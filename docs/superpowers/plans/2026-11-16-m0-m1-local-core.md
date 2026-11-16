@@ -1,0 +1,2721 @@
+# M0+M1 本地核心 Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** 为现有静态英语资料站增量开发学习助手 PWA 的本地核心：可重复的七上题库转换脚本 + Vite/TypeScript 应用（做题、判分、答题日志、错题列表、报告、设置、备份），数据存 IndexedDB。
+
+**Architecture:** 转换脚本（根 `scripts/`，Node 原生）产出标准题库 JSON → `app-src/public/content/g7a/`；Vite + TypeScript 原生（无框架）应用构建到仓库根 `app/`（GitHub Pages 从 main 分支发布，产物需提交）；Dexie.js 管理 IndexedDB；判分/会话/指标/备份均为纯逻辑模块 + Vitest 单测。
+
+**Tech Stack:** Node 22（`node:test`）、Vite 5、TypeScript 5.6（strict）、Dexie 4、Vitest 2、fake-indexeddb。
+
+**规格：** `docs/superpowers/specs/2026-11-16-m0-m1-local-core-design.md`。除特别说明，所有命令在仓库根 `/data/svn/learn/english-materials` 执行。
+
+**已核实的事实（写代码时直接依赖）：**
+
+- 四个专项 `data.js`（`g7a-present/nouns/numbers/articles`）格式一致：IIFE 求值出 `window.<KEY>`，含 `levels`（6 个）与 `questions`（48 个：`{id:"P1-1", level, stem, options[4], answer, explain}`），共 192 题。
+- `typing/data/v1.js` 求值出 `window.TYPING_VOL`：`{units:[{id:"v1-u1", order, label:"Starter Unit 1", words:[{id,no,word,variant,ipa,pos,meaning,...}]}]}`，10 单元 184 词，`variant` 可为空串（如 `centre`/`center`）。
+- GitHub Pages 从 main 分支仓库根发布（无 gh-pages 分支），故 `app/` 构建产物需提交入库。
+- CI（`.github/workflows/ci.yml`）用 find 扫描全仓 HTML，只排除 `./node_modules`、`./.git`、`./artifacts`；`scripts/check_site.py` 的 `SKIP_DIRS` 按目录名跳过（任意深度的 `node_modules` 都跳过）。
+- 根 `.gitignore` 的 `node_modules/` 匹配任意深度；`app/` 未被忽略（正确，需入库）。
+
+---
+
+### Task 1: 题库转换脚本（M0 / DEV-01、DEV-04 的内容部分）
+
+**Files:**
+- Create: `scripts/extract-g7a.mjs`
+- Create: `scripts/extract-g7a.test.mjs`
+- Generate: `app-src/public/content/g7a/questions.json`、`vocab.json`、`content.json`
+- Modify: `package.json`（scripts）
+
+- [ ] **Step 1: 写失败测试**
+
+创建 `scripts/extract-g7a.test.mjs`：
+
+```js
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { extractAll, toQuestionId, CONTENT_VERSION } from './extract-g7a.mjs'
+
+test('七上四专项共 192 道选择题，字段齐全', () => {
+  const { questions } = extractAll()
+  assert.equal(questions.length, 192)
+  for (const q of questions) {
+    assert.equal(q.type, 'single_choice')
+    assert.ok(q.id && q.contentVersion === CONTENT_VERSION)
+    assert.equal(q.grade, 7)
+    assert.equal(q.term, 'A')
+    assert.ok(q.unit && q.sourceUrl)
+    assert.ok(Array.isArray(q.knowledgePointIds) && q.knowledgePointIds.length === 1)
+    assert.ok(q.stem && Array.isArray(q.options) && q.options.length === 4)
+    assert.equal(typeof q.answerSpec.correctOptionIndex, 'number')
+    assert.ok(q.answerSpec.correctOptionIndex >= 0 && q.answerSpec.correctOptionIndex < 4)
+    assert.ok(q.explanation)
+    assert.ok(q.difficulty >= 1 && q.difficulty <= 6)
+    assert.equal(q.estimatedSeconds, 45)
+  }
+})
+
+test('题目 ID 稳定且唯一', () => {
+  const { questions } = extractAll()
+  const ids = new Set(questions.map((q) => q.id))
+  assert.equal(ids.size, 192)
+  assert.equal(toQuestionId('g7a-present', 'P1-1'), 'g7a-present-l1-0001')
+  assert.equal(toQuestionId('g7a-articles', 'A6-8'), 'g7a-articles-l6-0008')
+})
+
+test('七上词汇 10 单元 184 词', () => {
+  const { vocab } = extractAll()
+  assert.equal(vocab.units.length, 10)
+  assert.equal(vocab.units.reduce((n, u) => n + u.words.length, 0), 184)
+  for (const u of vocab.units) {
+    for (const w of u.words) {
+      assert.ok(w.id && w.word && w.meaning && w.pos)
+      assert.equal(typeof w.variant, 'string')
+    }
+  }
+})
+
+test('转换幂等：两次提取结果完全一致', () => {
+  assert.deepEqual(extractAll(), extractAll())
+})
+
+test('content.json 元数据与题数一致', () => {
+  const { content } = extractAll()
+  assert.equal(content.contentId, 'g7a')
+  assert.equal(content.version, CONTENT_VERSION)
+  assert.equal(content.questionCount, 192)
+  assert.equal(content.vocabWordCount, 184)
+  for (const f of content.files) {
+    assert.ok(f.name && f.sha256.length === 64 && f.count > 0)
+  }
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `node --test scripts/`
+Expected: FAIL，报错 `Cannot find module .../extract-g7a.mjs`
+
+- [ ] **Step 3: 实现转换脚本**
+
+创建 `scripts/extract-g7a.mjs`：
+
+```js
+#!/usr/bin/env node
+/* 七上题库转换（可重复、幂等）：
+   g7a-{present,nouns,numbers,articles}/data.js + typing/data/v1.js
+   → app-src/public/content/g7a/{questions,vocab,content}.json */
+import fs from 'node:fs'
+import path from 'node:path'
+import { createHash } from 'node:crypto'
+import { pathToFileURL } from 'node:url'
+
+const ROOT = path.resolve(import.meta.dirname, '..')
+const OUT_DIR = path.join(ROOT, 'app-src/public/content/g7a')
+export const CONTENT_VERSION = '2026-11-16'
+
+const SPECIALS = [
+  { dir: 'g7a-present', key: 'G7A_PRESENT', id: 'g7a-present', title: '一般现在时与句子种类', kpPrefix: 'grammar.present_simple' },
+  { dir: 'g7a-nouns', key: 'G7A_NOUNS', id: 'g7a-nouns', title: '名词与所有格', kpPrefix: 'grammar.noun' },
+  { dir: 'g7a-numbers', key: 'G7A_NUMBERS', id: 'g7a-numbers', title: '数词与介词', kpPrefix: 'grammar.number_prep' },
+  { dir: 'g7a-articles', key: 'G7A_ARTICLES', id: 'g7a-articles', title: '冠词与代词', kpPrefix: 'grammar.article_pronoun' },
+]
+
+const LEVEL_SLUGS = {
+  'g7a-present': ['meaning', 'be', 'third-person', 'negation-question', 'statement', 'mixed'],
+  'g7a-nouns': ['categories', 'countability', 'possessive-form', 'possessive-sound', 'word-class', 'mixed'],
+  'g7a-numbers': ['cardinal', 'ordinal', 'time-prep', 'place-prep', 'collocation', 'mixed'],
+  'g7a-articles': ['the', 'a-an', 'zero-article', 'personal-pronoun', 'possessive-demo', 'mixed'],
+}
+
+/** "P1-1"（字母+级别-序号）→ g7a-present-l1-0001；级别取自原始 ID 内的数字 */
+export function toQuestionId(specialId, rawId) {
+  const m = /^([A-Z])(\d+)-(\d+)$/.exec(String(rawId))
+  if (!m) throw new Error(`非法题目原始 ID：${rawId}`)
+  const level = Number(m[2])
+  const seq = Number(m[3])
+  if (level < 1 || level > 6 || seq < 1) throw new Error(`非法题目原始 ID：${rawId}`)
+  return `${specialId}-l${level}-${String(seq).padStart(4, '0')}`
+}
+```
+
+继续 `scripts/extract-g7a.mjs`（接在 `toQuestionId` 之后）：
+
+```js
+/** 以模块方式求值原站 data.js，返回挂到 window 上的数据对象 */
+function loadSpecialData(relPath, key) {
+  const src = fs.readFileSync(path.join(ROOT, relPath), 'utf8')
+  const sandbox = {}
+  new Function('window', src)(sandbox)
+  if (!sandbox[key]) throw new Error(`${relPath} 未见 window.${key}`)
+  return sandbox[key]
+}
+
+function toQuestion(sp, raw) {
+  const level = raw.level
+  const slug = LEVEL_SLUGS[sp.id][level - 1]
+  if (!slug) throw new Error(`${sp.id} 缺少级别 ${level} 的知识点映射`)
+  return {
+    id: toQuestionId(sp.id, raw.id),
+    contentVersion: CONTENT_VERSION,
+    grade: 7,
+    term: 'A',
+    unit: `${sp.id}-l${level}`,
+    sourceUrl: `${sp.dir}/`,
+    knowledgePointIds: [`${sp.kpPrefix}.${slug}`],
+    type: 'single_choice',
+    stem: raw.stem,
+    options: raw.options,
+    answerSpec: { correctOptionIndex: raw.answer },
+    explanation: raw.explain,
+    difficulty: level,
+    estimatedSeconds: 45,
+  }
+}
+
+function extractQuestions() {
+  const questions = []
+  for (const sp of SPECIALS) {
+    const data = loadSpecialData(path.join(sp.dir, 'data.js'), sp.key)
+    for (const raw of data.questions) questions.push(toQuestion(sp, raw))
+  }
+  return questions
+}
+
+function extractVocab() {
+  const vol = loadSpecialData('typing/data/v1.js', 'TYPING_VOL')
+  return {
+    book: 'g7a',
+    contentVersion: CONTENT_VERSION,
+    units: vol.units.map((u) => ({
+      id: u.id,
+      order: u.order,
+      label: u.label,
+      words: u.words.map((w) => ({
+        id: w.id,
+        no: w.no,
+        word: w.word,
+        variant: w.variant || '',
+        pos: w.pos,
+        ipa: w.ipa,
+        meaning: w.meaning,
+      })),
+    })),
+  }
+}
+
+function sha256(text) {
+  return createHash('sha256').update(text).digest('hex')
+}
+
+/** 全量提取（纯函数，不写文件）；键序固定保证输出稳定 */
+export function extractAll() {
+  const questions = extractQuestions()
+  const vocab = extractVocab()
+  const questionsJson = JSON.stringify(questions, null, 2) + '\n'
+  const vocabJson = JSON.stringify(vocab, null, 2) + '\n'
+  const content = {
+    contentId: 'g7a',
+    version: CONTENT_VERSION,
+    questionCount: questions.length,
+    vocabWordCount: vocab.units.reduce((n, u) => n + u.words.length, 0),
+    files: [
+      { name: 'questions.json', sha256: sha256(questionsJson), count: questions.length },
+      { name: 'vocab.json', sha256: sha256(vocabJson), count: vocab.units.length },
+    ],
+  }
+  return { questions, questionsJson, vocab, vocabJson, content }
+}
+
+function main() {
+  const { questionsJson, vocabJson, content } = extractAll()
+  fs.mkdirSync(OUT_DIR, { recursive: true })
+  fs.writeFileSync(path.join(OUT_DIR, 'questions.json'), questionsJson)
+  fs.writeFileSync(path.join(OUT_DIR, 'vocab.json'), vocabJson)
+  fs.writeFileSync(path.join(OUT_DIR, 'content.json'), JSON.stringify(content, null, 2) + '\n')
+  console.log(`已生成 ${questions.length} 道选择题、${content.vocabWordCount} 个单词 → ${path.relative(ROOT, OUT_DIR)}/`)
+}
+
+const invokedAsScript =
+  process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href
+if (invokedAsScript) main()
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `node --test scripts/`
+Expected: 5 个测试全 PASS（`# pass 5`）
+
+- [ ] **Step 5: 生成内容文件并验证幂等**
+
+Run: `node scripts/extract-g7a.mjs && sha256sum app-src/public/content/g7a/*.json && node scripts/extract-g7a.mjs && sha256sum app-src/public/content/g7a/*.json`
+Expected: 两次 sha256 完全一致；questions.json 192 题、vocab.json 184 词
+再抽查: `node -e "const q=require('./app-src/public/content/g7a/questions.json');console.log(q[0])"` 输出含 `"id": "g7a-present-l1-0001"`、`"correctOptionIndex": 3`（P1-1 答案是 3）
+
+- [ ] **Step 6: 根 package.json 增加脚本**
+
+`package.json` 的 `scripts` 增加（保留原有两项）：
+
+```json
+{
+  "scripts": {
+    "htmlvalidate": "html-validate \"**/*.html\"",
+    "lighthouse": "lhci autorun",
+    "extract:g7a": "node scripts/extract-g7a.mjs",
+    "test:extract": "node --test scripts/"
+  }
+}
+```
+
+- [ ] **Step 7: 提交**
+
+```bash
+git add scripts/extract-g7a.mjs scripts/extract-g7a.test.mjs app-src/public/content/g7a package.json
+git commit -m "feat(app): 七上题库转换脚本，产出 192 道选择题与 184 词词汇 JSON
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 2: app-src 脚手架（DEV-02）
+
+**Files:**
+- Create: `app-src/package.json`、`app-src/tsconfig.json`、`app-src/vite.config.ts`、`app-src/index.html`、`app-src/src/style.css`、`app-src/src/main.ts`、`app-src/src/router.ts`、`app-src/src/pages/{today,exercise,mistakes,report,settings}.ts`
+- Modify: `package.json`（代理脚本）
+
+- [ ] **Step 1: 创建 `app-src/package.json` 并安装依赖**
+
+```json
+{
+  "name": "english-coach-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "dexie": "^4.0.8",
+    "fake-indexeddb": "^6.0.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}
+```
+
+Run: `npm --prefix app-src install`
+Expected: 依赖安装成功（warnings 可忽略）
+
+- [ ] **Step 2: 创建 `app-src/tsconfig.json`**
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src", "vite.config.ts"]
+}
+```
+
+- [ ] **Step 3: 创建 `app-src/vite.config.ts`**
+
+```ts
+/// <reference types="vitest/config" />
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  base: '/english-materials/app/',
+  build: { outDir: '../app', emptyOutDir: true },
+  test: { environment: 'node', include: ['src/**/*.test.ts'] },
+})
+```
+
+- [ ] **Step 4: 创建 `app-src/index.html`**
+
+check_site.py 要求 lang/title/description/viewport/h1，全部满足：
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>英语学习助手</title>
+  <meta name="description" content="初中英语学习助手：今日练习、判分解析、错题本与学习报告，本地保存学习记录。">
+  <meta name="theme-color" content="#1a56a0">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <main id="app">
+    <h1>英语学习助手</h1>
+    <p>加载中…</p>
+  </main>
+  <nav id="tabbar" aria-label="主导航">
+    <a href="#/today">今日</a>
+    <a href="#/mistakes">错题</a>
+    <a href="#/report">报告</a>
+    <a href="#/settings">设置</a>
+  </nav>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
+```
+
+- [ ] **Step 5: 创建 `app-src/src/style.css`（一次写全，后续页面共用）**
+
+```css
+:root {
+  --bg: #f4f6fa;
+  --card: #ffffff;
+  --ink: #1f2933;
+  --muted: #6b7280;
+  --brand: #1a56a0;
+  --ok: #177245;
+  --ok-bg: #e6f4ea;
+  --bad: #b3261e;
+  --bad-bg: #fce8e6;
+  --line: #d8dee9;
+  --radius: 14px;
+}
+* { box-sizing: border-box; }
+html { font-size: 18px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  line-height: 1.6;
+}
+#app { max-width: 720px; margin: 0 auto; padding: 16px 16px 84px; }
+#tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  display: flex; background: var(--card); border-top: 1px solid var(--line);
+  max-width: 720px; margin: 0 auto;
+}
+#tabbar a {
+  flex: 1; text-align: center; padding: 12px 0 16px;
+  min-height: 44px; text-decoration: none; color: var(--muted); font-size: 1rem;
+}
+#tabbar a[aria-current="page"] { color: var(--brand); font-weight: 700; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.2rem; }
+.card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px; margin: 12px 0;
+}
+.card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+.card p { margin: 4px 0; color: var(--muted); font-size: 0.92rem; }
+.btn {
+  display: inline-block; min-height: 48px; padding: 10px 22px;
+  border-radius: 12px; border: none; background: var(--brand); color: #fff;
+  font-size: 1.05rem; cursor: pointer;
+}
+.btn-secondary { background: #e5eaf2; color: var(--ink); }
+.btn-block { display: block; width: 100%; }
+.progress-bar {
+  height: 10px; border-radius: 6px; background: #e5eaf2; overflow: hidden; margin: 8px 0;
+}
+.progress-bar > div { height: 100%; background: var(--brand); }
+.options { display: grid; gap: 10px; margin: 16px 0; }
+.option-btn {
+  min-height: 56px; text-align: left; padding: 12px 16px; font-size: 1.05rem;
+  background: var(--card); border: 2px solid var(--line); border-radius: 12px;
+  cursor: pointer; color: var(--ink);
+}
+.option-btn.selected { border-color: var(--brand); background: #e8f0fb; }
+.fill-input {
+  width: 100%; min-height: 56px; font-size: 1.15rem; padding: 10px 14px;
+  border: 2px solid var(--line); border-radius: 12px;
+}
+.feedback { border-radius: var(--radius); padding: 14px 16px; margin: 12px 0; }
+.feedback.ok { background: var(--ok-bg); }
+.feedback.bad { background: var(--bad-bg); }
+.feedback .verdict { font-weight: 700; font-size: 1.1rem; }
+.list { list-style: none; padding: 0; margin: 0; }
+.list li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.badge {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  background: #e5eaf2; font-size: 0.85rem; margin-right: 6px;
+}
+.form-row { margin: 14px 0; }
+.form-row label { display: block; font-weight: 600; margin-bottom: 4px; }
+.form-row input, .form-row select {
+  min-height: 48px; font-size: 1rem; padding: 8px 12px;
+  border: 2px solid var(--line); border-radius: 10px; width: 100%;
+}
+.error-panel { background: var(--bad-bg); padding: 14px; border-radius: var(--radius); }
+.muted { color: var(--muted); font-size: 0.9rem; }
+.action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+```
+
+- [ ] **Step 6: 创建 `app-src/src/router.ts`**
+
+```ts
+export interface PageContext {
+  container: HTMLElement
+  params: URLSearchParams
+}
+
+export type PageRenderer = (ctx: PageContext) => void | Promise<void>
+
+export interface RouteInfo {
+  name: string
+  params: URLSearchParams
+}
+
+export function parseHash(hash: string): RouteInfo {
+  const raw = hash.replace(/^#\/?/, '')
+  const [path, query = ''] = raw.split('?')
+  return { name: path || 'today', params: new URLSearchParams(query) }
+}
+
+export function navigate(name: string, params: Record<string, string> = {}): void {
+  const query = new URLSearchParams(params).toString()
+  location.hash = `#/${name}${query ? '?' + query : ''}`
+}
+
+export function startRouter(pages: Record<string, PageRenderer>, container: HTMLElement): void {
+  const tabbar = document.querySelectorAll<HTMLAnchorElement>('#tabbar a')
+  const render = () => {
+    const { name, params } = parseHash(location.hash)
+    const page = pages[name] ?? pages['today']
+    if (!page) throw new Error('缺少 today 页面')
+    for (const a of tabbar) {
+      const target = a.getAttribute('href')?.replace('#/', '') ?? ''
+      if (target === name) a.setAttribute('aria-current', 'page')
+      else a.removeAttribute('aria-current')
+    }
+    container.innerHTML = ''
+    void page({ container, params })
+  }
+  addEventListener('hashchange', render)
+  render()
+}
+```
+
+- [ ] **Step 7: 创建 5 个占位页面 + `main.ts`**
+
+每个页面文件（`app-src/src/pages/<name>.ts`）先写成同构占位（以 today 为例，其余 4 个文件把名字换掉）：
+
+```ts
+import type { PageRenderer } from '../router'
+
+export const renderToday: PageRenderer = ({ container }) => {
+  container.innerHTML = '<h1>今日学习</h1><p class="muted">建设中</p>'
+}
+```
+
+`app-src/src/main.ts`：
+
+```ts
+import { startRouter } from './router'
+import { renderToday } from './pages/today'
+import { renderExercise } from './pages/exercise'
+import { renderMistakes } from './pages/mistakes'
+import { renderReport } from './pages/report'
+import { renderSettings } from './pages/settings'
+
+const container = document.querySelector<HTMLElement>('#app')
+if (container) {
+  startRouter(
+    {
+      today: renderToday,
+      exercise: renderExercise,
+      mistakes: renderMistakes,
+      report: renderReport,
+      settings: renderSettings,
+    },
+    container,
+  )
+}
+```
+
+- [ ] **Step 8: 验证 dev 与构建**
+
+Run: `npm --prefix app-src run build`
+Expected: `tsc --noEmit` 无错误；vite 构建输出到 `app/`（`app/index.html`、`app/assets/` 存在）
+Run（后台）: `npm --prefix app-src run dev` 然后浏览器打开 `http://localhost:5173/#/today`
+Expected: 显示"今日学习 · 建设中"，底部 4 个 tab 可切换、当前 tab 高亮
+
+- [ ] **Step 9: 根 package.json 增加代理脚本**
+
+`package.json` scripts 增加：
+
+```json
+"dev:app": "npm --prefix app-src run dev",
+"build:app": "npm --prefix app-src run build",
+"test:app": "npm --prefix app-src run test"
+```
+
+- [ ] **Step 10: 提交**
+
+```bash
+git add app-src package.json app
+git commit -m "feat(app): Vite+TS 应用骨架，hash 路由与五页面占位，构建产物到 app/
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 3: 领域类型 + 题库加载与默写题派生（DEV-04 数据侧）
+
+**Files:**
+- Create: `app-src/src/types.ts`
+- Create: `app-src/src/content/loader.ts`
+- Create: `app-src/src/content/sets.ts`
+- Test: `app-src/src/content/loader.test.ts`
+
+- [ ] **Step 1: 创建 `app-src/src/types.ts`**
+
+```ts
+export type QuestionType = 'single_choice' | 'fill_in'
+
+export interface AnswerSpec {
+  correctOptionIndex?: number
+  acceptedAnswers?: string[]
+}
+
+export interface Question {
+  id: string
+  contentVersion: string
+  grade: number
+  term: 'A' | 'B'
+  /** 练习集合 ID：专项级别（g7a-present-l1）或词汇单元（v1-u4） */
+  unit: string
+  sourceUrl: string
+  knowledgePointIds: string[]
+  type: QuestionType
+  stem: string
+  options?: string[]
+  answerSpec: AnswerSpec
+  explanation: string
+  difficulty: number
+  estimatedSeconds: number
+}
+
+export interface VocabWord {
+  id: string
+  no: number
+  word: string
+  variant: string
+  pos: string
+  ipa: string
+  meaning: string
+}
+
+export interface VocabUnit {
+  id: string
+  order: number
+  label: string
+  words: VocabWord[]
+}
+
+export interface VocabBook {
+  book: string
+  contentVersion: string
+  units: VocabUnit[]
+}
+
+export interface ContentFileInfo {
+  name: string
+  sha256: string
+  count: number
+}
+
+export interface ContentMeta {
+  contentId: string
+  version: string
+  questionCount: number
+  vocabWordCount: number
+  files: ContentFileInfo[]
+}
+
+export type AttemptPhase = 'first' | 'retry'
+
+export interface Attempt {
+  id: string
+  taskId?: string
+  questionId: string
+  /** 选择题存选项下标字符串，填空题存原文 */
+  answer: string
+  isCorrect: boolean
+  phase: AttemptPhase
+  selfReportedReason?: 'gave_up'
+  /** ISO 8601 UTC */
+  submittedAt: string
+}
+
+export type MasteryStage = 'new' | 'weak' | 'consolidating' | 'mastered'
+
+export interface Mastery {
+  knowledgePointId: string
+  stage: MasteryStage
+  nextReviewAt?: string
+  lastAttemptAt?: string
+  metrics: { testedCount: number; firstTryCorrect: number }
+}
+
+export interface Settings {
+  grade: number
+  /** 词汇默写当前单元，取 vocab unit id（如 v1-u4） */
+  currentUnit: string
+  dailyMinutes: number
+  studyDaysPerWeek: number
+  aiEnabled: boolean
+  studentLabel: string
+}
+
+export interface ContentBundle {
+  questions: Question[]
+  vocab: VocabBook
+  meta: ContentMeta
+}
+```
+
+- [ ] **Step 2: 写失败测试 `app-src/src/content/loader.test.ts`**
+
+```ts
+import { describe, expect, it } from 'vitest'
+import { deriveVocabQuestions } from './loader'
+import type { VocabBook } from '../types'
+
+const vocab: VocabBook = {
+  book: 'g7a',
+  contentVersion: '2026-11-16',
+  units: [
+    {
+      id: 'v1-u1',
+      order: 1,
+      label: 'Starter Unit 1',
+      words: [
+        { id: 'v1-u1-1', no: 1, word: 'unit', variant: '', pos: 'n.', ipa: '/ˈjuːnɪt/', meaning: '单元' },
+        { id: 'v1-u1-2', no: 2, word: 'centre', variant: 'center', pos: 'n.', ipa: '', meaning: '中心；中央' },
+      ],
+    },
+  ],
+}
+
+describe('deriveVocabQuestions', () => {
+  it('中→英默写题：ID 稳定、含 variant 同义答案', () => {
+    const qs = deriveVocabQuestions(vocab, 'v1-u1')
+    expect(qs).toHaveLength(2)
+    expect(qs[0]).toMatchObject({
+      id: 'g7a-vocab-u1-0001',
+      type: 'fill_in',
+      unit: 'v1-u1',
+      answerSpec: { acceptedAnswers: ['unit'] },
+    })
+    expect(qs[1]).toMatchObject({
+      id: 'g7a-vocab-u1-0002',
+      answerSpec: { acceptedAnswers: ['centre', 'center'] },
+    })
+  })
+
+  it('同输入两次派生结果一致（题序与 ID 不变）', () => {
+    expect(deriveVocabQuestions(vocab, 'v1-u1')).toEqual(deriveVocabQuestions(vocab, 'v1-u1'))
+  })
+
+  it('未知单元返回空数组', () => {
+    expect(deriveVocabQuestions(vocab, 'v1-u99')).toEqual([])
+  })
+
+  it('每题带知识点 ID 与释义解析', () => {
+    const qs = deriveVocabQuestions(vocab, 'v1-u1')
+    expect(qs[0]!.knowledgePointIds).toEqual(['vocab.g7a.u1'])
+    expect(qs[0]!.explanation).toContain('unit')
+    expect(qs[0]!.explanation).toContain('单元')
+  })
+})
+```
+
+- [ ] **Step 3: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test`
+Expected: FAIL，`Failed to resolve import "./loader"`
+
+- [ ] **Step 4: 实现 `app-src/src/content/loader.ts`**
+
+```ts
+import type { ContentBundle, Question, VocabBook, VocabWord } from '../types'
+
+const CONTENT_BASE = './content/g7a'
+
+let bundlePromise: Promise<ContentBundle> | undefined
+
+/** 拉取并缓存题库（相对当前文档路径，dev 与子路径部署均正确） */
+export function fetchContentBundle(): Promise<ContentBundle> {
+  bundlePromise ??= (async () => {
+    const [questions, vocab, meta] = await Promise.all([
+      fetchJson<Question[]>(`${CONTENT_BASE}/questions.json`),
+      fetchJson<VocabBook>(`${CONTENT_BASE}/vocab.json`),
+      fetchJson<ContentBundle['meta']>(`${CONTENT_BASE}/content.json`),
+    ])
+    return { questions, vocab, meta }
+  })()
+  return bundlePromise
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`题库加载失败：${url}（HTTP ${res.status}）`)
+  return res.json() as Promise<T>
+}
+
+/** 词汇单元 id（v1-u4）→ 短名（u4），用于生成稳定题目 ID */
+function unitShortName(unitId: string): string {
+  return unitId.replace(/^v1-/, '')
+}
+
+function toVocabQuestion(unitId: string, w: VocabWord): Question {
+  const accepted = [w.word, ...(w.variant ? [w.variant] : [])]
+  return {
+    id: `g7a-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
+    contentVersion: w.id,
+    grade: 7,
+    term: 'A',
+    unit: unitId,
+    sourceUrl: 'typing/',
+    knowledgePointIds: [`vocab.g7a.${unitShortName(unitId)}`],
+    type: 'fill_in',
+    stem: `${w.meaning}（${w.pos}）`,
+    answerSpec: { acceptedAnswers: accepted },
+    explanation: `${w.word} ${w.ipa} ${w.pos} ${w.meaning}`,
+    difficulty: 1,
+    estimatedSeconds: 20,
+  }
+}
+
+/** 由词汇派生中→英默写题；词序取自源数据，保证 ID 跨会话稳定 */
+export function deriveVocabQuestions(vocab: VocabBook, unitId: string): Question[] {
+  const unit = vocab.units.find((u) => u.id === unitId)
+  if (!unit) return []
+  return unit.words.map((w) => toVocabQuestion(unitId, w))
+}
+
+export function findVocabUnit(vocab: VocabBook, unitId: string) {
+  return vocab.units.find((u) => u.id === unitId)
+}
+```
+
+注意：默写题的 `contentVersion` 复用词 ID（`v1-u1-1`），原词更新时可追溯。
+
+- [ ] **Step 5: 创建 `app-src/src/content/sets.ts`（专项元信息）**
+
+```ts
+export interface SpecialInfo {
+  id: string
+  title: string
+  sourceUrl: string
+}
+
+export const SPECIALS: SpecialInfo[] = [
+  { id: 'g7a-present', title: '一般现在时与句子种类', sourceUrl: 'g7a-present/' },
+  { id: 'g7a-nouns', title: '名词与所有格', sourceUrl: 'g7a-nouns/' },
+  { id: 'g7a-numbers', title: '数词与介词', sourceUrl: 'g7a-numbers/' },
+  { id: 'g7a-articles', title: '冠词与代词', sourceUrl: 'g7a-articles/' },
+]
+```
+
+- [ ] **Step 6: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test`
+Expected: 4 个测试 PASS
+
+- [ ] **Step 7: 提交**
+
+```bash
+git add app-src/src/types.ts app-src/src/content
+git commit -m "feat(app): 领域类型与题库加载，词汇派生中译英默写题
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 4: 判分引擎（DEV-04 判分侧）
+
+**Files:**
+- Create: `app-src/src/domain/grader.ts`
+- Test: `app-src/src/domain/grader.test.ts`
+
+- [ ] **Step 1: 写失败测试 `app-src/src/domain/grader.test.ts`**
+
+```ts
+import { describe, expect, it } from 'vitest'
+import { gradeAnswer, normalizeBlank } from './grader'
+import type { Question } from '../types'
+
+const choice: Question = {
+  id: 'q1',
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit: 'u',
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'single_choice',
+  stem: 'She ___ to school every day.',
+  options: ['go', 'goes', 'going', 'gone'],
+  answerSpec: { correctOptionIndex: 1 },
+  explanation: '三单用 goes',
+  difficulty: 1,
+  estimatedSeconds: 45,
+}
+
+const fill: Question = {
+  id: 'q2',
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit: 'u',
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'fill_in',
+  stem: '单元（n.）',
+  answerSpec: { acceptedAnswers: ['unit'] },
+  explanation: 'unit n. 单元',
+  difficulty: 1,
+  estimatedSeconds: 20,
+}
+
+const fillVariant: Question = {
+  ...fill,
+  id: 'q3',
+  answerSpec: { acceptedAnswers: ['centre', 'center'] },
+}
+
+describe('normalizeBlank', () => {
+  it('去首尾空白、折叠内部空白、统一小写', () => {
+    expect(normalizeBlank('  Unit  ')).toBe('unit')
+    expect(normalizeBlank('New   York ')).toBe('new york')
+    expect(normalizeBlank('UNIT')).toBe('unit')
+  })
+  it('全角标点转半角、去包裹引号', () => {
+    expect(normalizeBlank('，')).toBe(',')
+    expect(normalizeBlank('。')).toBe('.')
+    expect(normalizeBlank('twelve。')).toBe('twelve.')
+    expect(normalizeBlank('"unit"')).toBe('unit')
+    expect(normalizeBlank('“unit”')).toBe('unit')
+  })
+})
+
+describe('gradeAnswer', () => {
+  it('选择题：比对选项下标', () => {
+    expect(gradeAnswer(choice, '1').isCorrect).toBe(true)
+    expect(gradeAnswer(choice, '0').isCorrect).toBe(false)
+    expect(gradeAnswer(choice, '1').correctAnswer).toBe('goes')
+  })
+  it('选择题：非数字答案判错不抛异常', () => {
+    expect(gradeAnswer(choice, 'x').isCorrect).toBe(false)
+  })
+  it('填空：大小写与空白不敏感', () => {
+    expect(gradeAnswer(fill, '  UNIT ').isCorrect).toBe(true)
+    expect(gradeAnswer(fill, 'united').isCorrect).toBe(false)
+  })
+  it('填空：接受同义变体', () => {
+    expect(gradeAnswer(fillVariant, 'Center').isCorrect).toBe(true)
+    expect(gradeAnswer(fillVariant, 'centre').isCorrect).toBe(true)
+  })
+  it('填空：正确答案取首选（展示用）', () => {
+    expect(gradeAnswer(fillVariant, 'x').correctAnswer).toBe('centre')
+  })
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- grader`
+Expected: FAIL，`Cannot find module './grader'`
+
+- [ ] **Step 3: 实现 `app-src/src/domain/grader.ts`**
+
+```ts
+import type { Question } from '../types'
+
+const FULLWIDTH_PUNCT: Record<string, string> = {
+  '，': ',', '。': '.', '；': ';', '：': ':', '？': '?', '！': '!',
+  '（': '(', '）': ')', '“': '"', '”': '"', '‘': "'", '’': "'",
+}
+
+/** 填空答案规范化：空白/大小写/全半角标点/包裹引号（规格 7.3） */
+export function normalizeBlank(input: string): string {
+  let s = input.trim().toLowerCase()
+  s = s.replace(/[，。；：？！（）“‘’”]/g, (ch) => FULLWIDTH_PUNCT[ch] ?? ch)
+  s = s.replace(/\s+/g, ' ')
+  if (s.length >= 2) {
+    const first = s[0]!
+    const last = s[s.length - 1]!
+    if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
+      s = s.slice(1, -1)
+    }
+  }
+  return s
+}
+
+export interface GradeResult {
+  isCorrect: boolean
+  /** 展示给学生的标准答案文本 */
+  correctAnswer: string
+}
+
+export function gradeAnswer(question: Question, answer: string): GradeResult {
+  if (question.type === 'single_choice') {
+    const idx = Number(answer)
+    const correct = question.answerSpec.correctOptionIndex
+    const isCorrect = correct !== undefined && Number.isInteger(idx) && idx === correct
+    return { isCorrect, correctAnswer: correct !== undefined ? question.options?.[correct] ?? '' : '' }
+  }
+  const accepted = question.answerSpec.acceptedAnswers ?? []
+  const normalized = normalizeBlank(answer)
+  const isCorrect = accepted.some((a) => normalizeBlank(a) === normalized)
+  return { isCorrect, correctAnswer: accepted[0] ?? '' }
+}
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- grader`
+Expected: 全部 PASS
+
+- [ ] **Step 5: 提交**
+
+```bash
+git add app-src/src/domain
+git commit -m "feat(app): 客观题判分引擎（选择题+填空规范化）
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 5: Dexie schema 与 repositories（DEV-03）
+
+**Files:**
+- Create: `app-src/src/db/schema.ts`
+- Create: `app-src/src/db/repos.ts`
+- Test: `app-src/src/db/repos.test.ts`
+
+- [ ] **Step 1: 创建 `app-src/src/db/schema.ts`**
+
+```ts
+import Dexie, { type Table } from 'dexie'
+import type { Attempt, ContentMeta, Mastery, Question, Settings } from '../types'
+
+export interface SettingsRow {
+  key: string
+  value: Settings
+  updatedAt: string
+}
+
+export interface ContentMetaRow extends ContentMeta {
+  contentId: string
+}
+
+export interface WeeklyReportRow {
+  weekStart: string
+  facts: unknown
+  aiSuggestions?: string
+  generatedAt: string
+}
+
+export interface AiRequestRow {
+  id: string
+  type: string
+  status: string
+  localCostEstimate?: number
+  createdAt: string
+}
+
+export interface TaskRow {
+  id: string
+  day: string
+  type: string
+  questionIds: string[]
+  status: 'planned' | 'in_progress' | 'completed' | 'skipped' | 'deferred'
+  minutesPlanned: number
+}
+
+export class EnglishCoachDB extends Dexie {
+  settings!: Table<SettingsRow, string>
+  contentMeta!: Table<ContentMetaRow, string>
+  questions!: Table<Question, string>
+  tasks!: Table<TaskRow, string>
+  attempts!: Table<Attempt, string>
+  mastery!: Table<Mastery, string>
+  weeklyReports!: Table<WeeklyReportRow, string>
+  aiRequests!: Table<AiRequestRow, string>
+
+  constructor() {
+    super('EnglishCoachDB')
+    this.version(1).stores({
+      settings: 'key',
+      contentMeta: 'contentId',
+      questions: 'id, unit, *knowledgePointIds, contentVersion',
+      tasks: 'id, day, status',
+      attempts: 'id, questionId, submittedAt, phase',
+      mastery: 'knowledgePointId, nextReviewAt',
+      weeklyReports: 'weekStart',
+      aiRequests: 'createdAt',
+    })
+  }
+}
+
+export const db = new EnglishCoachDB()
+```
+
+- [ ] **Step 2: 写失败测试 `app-src/src/db/repos.test.ts`**
+
+```ts
+import 'fake-indexeddb/auto'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { db } from './schema'
+import {
+  DEFAULT_SETTINGS,
+  getSettings,
+  saveSettings,
+  saveAttempt,
+  hasPriorAttempt,
+  attemptsForQuestion,
+  upsertQuestions,
+  questionsByUnitPrefix,
+  putContentMeta,
+  getContentMeta,
+} from './repos'
+import type { Attempt, Question } from '../types'
+
+const q = (id: string, unit: string): Question => ({
+  id,
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit,
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'single_choice',
+  stem: 'stem',
+  options: ['a', 'b', 'c', 'd'],
+  answerSpec: { correctOptionIndex: 0 },
+  explanation: 'e',
+  difficulty: 1,
+  estimatedSeconds: 45,
+})
+
+const attempt = (id: string, questionId: string, isCorrect: boolean): Attempt => ({
+  id,
+  questionId,
+  answer: '0',
+  isCorrect,
+  phase: 'first',
+  submittedAt: '2026-11-16T10:00:00.000Z',
+})
+
+beforeEach(async () => {
+  await Promise.all([
+    db.settings.clear(),
+    db.questions.clear(),
+    db.attempts.clear(),
+    db.contentMeta.clear(),
+  ])
+})
+
+describe('settings', () => {
+  it('无记录时返回默认值', async () => {
+    expect(await getSettings()).toEqual(DEFAULT_SETTINGS)
+  })
+  it('保存后可读回且 updatedAt 存在', async () => {
+    await saveSettings({ ...DEFAULT_SETTINGS, dailyMinutes: 25 })
+    const s = await getSettings()
+    expect(s.dailyMinutes).toBe(25)
+    const row = await db.settings.get('app')
+    expect(row?.updatedAt).toBeTruthy()
+  })
+})
+
+describe('attempts（只追加）', () => {
+  it('同一 ID 重复保存不覆盖（add 语义）', async () => {
+    await saveAttempt(attempt('a1', 'q1', false))
+    await expect(saveAttempt(attempt('a1', 'q1', true))).rejects.toThrow()
+    const rows = await attemptsForQuestion('q1')
+    expect(rows).toHaveLength(1)
+    expect(rows[0]!.isCorrect).toBe(false)
+  })
+  it('hasPriorAttempt 反映历史存在性', async () => {
+    expect(await hasPriorAttempt('q1')).toBe(false)
+    await saveAttempt(attempt('a1', 'q1', false))
+    expect(await hasPriorAttempt('q1')).toBe(true)
+  })
+})
+
+describe('questions', () => {
+  it('按 unit 前缀查询专项全部题', async () => {
+    await upsertQuestions([q('g7a-present-l1-0001', 'g7a-present-l1'), q('g7a-present-l6-0048', 'g7a-present-l6'), q('g7a-nouns-l1-0001', 'g7a-nouns-l1')])
+    expect(await questionsByUnitPrefix('g7a-present')).toHaveLength(2)
+  })
+})
+
+describe('contentMeta', () => {
+  it('写入后可按 contentId 读回', async () => {
+    await putContentMeta({
+      contentId: 'g7a',
+      version: '2026-11-16',
+      questionCount: 192,
+      vocabWordCount: 184,
+      files: [],
+    })
+    expect((await getContentMeta('g7a'))?.version).toBe('2026-11-16')
+  })
+})
+```
+
+- [ ] **Step 3: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- repos`
+Expected: FAIL，`Cannot find module './repos'`
+
+- [ ] **Step 4: 实现 `app-src/src/db/repos.ts`**
+
+```ts
+import { db, type ContentMetaRow } from './schema'
+import type { Attempt, Question, Settings } from '../types'
+
+export const DEFAULT_SETTINGS: Settings = {
+  grade: 7,
+  currentUnit: 'v1-u4',
+  dailyMinutes: 35,
+  studyDaysPerWeek: 6,
+  aiEnabled: false,
+  studentLabel: '学生1',
+}
+
+const SETTINGS_KEY = 'app'
+
+export async function getSettings(): Promise<Settings> {
+  const row = await db.settings.get(SETTINGS_KEY)
+  return row ? { ...DEFAULT_SETTINGS, ...row.value } : { ...DEFAULT_SETTINGS }
+}
+
+export async function saveSettings(settings: Settings): Promise<void> {
+  await db.settings.put({ key: SETTINGS_KEY, value: settings, updatedAt: new Date().toISOString() })
+}
+
+/** 只追加：ID 冲突直接抛错，保证历史不可改写（T02） */
+export async function saveAttempt(attempt: Attempt): Promise<void> {
+  await db.attempts.add(attempt)
+}
+
+export async function listAttempts(): Promise<Attempt[]> {
+  return db.attempts.orderBy('submittedAt').toArray()
+}
+
+export async function attemptsForQuestion(questionId: string): Promise<Attempt[]> {
+  return db.attempts.where('questionId').equals(questionId).toArray()
+}
+
+export async function hasPriorAttempt(questionId: string): Promise<boolean> {
+  return (await db.attempts.where('questionId').equals(questionId).count()) > 0
+}
+
+export async function upsertQuestions(questions: Question[]): Promise<void> {
+  await db.questions.bulkPut(questions)
+}
+
+export async function questionsByUnitPrefix(prefix: string): Promise<Question[]> {
+  return db.questions.where('unit').startsWith(prefix).toArray()
+}
+
+export async function listAllQuestions(): Promise<Question[]> {
+  return db.questions.toArray()
+}
+
+export async function putContentMeta(meta: ContentMetaRow): Promise<void> {
+  await db.contentMeta.put(meta)
+}
+
+export async function getContentMeta(contentId: string): Promise<ContentMetaRow | undefined> {
+  return db.contentMeta.get(contentId)
+}
+```
+
+- [ ] **Step 5: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- repos`
+Expected: 全部 PASS
+
+- [ ] **Step 6: 提交**
+
+```bash
+git add app-src/src/db
+git commit -m "feat(app): Dexie schema 与 repositories，attempts 只追加
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 6: 内容播种（启动时把题库写入 IndexedDB）
+
+**Files:**
+- Create: `app-src/src/content/seed.ts`
+- Test: `app-src/src/content/seed.test.ts`
+
+- [ ] **Step 1: 写失败测试 `app-src/src/content/seed.test.ts`**
+
+```ts
+import 'fake-indexeddb/auto'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { db } from '../db/schema'
+import { seedContent } from './seed'
+import type { ContentBundle, Question } from '../types'
+
+const q = (id: string): Question => ({
+  id,
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit: 'g7a-present-l1',
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'single_choice',
+  stem: 'stem',
+  options: ['a', 'b', 'c', 'd'],
+  answerSpec: { correctOptionIndex: 0 },
+  explanation: 'e',
+  difficulty: 1,
+  estimatedSeconds: 45,
+})
+
+const bundle = (): ContentBundle => ({
+  questions: [q('q1'), q('q2')],
+  vocab: { book: 'g7a', contentVersion: 'v', units: [] },
+  meta: { contentId: 'g7a', version: 'v1', questionCount: 2, vocabWordCount: 0, files: [] },
+})
+
+beforeEach(async () => {
+  await Promise.all([db.questions.clear(), db.contentMeta.clear()])
+})
+
+describe('seedContent', () => {
+  it('首次播种：写入题目与 contentMeta', async () => {
+    const result = await seedContent(bundle())
+    expect(result).toEqual({ inserted: 2, skipped: false })
+    expect(await db.questions.count()).toBe(2)
+    expect((await db.contentMeta.get('g7a'))?.version).toBe('v1')
+  })
+  it('版本未变时跳过，不重复写入', async () => {
+    await seedContent(bundle())
+    const result = await seedContent(bundle())
+    expect(result).toEqual({ inserted: 0, skipped: true })
+    expect(await db.questions.count()).toBe(2)
+  })
+  it('版本升级时重新播种并更新 contentMeta', async () => {
+    await seedContent(bundle())
+    const upgraded = bundle()
+    upgraded.meta = { ...upgraded.meta, version: 'v2' }
+    const result = await seedContent(upgraded)
+    expect(result).toEqual({ inserted: 2, skipped: false })
+    expect((await db.contentMeta.get('g7a'))?.version).toBe('v2')
+    expect(await db.questions.count()).toBe(2)
+  })
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- seed`
+Expected: FAIL，`Cannot find module './seed'`
+
+- [ ] **Step 3: 实现 `app-src/src/content/seed.ts`**
+
+```ts
+import { getContentMeta, putContentMeta, upsertQuestions } from '../db/repos'
+import { db } from '../db/schema'
+import type { ContentBundle } from '../types'
+
+export interface SeedResult {
+  inserted: number
+  skipped: boolean
+}
+
+/** 版本未变则跳过；变化则整表重建题目索引（bulkPut 幂等） */
+export async function seedContent(bundle: ContentBundle): Promise<SeedResult> {
+  const meta = bundle.meta
+  const existing = await getContentMeta(meta.contentId)
+  if (existing && existing.version === meta.version) {
+    return { inserted: 0, skipped: true }
+  }
+  await upsertQuestions(bundle.questions)
+  const stale = await db.questions.toArray()
+  const knownIds = new Set(bundle.questions.map((q) => q.id))
+  const obsolete = stale.filter((q) => !knownIds.has(q.id)).map((q) => q.id)
+  if (obsolete.length > 0) await db.questions.bulkDelete(obsolete)
+  await putContentMeta(meta)
+  return { inserted: bundle.questions.length, skipped: false }
+}
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- seed`
+Expected: 3 个测试 PASS
+
+- [ ] **Step 5: 提交**
+
+```bash
+git add app-src/src/content/seed.ts app-src/src/content/seed.test.ts
+git commit -m "feat(app): 启动播种题库到 IndexedDB，按内容版本跳过或重建
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 7: 练习会话 PracticeSession（首测/复测区分）
+
+**Files:**
+- Create: `app-src/src/domain/session.ts`
+- Test: `app-src/src/domain/session.test.ts`
+
+- [ ] **Step 1: 写失败测试 `app-src/src/domain/session.test.ts`**
+
+```ts
+import { describe, expect, it } from 'vitest'
+import { PracticeSession, newAttemptId } from './session'
+import type { Attempt, Question } from '../types'
+
+const choice = (id: string): Question => ({
+  id,
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit: 'u',
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'single_choice',
+  stem: '1 + 1 = ___',
+  options: ['1', '2', '3', '4'],
+  answerSpec: { correctOptionIndex: 1 },
+  explanation: 'e',
+  difficulty: 1,
+  estimatedSeconds: 45,
+})
+
+describe('PracticeSession', () => {
+  it('空题集抛错', () => {
+    expect(() => new PracticeSession([], { hasPriorAttempt: async () => false, recordAttempt: async () => {} })).toThrow()
+  })
+
+  it('提交记录 attempt 并推进；首题 phase=first', async () => {
+    const attempts: Attempt[] = []
+    const s = new PracticeSession([choice('q1'), choice('q2')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => attempts.push(a),
+    })
+    const sub = await s.submit('1')
+    expect(sub.isCorrect).toBe(true)
+    expect(sub.phase).toBe('first')
+    expect(sub.isLast).toBe(false)
+    expect(attempts).toHaveLength(1)
+    expect(attempts[0]!.questionId).toBe('q1')
+    expect(attempts[0]!.isCorrect).toBe(true)
+    expect(s.done).toBe(1)
+    expect(s.current.id).toBe('q2')
+  })
+
+  it('已有历史时 phase=retry（做错后改对不覆盖首测，T02）', async () => {
+    const s = new PracticeSession([choice('q1')], {
+      hasPriorAttempt: async () => true,
+      recordAttempt: async () => {},
+    })
+    expect((await s.submit('2')).phase).toBe('retry')
+  })
+
+  it('我不会：记错误并带 gave_up 标记', async () => {
+    const attempts: Attempt[] = []
+    const s = new PracticeSession([choice('q1')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => attempts.push(a),
+    })
+    const sub = await s.submit('', { gaveUp: true })
+    expect(sub.isCorrect).toBe(false)
+    expect(sub.correctAnswer).toBe('2')
+    expect(attempts[0]!.selfReportedReason).toBe('gave_up')
+    expect(attempts[0]!.isCorrect).toBe(false)
+  })
+
+  it('最后一题后 isFinished，再提交抛错', async () => {
+    const s = new PracticeSession([choice('q1')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async () => {},
+    })
+    await s.submit('2')
+    expect(s.isFinished).toBe(true)
+    await expect(s.submit('2')).rejects.toThrow('练习已结束')
+  })
+
+  it('attempt id 为合法 UUID', () => {
+    expect(newAttemptId()).toMatch(/^[0-9a-f-]{36}$/)
+  })
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- session`
+Expected: FAIL，`Cannot find module './session'`
+
+- [ ] **Step 3: 实现 `app-src/src/domain/session.ts`**
+
+```ts
+import { gradeAnswer } from './grader'
+import type { Attempt, AttemptPhase, Question } from '../types'
+
+export interface SessionDeps {
+  hasPriorAttempt: (questionId: string) => Promise<boolean>
+  recordAttempt: (attempt: Attempt) => Promise<void>
+}
+
+export interface Submission {
+  question: Question
+  answer: string
+  isCorrect: boolean
+  phase: AttemptPhase
+  correctAnswer: string
+  isLast: boolean
+}
+
+export function newAttemptId(): string {
+  return globalThis.crypto.randomUUID()
+}
+
+/** 一次练习会话：顺序出题、提交即判分并落一条 attempt */
+export class PracticeSession {
+  private index = 0
+  readonly total: number
+
+  constructor(private questions: Question[], private deps: SessionDeps) {
+    if (questions.length === 0) throw new Error('PracticeSession 需要至少一道题')
+    this.total = questions.length
+  }
+
+  get current(): Question {
+    return this.questions[this.index]!
+  }
+
+  get done(): number {
+    return this.index
+  }
+
+  get isFinished(): boolean {
+    return this.index >= this.total
+  }
+
+  async submit(answer: string, opts: { gaveUp?: boolean } = {}): Promise<Submission> {
+    if (this.isFinished) throw new Error('练习已结束')
+    const question = this.current
+    const graded = gradeAnswer(question, answer)
+    const isCorrect = opts.gaveUp ? false : graded.isCorrect
+    const phase: AttemptPhase = (await this.deps.hasPriorAttempt(question.id)) ? 'retry' : 'first'
+    const attempt: Attempt = {
+      id: newAttemptId(),
+      questionId: question.id,
+      answer,
+      isCorrect,
+      phase,
+      ...(opts.gaveUp ? { selfReportedReason: 'gave_up' as const } : {}),
+      submittedAt: new Date().toISOString(),
+    }
+    await this.deps.recordAttempt(attempt)
+    this.index += 1
+    return {
+      question,
+      answer,
+      isCorrect,
+      phase,
+      correctAnswer: graded.correctAnswer,
+      isLast: this.index >= this.total,
+    }
+  }
+}
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- session`
+Expected: 6 个测试 PASS
+
+- [ ] **Step 5: 提交**
+
+```bash
+git add app-src/src/domain/session.ts app-src/src/domain/session.test.ts
+git commit -m "feat(app): 练习会话状态机，首测/复测区分与我不会记录
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 8: 练习页 UI
+
+**Files:**
+- Modify: `app-src/src/pages/exercise.ts`（替换占位实现）
+
+练习页纯 UI 无单测（逻辑已在 session/grader/repos 覆盖），以浏览器验证。
+
+- [ ] **Step 1: 实现 `app-src/src/pages/exercise.ts`**
+
+```ts
+import type { PageRenderer } from '../router'
+import { navigate } from '../router'
+import type { Question } from '../types'
+import { fetchContentBundle, deriveVocabQuestions } from '../content/loader'
+import { questionsByUnitPrefix } from '../db/repos'
+import { saveAttempt, hasPriorAttempt } from '../db/repos'
+import { PracticeSession, type Submission } from '../domain/session'
+
+const LETTERS = ['A', 'B', 'C', 'D']
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+}
+
+function shuffle<T>(items: T[]): T[] {
+  const arr = [...items]
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j]!, arr[i]!]
+  }
+  return arr
+}
+
+async function loadQuestions(params: URLSearchParams): Promise<{ title: string; questions: Question[] }> {
+  const vocabUnit = params.get('vocab')
+  if (vocabUnit) {
+    const bundle = await fetchContentBundle()
+    const unit = bundle.vocab.units.find((u) => u.id === vocabUnit)
+    return { title: `单词默写 · ${unit?.label ?? vocabUnit}`, questions: shuffle(deriveVocabQuestions(bundle.vocab, vocabUnit)) }
+  }
+  const special = params.get('special')
+  if (special) {
+    const questions = await questionsByUnitPrefix(special)
+    return { title: '专项练习', questions: shuffle(questions) }
+  }
+  return { title: '练习', questions: [] }
+}
+
+export const renderExercise: PageRenderer = async ({ container, params }) => {
+  container.innerHTML = '<h1>学习练习</h1><p class="muted">加载中…</p>'
+  let data: { title: string; questions: Question[] }
+  try {
+    data = await loadQuestions(params)
+  } catch (err) {
+    container.innerHTML = `<h1>学习练习</h1><div class="error-panel">题库加载失败：${escapeHtml(String(err))}<div class="action-row"><button class="btn" id="retry">重试</button></div></div>`
+    container.querySelector('#retry')?.addEventListener('click', () => navigate('exercise', Object.fromEntries(params)))
+    return
+  }
+  if (data.questions.length === 0) {
+    container.innerHTML = `<h1>学习练习</h1><div class="card"><h3>${escapeHtml(data.title)}</h3><p>该内容暂无题目。</p><div class="action-row"><button class="btn btn-secondary" id="back">返回今日学习</button></div></div>`
+    container.querySelector('#back')?.addEventListener('click', () => navigate('today'))
+    return
+  }
+
+  const session = new PracticeSession(data.questions, {
+    hasPriorAttempt,
+    recordAttempt: saveAttempt,
+  })
+  const stats = { correct: 0, total: session.total }
+
+  const renderQuestion = () => {
+    const q = session.current
+    const progress = Math.round((session.done / session.total) * 100)
+    container.innerHTML = `
+      <h1>${escapeHtml(data.title)}</h1>
+      <div class="progress-bar"><div style="width:${progress}%"></div></div>
+      <p class="muted">第 ${session.done + 1} / ${session.total} 题</p>
+      <div class="card">
+        <h3 style="font-size:1.25rem">${escapeHtml(q.stem)}</h3>
+        ${q.type === 'single_choice' ? renderOptions(q) : renderFill()}
+        <div class="action-row">
+          ${q.type === 'fill_in' ? '<button class="btn" id="submit">提交答案</button>' : ''}
+          <button class="btn btn-secondary" id="giveup">我不会</button>
+        </div>
+      </div>`
+    if (q.type === 'single_choice') {
+      for (const btn of container.querySelectorAll<HTMLButtonElement>('.option-btn')) {
+        btn.addEventListener('click', () => {
+          for (const b of container.querySelectorAll('.option-btn')) b.classList.remove('selected')
+          btn.classList.add('selected')
+          void submit(btn.dataset.index ?? '')
+        })
+      }
+    } else {
+      container.querySelector('#submit')?.addEventListener('click', () => {
+        const input = container.querySelector<HTMLInputElement>('#fill-input')
+        void submit(input?.value ?? '')
+      })
+      container.querySelector('#fill-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') container.querySelector<HTMLButtonElement>('#submit')?.click()
+      })
+    }
+    container.querySelector('#giveup')?.addEventListener('click', () => void submit('', { gaveUp: true }))
+  }
+
+  const renderFill = () => '<input class="fill-input" id="fill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词" inputmode="text">'
+
+  const renderOptions = (q: Question) => `<div class="options">${(q.options ?? []).map((opt, i) => `
+    <button class="option-btn" data-index="${i}"><strong>${LETTERS[i] ?? ''}.</strong> ${escapeHtml(opt)}</button>`).join('')}</div>`
+
+  const submit = async (answer: string, opts: { gaveUp?: boolean } = {}) => {
+    if (container.querySelector('.feedback')) return
+    let sub: Submission
+    try {
+      sub = await session.submit(answer, opts)
+    } catch {
+      return
+    }
+    if (sub.isCorrect) stats.correct += 1
+    const panel = document.createElement('div')
+    panel.className = `feedback ${sub.isCorrect ? 'ok' : 'bad'}`
+    panel.innerHTML = `
+      <p class="verdict">${sub.isCorrect ? '✓ 答对了' : '✗ 答错了'}</p>
+      ${sub.isCorrect ? '' : `<p>正确答案：<strong>${escapeHtml(sub.correctAnswer)}</strong></p>`}
+      <p>${escapeHtml(sub.question.explanation)}</p>
+      <div class="action-row"><button class="btn" id="next">${sub.isLast ? '查看总结' : '下一题'}</button></div>`
+    container.querySelector('.card')?.appendChild(panel)
+    container.querySelector('#giveup')?.setAttribute('disabled', 'true')
+    container.querySelector('#submit')?.setAttribute('disabled', 'true')
+    panel.querySelector('#next')?.addEventListener('click', () => {
+      if (session.isFinished) renderSummary()
+      else renderQuestion()
+    })
+  }
+
+  const renderSummary = () => {
+    container.innerHTML = `
+      <h1>${escapeHtml(data.title)}</h1>
+      <div class="card">
+        <h3>练习完成</h3>
+        <p>共 ${stats.total} 题，答对 ${stats.correct} 题（${Math.round((stats.correct / stats.total) * 100)}%）。</p>
+        <div class="action-row">
+          <button class="btn" id="back-today">返回今日学习</button>
+          <button class="btn btn-secondary" id="to-mistakes">查看错题本</button>
+        </div>
+      </div>`
+    container.querySelector('#back-today')?.addEventListener('click', () => navigate('today'))
+    container.querySelector('#to-mistakes')?.addEventListener('click', () => navigate('mistakes'))
+  }
+
+  renderQuestion()
+}
+```
+
+注意选择题点选即提交（单击选项=提交，无二次确认）；填空题输入后点“提交答案”或回车。
+
+- [ ] **Step 2: 类型检查与构建**
+
+Run: `npm --prefix app-src run build`
+Expected: tsc 无错误，构建成功
+
+- [ ] **Step 3: 浏览器验证**
+
+后台运行 `npm --prefix app-src run dev`，浏览器打开 `http://localhost:5173/#/exercise?special=g7a-present`：
+1. 显示"专项练习"与第 1/48 题、进度条
+2. 点一个选项 → 出现绿/红反馈面板（含 ✓/✗ 文字、正确答案、解析）与"下一题"
+3. 点"我不会" → 记为答错
+4. 填空题验证：`http://localhost:5173/#/exercise?vocab=v1-u1`，输入正确单词（大小写混用）判对，输错判错并显示解析
+5. 刷新页面后重做同一题 → DevTools Application → IndexedDB → EnglishCoachDB → attempts 里该题出现两条（first + retry）
+
+- [ ] **Step 4: 提交**
+
+```bash
+git add app-src/src/pages/exercise.ts
+git commit -m "feat(app): 练习页——选择/填空作答、判分反馈、我不会与练习总结
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 9: 指标口径 metrics（DEV-07 基础）
+
+**Files:**
+- Create: `app-src/src/domain/metrics.ts`
+- Test: `app-src/src/domain/metrics.test.ts`
+
+- [ ] **Step 1: 写失败测试 `app-src/src/domain/metrics.test.ts`**
+
+```ts
+import { describe, expect, it } from 'vitest'
+import { computeCoreMetrics, localDayKey, isSameLocalDay } from './metrics'
+import type { Attempt } from '../types'
+
+const a = (id: string, questionId: string, isCorrect: boolean, phase: 'first' | 'retry', submittedAt: string): Attempt => ({
+  id,
+  questionId,
+  answer: '0',
+  isCorrect,
+  phase,
+  submittedAt,
+})
+
+describe('computeCoreMetrics（口径见规格 7.5）', () => {
+  it('首测正确率只算 phase=first，不含重答', () => {
+    const attempts = [
+      a('1', 'q1', true, 'first', '2026-11-16T02:00:00.000Z'),
+      a('2', 'q2', false, 'first', '2026-11-16T02:01:00.000Z'),
+      a('3', 'q2', true, 'retry', '2026-11-16T02:02:00.000Z'),
+    ]
+    const m = computeCoreMetrics(attempts)
+    expect(m.totalAttempts).toBe(3)
+    expect(m.firstAttempts).toBe(2)
+    expect(m.firstCorrect).toBe(1)
+    expect(m.firstTryCorrectRate).toBe(0.5)
+    expect(m.retryAttempts).toBe(1)
+    expect(m.retryCorrect).toBe(1)
+    expect(m.wrongQuestions).toBe(1)
+  })
+  it('无首测时正确率为 null（不是 0）', () => {
+    const m = computeCoreMetrics([a('1', 'q1', true, 'retry', '2026-11-16T02:00:00.000Z')])
+    expect(m.firstTryCorrectRate).toBeNull()
+  })
+  it('空数据', () => {
+    const m = computeCoreMetrics([])
+    expect(m.totalAttempts).toBe(0)
+    expect(m.firstTryCorrectRate).toBeNull()
+  })
+})
+
+describe('本地日历日', () => {
+  it('localDayKey 生成 YYYY-MM-DD', () => {
+    expect(localDayKey(new Date(2026, 10, 16, 23, 30))).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+  it('isSameLocalDay 按本地时区比较', () => {
+    // 本地 2026-11-16 07:00 == UTC 2026-11-15 23:00（东八区）
+    const localKey = localDayKey(new Date(2026, 10, 16, 7, 0))
+    expect(isSameLocalDay('2026-11-15T23:00:00.000Z', localKey)).toBe(true)
+    expect(isSameLocalDay('2026-11-16T23:00:00.000Z', localKey)).toBe(false)
+  })
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- metrics`
+Expected: FAIL，`Cannot find module './metrics'`
+
+- [ ] **Step 3: 实现 `app-src/src/domain/metrics.ts`**
+
+```ts
+import type { Attempt } from '../types'
+
+export interface CoreMetrics {
+  totalAttempts: number
+  firstAttempts: number
+  firstCorrect: number
+  /** 首次作答正确率；无首测数据时为 null（页面显示“暂无数据”） */
+  firstTryCorrectRate: number | null
+  retryAttempts: number
+  retryCorrect: number
+  wrongQuestions: number
+}
+
+export function computeCoreMetrics(attempts: Attempt[]): CoreMetrics {
+  let firstAttempts = 0
+  let firstCorrect = 0
+  let retryAttempts = 0
+  let retryCorrect = 0
+  const wrong = new Set<string>()
+  for (const a of attempts) {
+    if (a.phase === 'first') {
+      firstAttempts += 1
+      if (a.isCorrect) firstCorrect += 1
+    } else {
+      retryAttempts += 1
+      if (a.isCorrect) retryCorrect += 1
+    }
+    if (!a.isCorrect) wrong.add(a.questionId)
+  }
+  return {
+    totalAttempts: attempts.length,
+    firstAttempts,
+    firstCorrect,
+    firstTryCorrectRate: firstAttempts > 0 ? firstCorrect / firstAttempts : null,
+    retryAttempts,
+    retryCorrect,
+    wrongQuestions: wrong.size,
+  }
+}
+
+/** 本地日历日键（规格 8：按设备本地时区算“今日”） */
+export function localDayKey(d = new Date()): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+export function isSameLocalDay(isoUtc: string, key: string): boolean {
+  return localDayKey(new Date(isoUtc)) === key
+}
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- metrics`
+Expected: 5 个测试 PASS（isSameLocalDay 第二条断言依赖本地时区为东八区；若在其他时区执行 CI 失败，把两条断言改为按本地时区动态计算期望值，见下）
+
+时区无关写法（若需要替换上面 isSameLocalDay 断言）：
+
+```ts
+it('isSameLocalDay 按本地时区比较', () => {
+  const d = new Date(2026, 10, 16, 7, 0)
+  const key = localDayKey(d)
+  const sameLocal = new Date(d.getTime()) // 与 d 同一本地日
+  const otherLocal = new Date(2026, 10, 17, 7, 0)
+  expect(isSameLocalDay(sameLocal.toISOString(), key)).toBe(true)
+  expect(isSameLocalDay(otherLocal.toISOString(), key)).toBe(false)
+})
+```
+
+- [ ] **Step 5: 提交**
+
+```bash
+git add app-src/src/domain/metrics.ts app-src/src/domain/metrics.test.ts
+git commit -m "feat(app): 学习指标口径——首测正确率、本地日历日
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 10: 今日 / 错题 / 报告 / 设置 页面
+
+**Files:**
+- Modify: `app-src/src/pages/today.ts`、`app-src/src/pages/mistakes.ts`、`app-src/src/pages/report.ts`、`app-src/src/pages/settings.ts`
+- Modify: `app-src/src/main.ts`（启动时播种题库）
+
+- [ ] **Step 1: 实现 `app-src/src/pages/today.ts`**
+
+```ts
+import type { PageRenderer } from '../router'
+import { navigate } from '../router'
+import { SPECIALS } from '../content/sets'
+import { fetchContentBundle, findVocabUnit } from '../content/loader'
+import { getSettings, listAttempts } from '../db/repos'
+import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
+
+export const renderToday: PageRenderer = async ({ container }) => {
+  container.innerHTML = '<h1>今日学习</h1><p class="muted">加载中…</p>'
+  const [settings, attempts, bundle] = await Promise.all([
+    getSettings(),
+    listAttempts(),
+    fetchContentBundle().catch(() => undefined),
+  ])
+  const today = localDayKey()
+  const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
+  const m = computeCoreMetrics(todayAttempts)
+
+  const vocabUnit = findVocabUnit(bundle?.vocab ?? { units: [], book: '', contentVersion: '' }, settings.currentUnit)
+  const cards = [
+    ...SPECIALS.map((s) => ({
+      title: s.title,
+      desc: '48 题 · 6 个级别',
+      action: () => navigate('exercise', { special: s.id }),
+    })),
+    {
+      title: `单词默写 · ${vocabUnit?.label ?? settings.currentUnit}`,
+      desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
+      action: () => navigate('exercise', { vocab: settings.currentUnit }),
+    },
+  ]
+
+  container.innerHTML = `
+    <h1>今日学习</h1>
+    <div class="card">
+      <h3>今天已练 ${todayAttempts.length} 题</h3>
+      <p>${m.firstTryCorrectRate === null ? '暂无首测数据' : `首测正确率 ${Math.round(m.firstTryCorrectRate * 100)}%`}</p>
+    </div>
+    ${cards
+      .map(
+        (c, i) => `
+    <div class="card">
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <div class="action-row"><button class="btn" data-card="${i}">开始练习</button></div>
+    </div>`,
+      )
+      .join('')}
+    <p class="muted">学习计划自动生成与到期复习将在后续版本提供。</p>`
+  for (const btn of container.querySelectorAll<HTMLButtonElement>('button[data-card]')) {
+    btn.addEventListener('click', () => cards[Number(btn.dataset.card)]?.action())
+  }
+}
+```
+
+- [ ] **Step 2: 实现 `app-src/src/pages/mistakes.ts`**
+
+```ts
+import type { PageRenderer } from '../router'
+import { listAttempts, listAllQuestions } from '../db/repos'
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' })
+}
+
+export const renderMistakes: PageRenderer = async ({ container }) => {
+  container.innerHTML = '<h1>错题本</h1><p class="muted">加载中…</p>'
+  const [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  const qMap = new Map(questions.map((q) => [q.id, q]))
+  const wrong = attempts.filter((a) => !a.isCorrect)
+  if (wrong.length === 0) {
+    container.innerHTML = '<h1>错题本</h1><div class="card"><p>还没有错题记录。先去今日学习做几道题吧。</p></div>'
+    return
+  }
+  const items = wrong.map((a) => {
+    const q = qMap.get(a.questionId)
+    return {
+      attempt: a,
+      question: q,
+      kp: q?.knowledgePointIds[0] ?? '未知知识点',
+      time: a.submittedAt,
+    }
+  })
+  items.sort((x, y) => (x.time < y.time ? 1 : -1))
+  container.innerHTML = `
+    <h1>错题本</h1>
+    <p class="muted">共 ${wrong.length} 条错误作答。复测排期将在后续版本提供。</p>
+    ${items
+      .map(
+        (it) => `
+    <div class="card">
+      <p><span class="badge">${escapeHtml(it.kp)}</span><span class="muted">${formatTime(it.time)}${it.attempt.phase === 'retry' ? ' · 复测' : ' · 首测'}</span></p>
+      <h3>${escapeHtml(it.question?.stem ?? it.attempt.questionId)}</h3>
+      ${it.question?.type === 'single_choice' ? `<p class="muted">你的答案：${escapeHtml(it.question.options?.[Number(it.attempt.answer)] ?? it.attempt.answer)}</p>` : `<p class="muted">你的答案：${escapeHtml(it.attempt.answer || '（未作答）')}</p>`}
+      <p>正确答案：<strong>${escapeHtml(it.question?.options?.[it.question.answerSpec.correctOptionIndex ?? 0] ?? it.question?.answerSpec.acceptedAnswers?.[0] ?? '—')}</strong></p>
+      <p>${escapeHtml(it.question?.explanation ?? '')}</p>
+    </div>`,
+      )
+      .join('')}`
+}
+```
+
+- [ ] **Step 3: 实现 `app-src/src/pages/report.ts`**
+
+```ts
+import type { PageRenderer } from '../router'
+import { listAttempts, listAllQuestions } from '../db/repos'
+import { computeCoreMetrics, localDayKey, isSameLocalDay } from '../domain/metrics'
+
+function pct(rate: number | null): string {
+  return rate === null ? '暂无数据' : `${Math.round(rate * 100)}%`
+}
+
+export const renderReport: PageRenderer = async ({ container }) => {
+  container.innerHTML = '<h1>学习报告</h1><p class="muted">加载中…</p>'
+  const [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  const m = computeCoreMetrics(attempts)
+  const qMap = new Map(questions.map((q) => [q.id, q]))
+  const vocabIds = new Set<string>()
+  for (const q of questions) {
+    if (q.id.startsWith('g7a-vocab-')) vocabIds.add(q.id)
+  }
+  const vocabAttempts = attempts.filter((a) => vocabIds.has(a.questionId))
+  const grammarAttempts = attempts.filter((a) => !vocabIds.has(a.questionId))
+  const todayCount = attempts.filter((a) => isSameLocalDay(a.submittedAt, localDayKey())).length
+  const vocabWrong = [...new Set(vocabAttempts.filter((a) => !a.isCorrect).map((a) => a.questionId))]
+
+  container.innerHTML = `
+    <h1>学习报告</h1>
+    <div class="card">
+      <h3>总体</h3>
+      <ul class="list">
+        <li>累计作答：${m.totalAttempts} 次（今日 ${todayCount} 次）</li>
+        <li>首测正确率：${pct(m.firstTryCorrectRate)}（${m.firstCorrect}/${m.firstAttempts}）</li>
+        <li>复测正确率：${pct(m.retryAttempts > 0 ? m.retryCorrect / m.retryAttempts : null)}（${m.retryCorrect}/${m.retryAttempts}）</li>
+        <li>曾做错题目：${m.wrongQuestions} 道</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>语法专项</h3>
+      <ul class="list">
+        <li>作答 ${grammarAttempts.length} 次</li>
+        <li>首测正确率：${pct(computeCoreMetrics(grammarAttempts).firstTryCorrectRate)}</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>单词默写</h3>
+      <ul class="list">
+        <li>作答 ${vocabAttempts.length} 次</li>
+        <li>首测正确率：${pct(computeCoreMetrics(vocabAttempts).firstTryCorrectRate)}</li>
+      </ul>
+      ${vocabWrong.length > 0 ? `<p class="muted">易错词：${vocabWrong.map((id) => qMap.get(id)?.answerSpec.acceptedAnswers?.[0] ?? id).slice(0, 12).join('、')}${vocabWrong.length > 12 ? '…' : ''}</p>` : ''}
+    </div>
+    <p class="muted">七天趋势与薄弱点排行将在后续版本提供。</p>`
+}
+```
+
+- [ ] **Step 4: 实现设置页基础（备份按钮 Task 11 接入）`app-src/src/pages/settings.ts`**
+
+```ts
+import type { PageRenderer } from '../router'
+import { getSettings, saveSettings } from '../db/repos'
+import { fetchContentBundle } from '../content/loader'
+import type { Settings } from '../types'
+
+export const renderSettings: PageRenderer = async ({ container }) => {
+  container.innerHTML = '<h1>家长设置</h1><p class="muted">加载中…</p>'
+  const [settings, bundle] = await Promise.all([
+    getSettings(),
+    fetchContentBundle().catch(() => undefined),
+  ])
+  const units = bundle?.vocab.units ?? []
+  const message = document.createElement('p')
+
+  container.innerHTML = `
+    <h1>家长设置</h1>
+    <div class="card">
+      <div class="form-row">
+        <label for="set-unit">单词默写当前单元</label>
+        <select id="set-unit">
+          ${units.map((u) => `<option value="${u.id}" ${u.id === settings.currentUnit ? 'selected' : ''}>${u.label}（${u.words.length} 词）</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="set-minutes">每日学习时长（分钟，20–45）</label>
+        <input id="set-minutes" type="number" min="20" max="45" step="5" value="${settings.dailyMinutes}">
+      </div>
+      <div class="form-row">
+        <label for="set-days">每周学习天数（1–7）</label>
+        <input id="set-days" type="number" min="1" max="7" value="${settings.studyDaysPerWeek}">
+      </div>
+      <div class="form-row">
+        <label for="set-ai">AI 讲解（联网调用外部 AI 服务，当前版本仅保存配置）</label>
+        <input id="set-ai" type="checkbox" ${settings.aiEnabled ? 'checked' : ''}>
+      </div>
+      <div class="action-row"><button class="btn" id="save">保存设置</button></div>
+    </div>
+    <div id="backup-slot"></div>
+  `
+  container.appendChild(message)
+
+  container.querySelector('#save')?.addEventListener('click', async () => {
+    const next: Settings = {
+      ...settings,
+      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value ?? settings.currentUnit),
+      dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
+      studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
+      aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
+    }
+    await saveSettings(next)
+    message.textContent = '已保存。'
+  })
+}
+
+function clamp(n: number, min: number, max: number): number {
+  if (!Number.isFinite(n)) return min
+  return Math.min(max, Math.max(min, n))
+}
+```
+
+- [ ] **Step 5: `main.ts` 启动播种 + 加载失败兜底**
+
+替换 `app-src/src/main.ts`：
+
+```ts
+import { startRouter } from './router'
+import { fetchContentBundle } from './content/loader'
+import { seedContent } from './content/seed'
+import { renderToday } from './pages/today'
+import { renderExercise } from './pages/exercise'
+import { renderMistakes } from './pages/mistakes'
+import { renderReport } from './pages/report'
+import { renderSettings } from './pages/settings'
+
+const container = document.querySelector<HTMLElement>('#app')
+if (container) {
+  startRouter(
+    {
+      today: renderToday,
+      exercise: renderExercise,
+      mistakes: renderMistakes,
+      report: renderReport,
+      settings: renderSettings,
+    },
+    container,
+  )
+  // 路由先行渲染，播种在后台完成；失败不阻塞做题以外页面
+  void fetchContentBundle()
+    .then((bundle) => seedContent(bundle))
+    .catch((err) => console.error('题库播种失败：', err))
+}
+```
+
+- [ ] **Step 6: 类型检查、测试、构建**
+
+Run: `npm --prefix app-src run build && npm --prefix app-src run test`
+Expected: tsc 无错误、全部测试 PASS、构建成功
+
+- [ ] **Step 7: 浏览器验证**
+
+dev server 下逐页检查：
+1. `#/today`：显示今日统计 + 5 张练习卡片（4 专项 + 当前单元默写）
+2. 做错 2 题后 `#/mistakes`：错题卡片显示题干、你的答案、正确答案、解析、首测/复测标记
+3. `#/report`：总体/语法/默写三卡片数据与实际作答一致
+4. `#/settings`：改单元与时长 → 保存 → 刷新后值保留；今日学习默写卡片跟随新单元
+
+- [ ] **Step 8: 提交**
+
+```bash
+git add app-src/src
+git commit -m "feat(app): 今日学习/错题本/报告/设置页面，启动播种题库
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 11: 存储不可用降级（规格 §3）
+
+隐私模式等场景下 IndexedDB 打不开：应用不崩溃，做题仍可用（记录不保存，页面明确提示）。纯降级路径无单测，以代码结构与浏览器验证为准。
+
+**Files:**
+- Create: `app-src/src/db/availability.ts`
+- Modify: `app-src/src/main.ts`、`app-src/src/pages/exercise.ts`、`app-src/src/pages/today.ts`、`app-src/src/pages/mistakes.ts`、`app-src/src/pages/report.ts`
+
+- [ ] **Step 1: 创建 `app-src/src/db/availability.ts`**
+
+```ts
+import { db } from './schema'
+
+let probed: Promise<boolean> | undefined
+
+/** 探测 IndexedDB 可用性（结果缓存，全程只探测一次） */
+export function isStorageAvailable(): Promise<boolean> {
+  probed ??= (async () => {
+    try {
+      await db.open()
+      return db.isOpen()
+    } catch {
+      return false
+    }
+  })()
+  return probed
+}
+```
+
+- [ ] **Step 2: `main.ts` 顶部横幅**
+
+在 `startRouter(...)` 之前插入：
+
+```ts
+  import { isStorageAvailable } from './db/availability'
+  // ...
+  void isStorageAvailable().then((ok) => {
+    if (!ok) {
+      const banner = document.createElement('div')
+      banner.className = 'error-panel'
+      banner.setAttribute('role', 'alert')
+      banner.textContent = '无法保存学习记录（浏览器存储不可用）。可以继续练习，但刷新后记录不会保留。'
+      container.prepend(banner)
+    }
+  })
+```
+
+- [ ] **Step 3: `exercise.ts` 降级注入（替换 session 构造处）**
+
+```ts
+  import { isStorageAvailable } from '../db/availability'
+  // 替换原来的 session 构造：
+  const storageOk = await isStorageAvailable()
+  const session = new PracticeSession(data.questions, {
+    hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
+    recordAttempt: storageOk
+      ? saveAttempt
+      : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
+  })
+```
+
+并在 `renderQuestion` 模板的 `<p class="muted">第 … 题</p>` 后追加：`${storageOk ? '' : '<p class="muted">存储不可用，本次练习不会保存记录。</p>'}`
+
+- [ ] **Step 4: today / mistakes / report 页 DB 读取兜底**
+
+三页把现有的数据读取段包进 try/catch。以 mistakes 页为例（today/report 同构）：
+
+```ts
+  let attempts: Awaited<ReturnType<typeof listAttempts>> = []
+  try {
+    attempts = await listAttempts()
+  } catch {
+    container.innerHTML = '<h1>错题本</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>'
+    return
+  }
+```
+
+（`listAllQuestions` 等其余 DB 调用同样包进同一 try 块。）
+
+- [ ] **Step 5: 构建、测试、提交**
+
+Run: `npm --prefix app-src run build && npm --prefix app-src run test`
+Expected: 通过（降级路径不影响既有测试）
+
+```bash
+git add app-src/src
+git commit -m "feat(app): 存储不可用时降级——可做题不保存，页面明确提示
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 12: 备份导出/导入（DEV-09）
+
+**Files:**
+- Create: `app-src/src/services/backup/index.ts`
+- Test: `app-src/src/services/backup/index.test.ts`
+- Modify: `app-src/src/pages/settings.ts`（接入导出/导入 UI）
+
+- [ ] **Step 1: 写失败测试 `app-src/src/services/backup/index.test.ts`**
+
+```ts
+import 'fake-indexeddb/auto'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { db } from '../../db/schema'
+import { exportBackup, parseAndValidateBackup, importBackup } from './index'
+import { saveAttempt, saveSettings, upsertQuestions, DEFAULT_SETTINGS } from '../../db/repos'
+import { computeCoreMetrics } from '../../domain/metrics'
+import type { Attempt, Question } from '../../types'
+
+const q = (id: string): Question => ({
+  id,
+  contentVersion: 'v',
+  grade: 7,
+  term: 'A',
+  unit: 'u',
+  sourceUrl: 's',
+  knowledgePointIds: ['k'],
+  type: 'single_choice',
+  stem: 'stem',
+  options: ['a', 'b', 'c', 'd'],
+  answerSpec: { correctOptionIndex: 0 },
+  explanation: 'e',
+  difficulty: 1,
+  estimatedSeconds: 45,
+})
+
+const attempt = (id: string, questionId: string, isCorrect: boolean, phase: 'first' | 'retry'): Attempt => ({
+  id,
+  questionId,
+  answer: '0',
+  isCorrect,
+  phase,
+  submittedAt: '2026-11-16T10:00:00.000Z',
+})
+
+beforeEach(async () => {
+  await Promise.all([
+    db.settings.clear(),
+    db.questions.clear(),
+    db.attempts.clear(),
+    db.mastery.clear(),
+    db.weeklyReports.clear(),
+    db.contentMeta.clear(),
+  ])
+})
+
+describe('parseAndValidateBackup', () => {
+  it('非 JSON 拒绝', () => {
+    expect(() => parseAndValidateBackup('not json')).toThrow()
+  })
+  it('schemaVersion 不符拒绝', () => {
+    const file = JSON.stringify({ schemaVersion: 99, data: {} })
+    expect(() => parseAndValidateBackup(file)).toThrow(/版本/)
+  })
+  it('counts 与数据不一致拒绝', () => {
+    const file = JSON.stringify({ schemaVersion: 1, app: 'english-coach', exportedAt: 'x', counts: { attempts: 5 }, data: { attempts: [] } })
+    expect(() => parseAndValidateBackup(file)).toThrow()
+  })
+})
+
+describe('导出→清空→导入（T08）', () => {
+  it('记录数与指标一致', async () => {
+    await upsertQuestions([q('q1'), q('q2')])
+    await saveSettings({ ...DEFAULT_SETTINGS, dailyMinutes: 25 })
+    await saveAttempt(attempt('a1', 'q1', true, 'first'))
+    await saveAttempt(attempt('a2', 'q2', false, 'first'))
+
+    const backup = await exportBackup()
+    expect(backup.counts.attempts).toBe(2)
+
+    // 清空（模拟新设备）
+    await Promise.all([db.attempts.clear(), db.questions.clear(), db.settings.clear()])
+
+    const text = JSON.stringify(backup)
+    const parsed = parseAndValidateBackup(text)
+    const result = await importBackup(parsed, 'overwrite')
+    expect(result.attemptsAdded).toBe(2)
+
+    const attempts = await db.attempts.toArray()
+    expect(computeCoreMetrics(attempts)).toEqual(computeCoreMetrics([attempt('a1', 'q1', true, 'first'), attempt('a2', 'q2', false, 'first')]))
+    expect(await db.questions.count()).toBe(2)
+    expect((await db.settings.get('app'))?.value.dailyMinutes).toBe(25)
+  })
+
+  it('合并模式不覆盖已有 attempt 历史', async () => {
+    await saveAttempt(attempt('a1', 'q1', false, 'first'))
+    const backup = await exportBackup()
+    await saveAttempt(attempt('a2', 'q2', true, 'first'))
+
+    const result = await importBackup(backup, 'merge')
+    expect(result.attemptsAdded).toBe(0)
+    expect(result.attemptsSkipped).toBe(1)
+    // 本地 a2 仍在
+    expect(await db.attempts.count()).toBe(2)
+  })
+})
+```
+
+- [ ] **Step 2: 运行测试确认失败**
+
+Run: `npm --prefix app-src run test -- backup`
+Expected: FAIL，`Cannot find module './index'`（目录不存在）
+
+- [ ] **Step 3: 实现 `app-src/src/services/backup/index.ts`**
+
+```ts
+import { db, type SettingsRow, type WeeklyReportRow } from '../../db/schema'
+import type { Attempt, ContentMetaRow, Mastery, Question } from '../../types'
+
+export const BACKUP_SCHEMA_VERSION = 1
+
+export class BackupError extends Error {}
+
+export interface BackupCounts {
+  settings: number
+  contentMeta: number
+  questions: number
+  attempts: number
+  mastery: number
+  weeklyReports: number
+}
+
+export interface BackupFile {
+  schemaVersion: number
+  app: 'english-coach'
+  exportedAt: string
+  counts: BackupCounts
+  data: {
+    settings: SettingsRow[]
+    contentMeta: ContentMetaRow[]
+    questions: Question[]
+    attempts: Attempt[]
+    mastery: Mastery[]
+    weeklyReports: WeeklyReportRow[]
+  }
+}
+
+export async function exportBackup(): Promise<BackupFile> {
+  const [settings, contentMeta, questions, attempts, mastery, weeklyReports] = await Promise.all([
+    db.settings.toArray(),
+    db.contentMeta.toArray(),
+    db.questions.toArray(),
+    db.attempts.toArray(),
+    db.mastery.toArray(),
+    db.weeklyReports.toArray(),
+  ])
+  return {
+    schemaVersion: BACKUP_SCHEMA_VERSION,
+    app: 'english-coach',
+    exportedAt: new Date().toISOString(),
+    counts: {
+      settings: settings.length,
+      contentMeta: contentMeta.length,
+      questions: questions.length,
+      attempts: attempts.length,
+      mastery: mastery.length,
+      weeklyReports: weeklyReports.length,
+    },
+    data: { settings, contentMeta, questions, attempts, mastery, weeklyReports },
+  }
+}
+
+export function parseAndValidateBackup(text: string): BackupFile {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(text)
+  } catch {
+    throw new BackupError('不是有效的 JSON 文件')
+  }
+  const file = parsed as Partial<BackupFile>
+  if (file.schemaVersion !== BACKUP_SCHEMA_VERSION) {
+    throw new BackupError(`备份版本不支持（${String(file.schemaVersion)}，本应用支持 ${BACKUP_SCHEMA_VERSION}）`)
+  }
+  if (!file.data || typeof file.data !== 'object') throw new BackupError('备份缺少 data 字段')
+  const d = file.data
+  for (const key of ['settings', 'contentMeta', 'questions', 'attempts', 'mastery', 'weeklyReports'] as const) {
+    if (!Array.isArray(d[key])) throw new BackupError(`备份缺少 ${key} 数据`)
+  }
+  if (!file.counts || typeof file.counts !== 'object') throw new BackupError('备份缺少 counts 字段')
+  for (const [key, value] of Object.entries(file.counts)) {
+    const actual = (d as Record<string, unknown[]>)[key]?.length ?? 0
+    if (value !== actual) throw new BackupError(`counts.${key}（${value}）与实际数据（${actual}）不一致`)
+  }
+  for (const a of d.attempts ?? []) {
+    if (!a.id || !a.questionId || typeof a.isCorrect !== 'boolean' || (a.phase !== 'first' && a.phase !== 'retry')) {
+      throw new BackupError(`存在非法 attempt 记录：${JSON.stringify(a).slice(0, 120)}`)
+    }
+  }
+  return { ...(file as BackupFile), data: d }
+}
+
+export interface ImportSummary {
+  attemptsAdded: number
+  attemptsSkipped: number
+}
+
+export async function importBackup(file: BackupFile, mode: 'merge' | 'overwrite'): Promise<ImportSummary> {
+  if (mode === 'overwrite') {
+    await Promise.all([
+      db.settings.clear(),
+      db.contentMeta.clear(),
+      db.questions.clear(),
+      db.attempts.clear(),
+      db.mastery.clear(),
+      db.weeklyReports.clear(),
+    ])
+    await db.settings.bulkAdd(file.data.settings)
+    await db.contentMeta.bulkAdd(file.data.contentMeta)
+    await db.questions.bulkAdd(file.data.questions)
+    await db.mastery.bulkAdd(file.data.mastery)
+    await db.weeklyReports.bulkAdd(file.data.weeklyReports)
+    await db.attempts.bulkAdd(file.data.attempts)
+    return { attemptsAdded: file.data.attempts.length, attemptsSkipped: 0 }
+  }
+  // 合并：题目/元数据 upsert；attempts 只补缺失，绝不改写历史；settings 跳过已有键
+  await db.contentMeta.bulkPut(file.data.contentMeta)
+  await db.questions.bulkPut(file.data.questions)
+  await db.mastery.bulkPut(file.data.mastery)
+  await db.weeklyReports.bulkPut(file.data.weeklyReports)
+  const existingKeys = await db.settings.bulkGet(file.data.settings.map((r) => r.key))
+  const newSettings = file.data.settings.filter((_, i) => existingKeys[i] === undefined)
+  if (newSettings.length > 0) await db.settings.bulkAdd(newSettings)
+  const existingAttempts = await db.attempts.bulkGet(file.data.attempts.map((a) => a.id))
+  const missing = file.data.attempts.filter((_, i) => existingAttempts[i] === undefined)
+  if (missing.length > 0) await db.attempts.bulkAdd(missing)
+  return { attemptsAdded: missing.length, attemptsSkipped: file.data.attempts.length - missing.length }
+}
+
+export function backupFileName(date = new Date()): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `english-learning-backup-${y}${m}${d}.json`
+}
+```
+
+- [ ] **Step 4: 运行测试确认通过**
+
+Run: `npm --prefix app-src run test -- backup`
+Expected: 5 个测试 PASS
+
+- [ ] **Step 5: 设置页接入备份 UI**
+
+在 `app-src/src/pages/settings.ts` 的 `container.innerHTML` 模板中 `</div>`（设置卡片结束）与 `<div id="backup-slot">` 之间加入备份卡片：
+
+```ts
+  import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
+```
+
+模板中追加（放在 `<div id="backup-slot"></div>` 位置，替换之）：
+
+```html
+    <div class="card">
+      <h3>备份与恢复</h3>
+      <p>导出全部学习记录为 JSON 文件；恢复时先校验再写入，合并模式不会改写已有历史。</p>
+      <div class="action-row">
+        <button class="btn" id="backup-export">导出备份</button>
+        <label class="btn btn-secondary" style="display:inline-flex;align-items:center">导入备份
+          <input type="file" id="backup-import" accept="application/json,.json" style="display:none">
+        </label>
+      </div>
+      <div id="backup-preview"></div>
+    </div>
+```
+
+事件绑定（放在保存设置监听之后）：
+
+```ts
+  container.querySelector('#backup-export')?.addEventListener('click', async () => {
+    const file = await exportBackup()
+    const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = backupFileName()
+    a.click()
+    URL.revokeObjectURL(url)
+  })
+
+  container.querySelector<HTMLInputElement>('#backup-import')?.addEventListener('change', async (e) => {
+    const input = e.target as HTMLInputElement
+    const preview = container.querySelector('#backup-preview')!
+    const file = input.files?.[0]
+    if (!file) return
+    let parsed
+    try {
+      parsed = parseAndValidateBackup(await file.text())
+    } catch (err) {
+      preview.innerHTML = `<div class="error-panel">导入失败：${err instanceof BackupError ? err.message : '文件无法解析'}</div>`
+      return
+    }
+    input.value = ''
+    preview.innerHTML = `
+      <p>该备份包含 ${parsed.counts.attempts} 条作答、${parsed.counts.questions} 道题、${parsed.counts.settings} 条设置（导出于 ${new Date(parsed.exportedAt).toLocaleString('zh-CN')}）。</p>
+      <div class="action-row">
+        <button class="btn" id="backup-merge">合并导入（保留本地已有记录）</button>
+        <button class="btn btn-secondary" id="backup-overwrite">覆盖导入（清空后恢复）</button>
+      </div>`
+    const run = async (mode: 'merge' | 'overwrite') => {
+      const result = await importBackup(parsed, mode)
+      preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
+    }
+    preview.querySelector('#backup-merge')?.addEventListener('click', () => void run('merge'))
+    preview.querySelector('#backup-overwrite')?.addEventListener('click', () => void run('overwrite'))
+  })
+```
+
+- [ ] **Step 6: 测试、构建、浏览器验证**
+
+Run: `npm --prefix app-src run test && npm --prefix app-src run build`
+浏览器：`#/settings` → 导出备份（下载 JSON）→ DevTools 清空 EnglishCoachDB 各表 → 导入刚下载的文件 → 覆盖导入 → `#/report` 数据恢复一致。
+
+- [ ] **Step 7: 提交**
+
+```bash
+git add app-src/src
+git commit -m "feat(app): 备份导出/校验/导入（合并与覆盖），attempts 历史不可改写
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+### Task 13: 原站入口、CI 适配、构建发布与验收
+
+**Files:**
+- Modify: `index.html`（导航加入口）
+- Modify: `.github/workflows/ci.yml`（HTML 扫描排除）
+- Modify: `package.json`（htmlvalidate 脚本本地版对齐 CI 排除）
+- Generate: `app/`（最终构建产物）
+
+- [ ] **Step 1: 原站首页加学习助手入口**
+
+查看 `index.html` 的 `<nav class="site-nav …">`，在"背单词"或"搜索"链接旁加：
+
+```html
+      <a href="app/">学习助手</a>
+```
+
+（注意与既有链接风格、顺序保持一致；check_site.py 会校验 `app/index.html` 存在。）
+
+- [ ] **Step 2: CI HTML 扫描排除新目录**
+
+`.github/workflows/ci.yml` 的 find 命令改为（新增两行排除）：
+
+```yaml
+          find . -name "*.html" \
+            -not -path "./node_modules/*" \
+            -not -path "./.git/*" \
+            -not -path "./artifacts/*" \
+            -not -path "./app-src/node_modules/*" \
+            -not -path "./app/*" | sort > /tmp/hv-files.txt
+```
+
+`package.json` 的 `htmlvalidate` 脚本对齐同一排除（避免本地误扫 app-src 依赖里的 HTML）：
+
+```json
+"htmlvalidate": "html-validate $(find . -name '*.html' -not -path './node_modules/*' -not -path './.git/*' -not -path './artifacts/*' -not -path './app-src/node_modules/*' -not -path './app/*' | sort)"
+```
+
+- [ ] **Step 3: 全量本地检查**
+
+依次运行（根目录）：
+
+```bash
+npm install --no-audit --no-fund        # 仅根 CI 依赖（如已装可跳过）
+npm run htmlvalidate
+python3 scripts/check_site.py
+npm run test:extract
+npm run test:app
+npm run build:app
+```
+
+Expected:
+- htmlvalidate 无 error
+- check_site.py 退出码 0；若 `app/` 或 `app-src/` 触发问题（如绝对路径 /english-materials/app/... 的链接映射），据实修复：属应用自身问题的改应用文件；属扫描器应跳过的目录，在 `scripts/check_site.py` 的 `SKIP_DIRS` 增加 `"app-src"` 与 `"app"` 并在 commit message 说明原因
+- 两个测试套件全绿
+- 构建产物更新到 `app/`
+
+- [ ] **Step 4: 浏览器终验（对照规格 §4 验收清单）**
+
+后台 `npm run dev:app`，浏览器逐项验证：
+
+1. `#/today` → 点"一般现在时与句子种类"开始 → 完成 48 题中的前几题（含做错、我不会）
+2. 刷新页面（F5）→ `#/today` 今日统计仍在、`#/mistakes` 错题仍在（数据不丢）
+3. 同一题再练一次 → attempts 中出现 phase=retry 新记录，首测记录未变（DevTools 查看）
+4. `#/settings` 修改每日时长 → 保存 → 刷新 → 保留
+5. 导出备份 → DevTools 清空 EnglishCoachDB 全部表 → 导入（覆盖）→ `#/report` 与清空前一致
+6. `vite preview`（`npm --prefix app-src run preview`）验证构建产物在 `/english-materials/app/` base 下资源加载正常（JS/CSS/题库 JSON 均 200）
+
+- [ ] **Step 5: 提交（含构建产物与 CI 适配）**
+
+```bash
+git add index.html .github/workflows/ci.yml package.json app scripts/check_site.py
+git commit -m "feat(app): 原站加入口、CI 排除新目录，发布 M1 构建产物
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+- [ ] **Step 6: 收尾：验收记录**
+
+在 `docs/superpowers/specs/2026-11-16-m0-m1-local-core-design.md` 末尾追加"验收记录"小节，逐条记录规格 §4 五项验收的实际结果（通过/不通过与证据），提交：
+
+```bash
+git add docs/superpowers/specs/2026-11-16-m0-m1-local-core-design.md
+git commit -m "docs: M0+M1 验收记录
+
+Co-Authored-By: Claude Code <noreply@anthropic.com>"
+```
+
+---
+
+## 任务依赖与顺序
+
+Task 1 → 2 → 3 → 4 → 5（4、5 可并行）→ 6 → 7 → 8 → 9（可与 8 并行）→ 10 → 11 → 12 → 13。
+所有任务在 `main` 分支按序提交；如需隔离开发，执行时用 superpowers:using-git-worktrees。
+
+## 完成定义（对照规格 §4）
+
+1. `npm run extract:g7a` 产出 192 题 + 184 词，重复运行输出一致 —— Task 1
+2. 本地可做题、判分、解析 —— Task 4/7/8
+3. 刷新不丢、首测不被覆盖 —— Task 5/7（T02）
+4. 设置持久、备份 round-trip —— Task 5/10/12（T08）
+5. 测试全绿、构建不破坏原站 CI —— Task 2/13
+6. 存储不可用降级 —— Task 11

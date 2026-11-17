@@ -444,7 +444,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/types.ts`（Settings 扩展）、`app-src/src/pages/settings.ts`、`app-src/src/pages/report.ts`、`app-src/src/db/repos.ts`
 - Test: `app-src/src/pages/settings-gate.test.ts`（门禁纯函数部分）
 
-- [ ] **Step 1: Settings 扩展与门禁纯函数**
+- [x] **Step 1: Settings 扩展与门禁纯函数**
 
 ```ts
 // types.ts Settings 增加：
@@ -462,18 +462,18 @@ export function verifyPin(input: string, pin: string | undefined): boolean  // �
 
 测试：verifyPin 边界（空、长度≠4、非数字、正确）；isPinProtectedAction 矩阵。
 
-- [ ] **Step 2: settings 页实现**
+- [x] **Step 2: settings 页实现**
 
 - "家长保护"卡：未设置 → "设置 4 位数字 PIN"（两次输入一致才保存）；已设置 → "修改 PIN"（先验旧）与"关闭保护"（先验旧）
 - 门禁交互：触发受保护操作时弹出简单行内 PIN 输入（非模态也可），验错提示"PIN 不正确"，验对继续原操作；PIN 明文存 settings（注释注明仅防误操作）
 - "试卷成绩"卡：表单可加多行 `label/got/total`，保存到 `examScores`；展示最近两次试卷共 8 行上限；提供清除
 - 备份导出剔除 `parentPin` 在 Task 9 统一做，本任务不动 backup
 
-- [ ] **Step 3: report.ts 展示试卷成绩**
+- [x] **Step 3: report.ts 展示试卷成绩**
 
 报告页新增"试卷成绩（手工录入）"小区块：列出 examScores 各行"语法 12/15"，标注"手工录入，仅供参考"；未录入不显示。
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 家长 PIN 门禁与试卷分项成绩录入

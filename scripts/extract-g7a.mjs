@@ -12,10 +12,10 @@ const OUT_DIR = path.join(ROOT, 'app-src/public/content/g7a')
 export const CONTENT_VERSION = '2026-11-16'
 
 const SPECIALS = [
-  { dir: 'g7a-present', key: 'G7A_PRESENT', id: 'g7a-present', title: '一般现在时与句子种类', kpPrefix: 'grammar.present_simple' },
-  { dir: 'g7a-nouns', key: 'G7A_NOUNS', id: 'g7a-nouns', title: '名词与所有格', kpPrefix: 'grammar.noun' },
-  { dir: 'g7a-numbers', key: 'G7A_NUMBERS', id: 'g7a-numbers', title: '数词与介词', kpPrefix: 'grammar.number_prep' },
-  { dir: 'g7a-articles', key: 'G7A_ARTICLES', id: 'g7a-articles', title: '冠词与代词', kpPrefix: 'grammar.article_pronoun' },
+  { dir: 'g7a-present', key: 'G7A_PRESENT', id: 'g7a-present', kpPrefix: 'grammar.present_simple' },
+  { dir: 'g7a-nouns', key: 'G7A_NOUNS', id: 'g7a-nouns', kpPrefix: 'grammar.noun' },
+  { dir: 'g7a-numbers', key: 'G7A_NUMBERS', id: 'g7a-numbers', kpPrefix: 'grammar.number_prep' },
+  { dir: 'g7a-articles', key: 'G7A_ARTICLES', id: 'g7a-articles', kpPrefix: 'grammar.article_pronoun' },
 ]
 
 const LEVEL_SLUGS = {
@@ -45,7 +45,15 @@ function loadSpecialData(relPath, key) {
 }
 
 function toQuestion(sp, raw) {
+  if (!raw.stem || !Array.isArray(raw.options) || !raw.explain) {
+    throw new Error(`${sp.id} 题目 ${raw.id} 缺少 stem/options/explain`)
+  }
   const level = raw.level
+  const idMatch = /^([A-Z])(\d+)-(\d+)$/.exec(String(raw.id))
+  if (!idMatch) throw new Error(`非法题目原始 ID：${raw.id}`)
+  if (Number(idMatch[2]) !== level) {
+    throw new Error(`${sp.id} 题目 ${raw.id} 的级别与 level=${level} 不一致`)
+  }
   const slug = LEVEL_SLUGS[sp.id][level - 1]
   if (!slug) throw new Error(`${sp.id} 缺少级别 ${level} 的知识点映射`)
   return {
@@ -121,12 +129,13 @@ export function extractAll() {
 }
 
 function main() {
-  const { questionsJson, vocabJson, content } = extractAll()
+  const { questions, questionsJson, vocabJson, content } = extractAll()
+  const knowledgePointCount = new Set(questions.flatMap((q) => q.knowledgePointIds)).size
   fs.mkdirSync(OUT_DIR, { recursive: true })
   fs.writeFileSync(path.join(OUT_DIR, 'questions.json'), questionsJson)
   fs.writeFileSync(path.join(OUT_DIR, 'vocab.json'), vocabJson)
   fs.writeFileSync(path.join(OUT_DIR, 'content.json'), JSON.stringify(content, null, 2) + '\n')
-  console.log(`已生成 ${content.questionCount} 道选择题、${content.vocabWordCount} 个单词 → ${path.relative(ROOT, OUT_DIR)}/`)
+  console.log(`已生成 ${content.questionCount} 道选择题、${content.vocabWordCount} 个单词（${knowledgePointCount} 个知识点） → ${path.relative(ROOT, OUT_DIR)}/`)
 }
 
 const invokedAsScript =

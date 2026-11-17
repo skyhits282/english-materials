@@ -8,6 +8,9 @@
     "extract:g7a": "node scripts/extract-g7a.mjs",
     "test:extract": "node --test \"scripts/*.test.mjs\""
   },
+  "engines": {
+    "node": ">=22.6"
+  },
   "devDependencies": {
     "@lhci/cli": ">=0.14.0",
     "html-validate": ">=9.0.0"

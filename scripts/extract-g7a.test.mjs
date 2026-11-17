@@ -1,5 +1,8 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import fs from 'node:fs'
+import path from 'node:path'
+import { createHash } from 'node:crypto'
 import { extractAll, toQuestionId, CONTENT_VERSION } from './extract-g7a.mjs'
 
 test('七上四专项共 192 道选择题，字段齐全', () => {
@@ -27,6 +30,10 @@ test('题目 ID 稳定且唯一', () => {
   assert.equal(ids.size, 192)
   assert.equal(toQuestionId('g7a-present', 'P1-1'), 'g7a-present-l1-0001')
   assert.equal(toQuestionId('g7a-articles', 'A6-8'), 'g7a-articles-l6-0008')
+  assert.throws(() => toQuestionId('g7a-present', 'P0-1'))
+  assert.throws(() => toQuestionId('g7a-present', 'P7-1'))
+  assert.throws(() => toQuestionId('g7a-present', 'p1-1'))
+  assert.throws(() => toQuestionId('g7a-present', ''))
 })
 
 test('七上词汇 10 单元 184 词', () => {
@@ -53,5 +60,22 @@ test('content.json 元数据与题数一致', () => {
   assert.equal(content.vocabWordCount, 184)
   for (const f of content.files) {
     assert.ok(f.name && f.sha256.length === 64 && f.count > 0)
+  }
+})
+
+test('已提交产物与提取结果逐字节一致（防漂移）', () => {
+  const { questionsJson, vocabJson, content } = extractAll()
+  const outDir = path.resolve(import.meta.dirname, '../app-src/public/content/g7a')
+  const committed = {
+    'questions.json': fs.readFileSync(path.join(outDir, 'questions.json'), 'utf8'),
+    'vocab.json': fs.readFileSync(path.join(outDir, 'vocab.json'), 'utf8'),
+    'content.json': fs.readFileSync(path.join(outDir, 'content.json'), 'utf8'),
+  }
+  assert.equal(committed['questions.json'], questionsJson)
+  assert.equal(committed['vocab.json'], vocabJson)
+  assert.equal(committed['content.json'], JSON.stringify(content, null, 2) + '\n')
+  for (const f of content.files) {
+    const actual = createHash('sha256').update(committed[f.name]).digest('hex')
+    assert.equal(f.sha256, actual)
   }
 })

@@ -4,7 +4,7 @@ export interface CoreMetrics {
   totalAttempts: number
   firstAttempts: number
   firstCorrect: number
-  /** 首次作答正确率；无首测数据时为 null（页面显示"暂无数据"） */
+  /** 首次作答正确率；无首测数据时为 null（页面显示“暂无数据”） */
   firstTryCorrectRate: number | null
   retryAttempts: number
   retryCorrect: number
@@ -38,7 +38,7 @@ export function computeCoreMetrics(attempts: Attempt[]): CoreMetrics {
   }
 }
 
-/** 本地日历日键（规格 8：按设备本地时区算"今日"） */
+/** 本地日历日键（规格 8：按设备本地时区算“今日”） */
 export function localDayKey(d = new Date()): string {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')

@@ -448,7 +448,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
         <input id="set-days" type="number" min="1" max="7" value="${escapeHtml(String(settings.studyDaysPerWeek))}">
       </div>
       <div class="form-row">
-        <label for="set-ai">AI 讲解（联网调用外部 AI 服务，当前版本仅保存配置）</label>
+        <label for="set-ai">AI 讲解（联网调用外部 AI 服务；关闭后练习/报告页 AI 按钮置灰）</label>
         <input id="set-ai" type="checkbox" ${settings.aiEnabled ? 'checked' : ''}>
       </div>
       <div class="action-row"><button class="btn" id="save">保存设置</button></div>
@@ -473,7 +473,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     </div>
     <div class="card">
       <h3>AI 配置</h3>
-      <p>联网调用外部 AI 服务（阿里云百炼 OpenAI 兼容模式）。密钥仅存本机浏览器，不会出现在备份文件中。</p>
+      <p>联网调用外部 AI 服务（阿里云百炼 OpenAI 兼容模式）。密钥仅存本机浏览器，不会出现在备份文件中。还需在上方「AI 讲解」勾选开启后，练习/报告页才会启用 AI。</p>
       <div class="form-row">
         <label for="ai-base-url">接口地址（https）</label>
         <input id="ai-base-url" type="text" value="${escapeHtml(settings.aiBaseUrl ?? AI_DEFAULT_BASE_URL)}">

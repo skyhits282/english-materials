@@ -6,6 +6,7 @@ import { pickReviewQuestions } from '../domain/review-picker'
 import { generatePlan, isStudyDay } from '../domain/plan'
 import { SPECIALS } from '../content/sets'
 import { vocabKpFromQuestionId } from '../content/loader'
+import { uuid } from '../utils/uuid'
 
 export const DEFAULT_SETTINGS: Settings = {
   grade: 7,
@@ -32,7 +33,7 @@ export async function saveSettings(settings: Settings): Promise<void> {
  *  供配额按本地日计数与用量统计。 */
 export async function recordAiRequest(type: string, status: string, latencyMs: number): Promise<void> {
   await db.aiRequests.add({
-    id: globalThis.crypto.randomUUID(),
+    id: uuid(),
     type,
     status,
     latencyMs,
@@ -211,11 +212,10 @@ export async function saveWeeklyReport(report: WeeklyReportRow): Promise<void> {
   await db.weeklyReports.put(report)
 }
 
-/** 最近 limit 周的周报记录（weekStart 降序，只含有记录的周；报告页历史周报区用） */
+/** 最近 limit 周的周报记录（weekStart 降序，只含有记录的周；报告页历史周报区用）。
+ *  weekStart 为主键：Dexie orderBy 走主键索引（reverse 后 limit），免去全表 JS 排序。 */
 export async function listRecentWeeklyReports(limit = 4): Promise<WeeklyReportRow[]> {
-  const rows = await db.weeklyReports.toArray()
-  rows.sort((a, b) => (a.weekStart < b.weekStart ? 1 : -1))
-  return rows.slice(0, limit)
+  return db.weeklyReports.orderBy('weekStart').reverse().limit(limit).toArray()
 }
 
 /** 每日计划生成的调用方输入：题库内容（生成器是纯函数无 IO，页面经 fetchContentBundle 取得后传入） */

@@ -259,7 +259,8 @@ function validateMasteryRow(row: unknown, line: number): void {
   }
 }
 
-/** weeklyReports 行：weekStart/generatedAt 须为字符串（facts 透传不校验形状） */
+/** weeklyReports 行：weekStart/generatedAt 须为字符串；aiSuggestions 可缺省，出现即须为字符串
+ *  （否则报告页 suggestionsHtml 的 trim() 抛 TypeError 卡死历史周报区）；facts 透传不校验形状（展示层判型降级） */
 function validateWeeklyReportRow(row: unknown, line: number): void {
   if (!isPlainObject(row)) throw new BackupError(`备份 weeklyReports 表第 ${line} 行不是对象`)
   if (typeof row.weekStart !== 'string' || row.weekStart === '') {
@@ -267,6 +268,9 @@ function validateWeeklyReportRow(row: unknown, line: number): void {
   }
   if (typeof row.generatedAt !== 'string') {
     throw new BackupError(`备份 weeklyReports 表第 ${line} 行 generatedAt 不是字符串`)
+  }
+  if (row.aiSuggestions !== undefined && typeof row.aiSuggestions !== 'string') {
+    throw new BackupError(`备份 weeklyReports 表第 ${line} 行 aiSuggestions 不是字符串`)
   }
 }
 

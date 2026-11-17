@@ -10,13 +10,14 @@ import { AiError, type ChatMessage } from './transport'
 /** 假 Key（红线：任何真实密钥不得出现在代码/测试/提交中） */
 const FAKE_KEY = 'sk-test-fake-key-0000'
 
-/** settings 夹具：已配置假 Key 的可用 AI 配置 */
+/** settings 夹具：已配置假 Key 且开关打开的可用 AI 配置 */
 const settings = (over: Partial<Settings> = {}): Settings => ({
   ...DEFAULT_SETTINGS,
   aiBaseUrl: 'https://dashscope.example/v1',
   aiApiKey: FAKE_KEY,
   aiModel: 'qwen-test',
   aiDailyLimit: 50,
+  aiEnabled: true,
   ...over,
 })
 
@@ -190,6 +191,17 @@ describe('runAiTask 成功路径', () => {
 })
 
 describe('runAiTask 错误映射（含失败记录）', () => {
+  it('aiEnabled=false（设置页关闭开关）→ auth 拒绝：不发请求、不写 aiRequests（与 UI 灰态同口径）', async () => {
+    stubFetch(async () => okContent('{"hint":"x"}')) // 不应被调用
+    await expect(runAiTask('coach_turn', coachPayload, { settings: settings({ aiEnabled: false }) })).rejects.toMatchObject({
+      name: 'AiError',
+      kind: 'auth',
+      message: 'AI 已在设置页关闭，请到设置页开启后重试',
+    })
+    expect(calls).toHaveLength(0)
+    expect(await db.aiRequests.count()).toBe(0)
+  })
+
   it('401 → auth，aiRequests 记 auth', async () => {
     stubFetch(async () => new Response('{"error":{"message":"Invalid API key"}}', { status: 401 }))
     await expect(runAiTask('coach_turn', coachPayload, { settings: settings() })).rejects.toMatchObject({

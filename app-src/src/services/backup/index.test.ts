@@ -47,6 +47,7 @@ const task = (id: string): TaskRow => ({
 const weeklyReport = (weekStart: string): WeeklyReportRow => ({
   weekStart,
   facts: { attempts: 1 },
+  aiSuggestions: '{"progress":"有进步","weakness":"时态","adjustments":"多复习","nextGoals":"保持"}',
   generatedAt: '2026-11-17T08:00:00.000Z',
 })
 
@@ -169,6 +170,20 @@ describe('parseAndValidateBackup', () => {
       data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [{ knowledgePointId: 'k', stage: 'broken' }], weeklyReports: [] },
     })
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('畸形 weeklyReports 行拒绝（aiSuggestions 非字符串：否则报告页 trim() 抛 TypeError 卡死历史区）', () => {
+    const bad = { ...weeklyReport('2026-11-16'), aiSuggestions: 123 }
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: '2026-11-17T00:00:00.000Z',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 1, tasks: 0, aiRequests: 0 },
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [bad], tasks: [], aiRequests: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/aiSuggestions/)
+    // 校验在导入前拒绝，weeklyReports 表不落任何行
+    expect(() => parseAndValidateBackup(file)).toThrow(/weeklyReports/)
   })
   it('settings.book 非法值拒绝且不写入', async () => {
     const file = JSON.stringify({

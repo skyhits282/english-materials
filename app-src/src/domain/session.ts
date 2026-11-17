@@ -1,4 +1,5 @@
 import { gradeAnswer } from './grader'
+import { uuid } from '../utils/uuid'
 import type { Attempt, AttemptPhase, Question } from '../types'
 
 export interface SessionDeps {
@@ -15,9 +16,9 @@ export interface Submission {
   isLast: boolean
 }
 
-/** crypto.randomUUID 需 secure context（https/localhost）与 Node ≥19；非安全上下文部署需 fallback */
+/** attempt id：统一走 utils/uuid（原生 randomUUID 或非安全上下文的 v4 回退） */
 export function newAttemptId(): string {
-  return globalThis.crypto.randomUUID()
+  return uuid()
 }
 
 /** 一次练习会话：顺序出题、提交即判分并落一条 attempt */

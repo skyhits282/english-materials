@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PracticeSession, newAttemptId } from './session'
 import type { Attempt, Question } from '../types'
 
@@ -74,6 +74,22 @@ describe('PracticeSession', () => {
 
   it('attempt id 为合法 UUID', () => {
     expect(newAttemptId()).toMatch(/^[0-9a-f-]{36}$/)
+  })
+
+  it('非安全上下文无 crypto.randomUUID → attempt id 走回退仍为合法 UUID v4 格式', () => {
+    // 模拟 http 非 localhost 部署：crypto 存在但无 randomUUID（uuid() 应回退到 Math.random 版本）
+    vi.stubGlobal('crypto', { getRandomValues: globalThis.crypto.getRandomValues.bind(globalThis.crypto) })
+    expect(newAttemptId()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
+  })
+
+  it('原生 randomUUID 可用时 newAttemptId 直接透传（不落回退分支）', () => {
+    const spy = vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValue('aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee')
+    expect(newAttemptId()).toBe('aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee')
+    spy.mockRestore()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
   it('并发重入被守卫拦截：只落一条 attempt、index 只 +1', async () => {

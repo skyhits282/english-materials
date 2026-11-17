@@ -11,14 +11,17 @@ export interface AiButtonState {
   title: string
 }
 
-/** 是否已配置 AI 密钥（与 runAiTask 的 auth 前置检查同一判定：空白视同未配置） */
+/** 是否已配置 AI 密钥（与 runAiTask 的 auth 前置检查同一判定：空白视同未配置；
+ *  另有 aiEnabled 总开关，见 aiButtonState） */
 export function hasAiKey(settings: Settings): boolean {
   return (settings.aiApiKey ?? '').trim() !== ''
 }
 
-/** 按钮状态推导：未配置 Key → 灰态（提示去设置页）；本地配额满 → 灰态（注明"本地上限"）；
- *  否则可用，title 顺带展示今日用量便于家长掌握额度。 */
+/** 按钮状态推导：设置页关闭 AI（aiEnabled=false）→ 灰态（提示去设置页开启，家长显式关停优先于
+ *  Key/配额判定）；未配置 Key → 灰态（提示去设置页）；本地配额满 → 灰态（注明"本地上限"）；
+ *  否则可用，title 顺带展示今日用量便于家长掌握额度。与 runAiTask 的 aiEnabled/auth 前置检查同口径。 */
 export function aiButtonState(settings: Settings, usageToday: number): AiButtonState {
+  if (settings.aiEnabled === false) return { disabled: true, title: '已在设置页关闭 AI' }
   if (!hasAiKey(settings)) return { disabled: true, title: '未配置 AI（设置页）' }
   const limit = effectiveDailyLimit(settings)
   if (usageToday >= limit) {

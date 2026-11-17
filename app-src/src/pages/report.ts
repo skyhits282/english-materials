@@ -34,9 +34,11 @@ function kpLabel(kp: string): string {
 }
 
 /** 周报 AI 建议渲染（新结果与历史存档共用）：存档为 JSON 字符串——四字段渲染四段，
- *  {raw} 降级或非 JSON 文本按单段纯文本展示。AI 返回内容一律 escapeHtml（不信任外部模型输出）。 */
-function suggestionsHtml(aiSuggestions: string | undefined): string {
-  if (aiSuggestions === undefined || aiSuggestions.trim() === '') return ''
+ *  {raw} 降级或非 JSON 文本按单段纯文本展示。AI 返回内容一律 escapeHtml（不信任外部模型输出）。
+ *  入参收 unknown 判型（与 storedFactsHtml 防御口径一致）：历史行可能先于备份校验入库（纵深防御），
+ *  非字符串（畸形注入）按无建议降级返回空串，绝不让历史周报区卡死。 */
+export function suggestionsHtml(aiSuggestions: unknown): string {
+  if (typeof aiSuggestions !== 'string' || aiSuggestions.trim() === '') return ''
   try {
     const parsed = JSON.parse(aiSuggestions) as Record<string, unknown>
     if (
@@ -76,7 +78,8 @@ function storedFactsHtml(facts: unknown): string {
           })
           .join('、')
       : '无'
-  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? String(Math.round(v)) : '0')
+  // 畸形数据与 rate() 同口径显示"暂无"（合法 0 仍如实显示 0）
+  const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? String(Math.round(v)) : '暂无')
   return `<ul class="list">
     <li>学习天数：${num(f.studyDays)} 天 · 作答 ${num(f.answeredCount)} 题</li>
     <li>任务完成率：${f.completionRate === null || f.completionRate === undefined ? '暂无任务' : rate(f.completionRate)}</li>

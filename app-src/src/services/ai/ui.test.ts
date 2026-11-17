@@ -11,6 +11,7 @@ const settings = (over: Partial<Settings> = {}): Settings => ({
   ...DEFAULT_SETTINGS,
   aiApiKey: FAKE_KEY,
   aiDailyLimit: 5,
+  aiEnabled: true,
   ...over,
 })
 
@@ -23,6 +24,18 @@ describe('hasAiKey', () => {
 })
 
 describe('aiButtonState：AI 按钮状态推导', () => {
+  it('aiEnabled=false（家长在设置页关闭）→ 灰态，title 提示"已在设置页关闭 AI"（优先于 Key/配额判定）', () => {
+    const state = aiButtonState(settings({ aiEnabled: false }), 0)
+    expect(state.disabled).toBe(true)
+    expect(state.title).toBe('已在设置页关闭 AI')
+    // 即使配额也满，提示仍以关闭开关为准（对家长更诚实）
+    expect(aiButtonState(settings({ aiEnabled: false }), 5).title).toBe('已在设置页关闭 AI')
+  })
+
+  it('aiEnabled=true 且已配置 Key → 可用（开关不再形同虚设）', () => {
+    expect(aiButtonState(settings(), 0).disabled).toBe(false)
+  })
+
   it('未配置 Key → 灰态，title 引导去设置页', () => {
     const s = settings()
     delete s.aiApiKey

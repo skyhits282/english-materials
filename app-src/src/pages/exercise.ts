@@ -178,7 +178,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       console.warn('AI 配置/用量读取失败，AI 按钮按未配置处理：', err)
     }
     if (stale) return
-    // 会话内 AI 请求统一取消源：hashchange 离开页面时中止在途请求（省配额；UI 已随页面卸载）
+    // 会话内 AI 请求统一取消源：hashchange 离开页面时中止在途请求（中止在途请求省服务端计费；UI 已随页面卸载）
     const aiAbort = new AbortController()
     window.addEventListener('hashchange', () => aiAbort.abort(), { once: true })
     // "AI 提示"每题限一次的会话内记录（页面内存，不落库）

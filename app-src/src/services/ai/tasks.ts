@@ -110,6 +110,8 @@ export async function runAiTask(
   signal?: AbortSignal,
 ): Promise<ExplainMistakeResult | CoachTurnResult | WeeklyInsightResult | AiRawResult> {
   const apiKey = deps.settings.aiApiKey?.trim()
+  // 家长总开关（设置页「AI 讲解」复选框）：关闭时与 UI 灰态同口径拒绝；先于 Key/配额判定，不发请求不计数
+  if (deps.settings.aiEnabled === false) throw new AiError('auth', 'AI 已在设置页关闭，请到设置页开启后重试')
   if (apiKey === undefined || apiKey === '') throw new AiError('auth', '未配置 AI：请在设置页填写 API Key')
   const now = deps.now ?? new Date()
   // 配额：超限直接拒绝，不发起网络请求、不写 aiRequests（本地调用未发生）

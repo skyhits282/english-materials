@@ -3,10 +3,7 @@ import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
 import { fetchContentBundle } from '../content/loader'
 import type { Settings } from '../types'
 import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
-}
+import { escapeHtml } from '../ui/escape'
 
 export const renderSettings: PageRenderer = async ({ container }) => {
   let stale = false
@@ -34,16 +31,16 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       <div class="form-row">
         <label for="set-unit">单词默写当前单元</label>
         <select id="set-unit">
-          ${units.map((u) => `<option value="${u.id}" ${u.id === settings.currentUnit ? 'selected' : ''}>${u.label}（${u.words.length} 词）</option>`).join('')}
+          ${units.map((u) => `<option value="${escapeHtml(u.id)}" ${u.id === settings.currentUnit ? 'selected' : ''}>${escapeHtml(u.label)}（${u.words.length} 词）</option>`).join('')}
         </select>
       </div>
       <div class="form-row">
         <label for="set-minutes">每日学习时长（分钟，20–45）</label>
-        <input id="set-minutes" type="number" min="20" max="45" step="5" value="${settings.dailyMinutes}">
+        <input id="set-minutes" type="number" min="20" max="45" step="5" value="${escapeHtml(String(settings.dailyMinutes))}">
       </div>
       <div class="form-row">
         <label for="set-days">每周学习天数（1–7）</label>
-        <input id="set-days" type="number" min="1" max="7" value="${settings.studyDaysPerWeek}">
+        <input id="set-days" type="number" min="1" max="7" value="${escapeHtml(String(settings.studyDaysPerWeek))}">
       </div>
       <div class="form-row">
         <label for="set-ai">AI 讲解（联网调用外部 AI 服务，当前版本仅保存配置）</label>

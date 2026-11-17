@@ -4,6 +4,7 @@ import { SPECIALS } from '../content/sets'
 import { fetchContentBundle, findVocabUnit } from '../content/loader'
 import { getSettings, listAttempts } from '../db/repos'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
+import { escapeHtml } from '../ui/escape'
 
 export const renderToday: PageRenderer = async ({ container }) => {
   let stale = false
@@ -41,7 +42,7 @@ export const renderToday: PageRenderer = async ({ container }) => {
       }
     }),
     {
-      title: `单词默写 · ${vocabUnit?.label ?? settings.currentUnit}`,
+      title: `单词默写 · ${escapeHtml(vocabUnit?.label ?? settings.currentUnit)}`,
       desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
       action: () => navigate('exercise', { vocab: settings.currentUnit }),
     },

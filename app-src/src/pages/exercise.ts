@@ -6,12 +6,9 @@ import { questionsByUnitPrefix } from '../db/repos'
 import { saveAttempt, hasPriorAttempt } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
+import { escapeHtml } from '../ui/escape'
 
 const LETTERS = ['A', 'B', 'C', 'D']
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
-}
 
 function shuffle<T>(items: T[]): T[] {
   const arr = [...items]

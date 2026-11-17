@@ -76,6 +76,71 @@ describe('parseAndValidateBackup', () => {
     expect(caught).toBeInstanceOf(BackupError)
     expect((caught as Error).message).toContain('<img src=x onerror=alert(1)>')
   })
+  it('畸形 settings 行拒绝（缺 key）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [{ id: 's', dailyMinutes: 40 }], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/settings/)
+  })
+  it('畸形 settings 行拒绝（value 非对象）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [{ key: 'app', value: 40, updatedAt: 'x' }], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/settings/)
+  })
+  it('畸形 questions 行拒绝（缺 id）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [], contentMeta: [], questions: [{ stem: 's' }], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('畸形 mastery 行拒绝（stage 非法）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 1, weeklyReports: 0 },
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [{ knowledgePointId: 'k', stage: 'broken' }], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('含 XSS 载荷 questionId 的合法 attempt 行可导入（转义在展示层）', async () => {
+    const payload = '<img src=x onerror=alert(1)>'
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [{ ...attempt('a1', payload, false, 'first') }],
+        mastery: [],
+        weeklyReports: [],
+      },
+    })
+    const parsed = parseAndValidateBackup(file)
+    expect(parsed.counts.attempts).toBe(1)
+    const result = await importBackup(parsed, 'merge')
+    expect(result.attemptsAdded).toBe(1)
+    const stored = await db.attempts.get('a1')
+    expect(stored?.questionId).toBe(payload)
+  })
 })
 
 describe('导出→清空→导入（T08）', () => {
@@ -138,6 +203,33 @@ describe('覆盖导入事务性', () => {
     await expect(importBackup(file, 'overwrite')).rejects.toThrow()
     expect(await db.attempts.count()).toBe(1)
     expect(await db.attempts.get('local-a1')).toBeDefined()
+    expect(await db.questions.get('local-q')).toBeDefined()
+  })
+})
+
+describe('合并导入事务性', () => {
+  it('中途失败回滚，不写入部分数据', async () => {
+    await upsertQuestions([q('local-q')])
+
+    // 同一备份内两条 attempt 主键相同：合并路径 bulkAdd 第二条时约束冲突，此前写入的题目应一并回滚
+    const file: BackupFile = {
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 2, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [q('new-q')],
+        attempts: [attempt('dup-a', 'new-q', true, 'first'), attempt('dup-a', 'new-q', true, 'first')],
+        mastery: [],
+        weeklyReports: [],
+      },
+    }
+
+    await expect(importBackup(file, 'merge')).rejects.toThrow()
+    expect(await db.questions.get('new-q')).toBeUndefined()
+    expect(await db.attempts.count()).toBe(0)
     expect(await db.questions.get('local-q')).toBeDefined()
   })
 })

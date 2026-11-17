@@ -75,6 +75,10 @@ export function parseAndValidateBackup(text: string): BackupFile {
     const actual = (d as Record<string, unknown[]>)[key]?.length ?? 0
     if (value !== actual) throw new BackupError(`counts.${key}（${value}）与实际数据（${actual}）不一致`)
   }
+  // 行形状校验（规格 §2.6：先校验 schemaVersion 与字段类型，再入库）
+  d.settings.forEach((row, i) => validateSettingsRow(row, i + 1))
+  d.questions.forEach((row, i) => validateQuestionRow(row, i + 1))
+  d.mastery.forEach((row, i) => validateMasteryRow(row, i + 1))
   const primaryKeys: Array<[keyof BackupFile['data'], string]> = [
     ['settings', 'key'],
     ['contentMeta', 'contentId'],
@@ -91,12 +95,87 @@ export function parseAndValidateBackup(text: string): BackupFile {
       seen.add(id)
     }
   }
-  for (const a of d.attempts ?? []) {
+  d.attempts.forEach((a, i) => {
     if (!a.id || !a.questionId || typeof a.isCorrect !== 'boolean' || (a.phase !== 'first' && a.phase !== 'retry')) {
-      throw new BackupError(`存在非法 attempt 记录：${JSON.stringify(a).slice(0, 120)}`)
+      throw new BackupError(`备份 attempts 表第 ${i + 1} 行记录非法：${JSON.stringify(a).slice(0, 120)}`)
+    }
+  })
+  return { ...(file as BackupFile), data: d }
+}
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+/** settings 行：{ key: string, value: Settings, updatedAt: string }，字段宽松校验（可缺省，出现即需类型正确） */
+function validateSettingsRow(row: unknown, line: number): void {
+  if (!isPlainObject(row)) throw new BackupError(`备份 settings 表第 ${line} 行不是对象`)
+  if (typeof row.key !== 'string' || row.key === '') {
+    throw new BackupError(`备份 settings 表第 ${line} 行缺少合法 key`)
+  }
+  if (typeof row.updatedAt !== 'string') {
+    throw new BackupError(`备份 settings 表第 ${line} 行 updatedAt 不是字符串`)
+  }
+  if (!isPlainObject(row.value)) throw new BackupError(`备份 settings 表第 ${line} 行 value 不是对象`)
+  const value = row.value
+  const stringFields = ['currentUnit', 'studentLabel'] as const
+  for (const f of stringFields) {
+    if (value[f] !== undefined && typeof value[f] !== 'string') {
+      throw new BackupError(`备份 settings 表第 ${line} 行 value.${f} 不是字符串`)
     }
   }
-  return { ...(file as BackupFile), data: d }
+  const numberFields = ['grade', 'dailyMinutes', 'studyDaysPerWeek'] as const
+  for (const f of numberFields) {
+    if (value[f] !== undefined && typeof value[f] !== 'number') {
+      throw new BackupError(`备份 settings 表第 ${line} 行 value.${f} 不是数字`)
+    }
+  }
+  if (value.aiEnabled !== undefined && typeof value.aiEnabled !== 'boolean') {
+    throw new BackupError(`备份 settings 表第 ${line} 行 value.aiEnabled 不是布尔值`)
+  }
+}
+
+/** questions 行：对齐 Question 接口，必填形状缺失或类型错误即拒绝 */
+function validateQuestionRow(row: unknown, line: number): void {
+  if (!isPlainObject(row)) throw new BackupError(`备份 questions 表第 ${line} 行不是对象`)
+  if (typeof row.id !== 'string' || row.id === '') {
+    throw new BackupError(`备份 questions 表第 ${line} 行缺少合法 id`)
+  }
+  if (row.type !== 'single_choice' && row.type !== 'fill_in') {
+    throw new BackupError(`备份 questions 表第 ${line} 行 type 非法：${String(row.type)}`)
+  }
+  if (typeof row.stem !== 'string' || typeof row.explanation !== 'string') {
+    throw new BackupError(`备份 questions 表第 ${line} 行 stem/explanation 不是字符串`)
+  }
+  if (!Array.isArray(row.knowledgePointIds)) {
+    throw new BackupError(`备份 questions 表第 ${line} 行 knowledgePointIds 不是数组`)
+  }
+  if (row.options !== undefined && !Array.isArray(row.options)) {
+    throw new BackupError(`备份 questions 表第 ${line} 行 options 不是数组`)
+  }
+  if (!isPlainObject(row.answerSpec)) {
+    throw new BackupError(`备份 questions 表第 ${line} 行 answerSpec 不是对象`)
+  }
+}
+
+/** mastery 行：对齐 Mastery 接口 */
+function validateMasteryRow(row: unknown, line: number): void {
+  if (!isPlainObject(row)) throw new BackupError(`备份 mastery 表第 ${line} 行不是对象`)
+  if (typeof row.knowledgePointId !== 'string' || row.knowledgePointId === '') {
+    throw new BackupError(`备份 mastery 表第 ${line} 行缺少合法 knowledgePointId`)
+  }
+  const stages = ['new', 'weak', 'consolidating', 'mastered']
+  if (!stages.includes(row.stage as string)) {
+    throw new BackupError(`备份 mastery 表第 ${line} 行 stage 非法：${String(row.stage)}`)
+  }
+  if (row.metrics !== undefined) {
+    if (!isPlainObject(row.metrics)) {
+      throw new BackupError(`备份 mastery 表第 ${line} 行 metrics 不是对象`)
+    }
+    if (typeof row.metrics.testedCount !== 'number' || typeof row.metrics.firstTryCorrect !== 'number') {
+      throw new BackupError(`备份 mastery 表第 ${line} 行 metrics 字段类型非法`)
+    }
+  }
 }
 
 export interface ImportSummary {
@@ -129,17 +208,23 @@ export async function importBackup(file: BackupFile, mode: 'merge' | 'overwrite'
     )
   }
   // 合并：题目/元数据 upsert；attempts 只补缺失，绝不改写历史；settings 跳过已有键
-  await db.contentMeta.bulkPut(file.data.contentMeta)
-  await db.questions.bulkPut(file.data.questions)
-  await db.mastery.bulkPut(file.data.mastery)
-  await db.weeklyReports.bulkPut(file.data.weeklyReports)
-  const existingKeys = await db.settings.bulkGet(file.data.settings.map((r) => r.key))
-  const newSettings = file.data.settings.filter((_, i) => existingKeys[i] === undefined)
-  if (newSettings.length > 0) await db.settings.bulkAdd(newSettings)
-  const existingAttempts = await db.attempts.bulkGet(file.data.attempts.map((a) => a.id))
-  const missing = file.data.attempts.filter((_, i) => existingAttempts[i] === undefined)
-  if (missing.length > 0) await db.attempts.bulkAdd(missing)
-  return { attemptsAdded: missing.length, attemptsSkipped: file.data.attempts.length - missing.length }
+  return db.transaction(
+    'rw',
+    [db.settings, db.contentMeta, db.questions, db.attempts, db.mastery, db.weeklyReports],
+    async () => {
+      await db.contentMeta.bulkPut(file.data.contentMeta)
+      await db.questions.bulkPut(file.data.questions)
+      await db.mastery.bulkPut(file.data.mastery)
+      await db.weeklyReports.bulkPut(file.data.weeklyReports)
+      const existingKeys = await db.settings.bulkGet(file.data.settings.map((r) => r.key))
+      const newSettings = file.data.settings.filter((_, i) => existingKeys[i] === undefined)
+      if (newSettings.length > 0) await db.settings.bulkAdd(newSettings)
+      const existingAttempts = await db.attempts.bulkGet(file.data.attempts.map((a) => a.id))
+      const missing = file.data.attempts.filter((_, i) => existingAttempts[i] === undefined)
+      if (missing.length > 0) await db.attempts.bulkAdd(missing)
+      return { attemptsAdded: missing.length, attemptsSkipped: file.data.attempts.length - missing.length }
+    },
+  )
 }
 
 export function backupFileName(date = new Date()): string {

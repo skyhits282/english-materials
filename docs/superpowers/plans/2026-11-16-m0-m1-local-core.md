@@ -2343,7 +2343,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 **已知局限（M2 处理）：**
 - 词汇默写题运行时派生、不入 questions 表：错题本对词汇题显示 questionId 作题干、正确答案"—"，报告"易错词"显示原始 ID。修复方向：两页从 bundle 派生词汇题建补充 qMap，或播种时写入词汇题。
-- today/report/settings 页对内容 JSON 来源字符串（u.label、acceptedAnswers、currentUnit）未做 HTML 转义：当前内容为仓库内一方数据，未来引入外部供稿前需补齐 escapeHtml。
+- ~~today/report/settings 页对内容 JSON 来源字符串（u.label、acceptedAnswers、currentUnit）未做 HTML 转义~~：已在 Task 12 审查修复中补齐（escapeHtml 抽取为 `ui/escape.ts` 共享模块，导入可达字段全部转义），此条关闭。
 
 ---
 
@@ -2990,6 +2990,14 @@ git commit -m "feat(app): 备份导出/校验/导入（合并与覆盖），atte
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
+
+**审查修复记录（2026-11-17，整体审查 Important×2）：**
+
+1. **转义 sink**：备份导入可把任意 settings/questions/attempts 行写入本地，此前 report.ts（易错词兜底 `id` 与 `acceptedAnswers`）、today.ts（`currentUnit` 兜底）、settings.ts（`u.id`/`u.label`、`dailyMinutes`/`studyDaysPerWeek` 的 value 属性注入）三处插值未转义，构成存储型 XSS。修复：escapeHtml 从 mistakes/exercise/settings 三页抽取为共享模块 `app-src/src/ui/escape.ts`（原使用处改为 import），三页所有可达自导入数据的插值补转义。
+2. **导入行校验**：`parseAndValidateBackup` 原先只校验 attempts 行，settings/questions/mastery 行原样入库。补齐三表行形状与字段类型校验（对齐 schema/接口：settings 需 `key`/`updatedAt`/`value` 及宽松字段类型，questions 需 `id`/`type`/`stem`/`explanation`/`knowledgePointIds`/`answerSpec`，mastery 需 `knowledgePointId`/`stage`/`metrics`），非法行抛 BackupError 并带表名与行号（从 1 计）。
+3. **合并事务**：`importBackup` 合并路径的 bulkPut/bulkAdd 顺序写入无事务，中途失败会留下部分写入。已参照覆盖路径用 `db.transaction('rw', [...六表], ...)` 把全部合并写入包进同一事务（回调内仅 Dexie 表操作）。
+
+新增测试 6 例：settings 缺 key / value 非对象、questions 缺 id、mastery stage 非法、含 `<img onerror>` questionId 的合法 attempt 可导入（转义在展示层）、合并导入中途失败回滚。
 
 ---
 

@@ -1,9 +1,6 @@
 import type { PageRenderer } from '../router'
 import { listAttempts, listAllQuestions } from '../db/repos'
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
-}
+import { escapeHtml } from '../ui/escape'
 
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' })

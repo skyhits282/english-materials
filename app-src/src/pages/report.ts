@@ -1,6 +1,7 @@
 import type { PageRenderer } from '../router'
 import { listAttempts, listAllQuestions } from '../db/repos'
 import { computeCoreMetrics, localDayKey, isSameLocalDay } from '../domain/metrics'
+import { escapeHtml } from '../ui/escape'
 
 function pct(rate: number | null): string {
   return rate === null ? '暂无数据' : `${Math.round(rate * 100)}%`
@@ -54,7 +55,7 @@ export const renderReport: PageRenderer = async ({ container }) => {
         <li>作答 ${vocabAttempts.length} 次</li>
         <li>首测正确率：${pct(computeCoreMetrics(vocabAttempts).firstTryCorrectRate)}</li>
       </ul>
-      ${vocabWrong.length > 0 ? `<p class="muted">易错词：${vocabWrong.map((id) => qMap.get(id)?.answerSpec.acceptedAnswers?.[0] ?? id).slice(0, 12).join('、')}${vocabWrong.length > 12 ? '…' : ''}</p>` : ''}
+      ${vocabWrong.length > 0 ? `<p class="muted">易错词：${vocabWrong.map((id) => escapeHtml(qMap.get(id)?.answerSpec.acceptedAnswers?.[0] ?? id)).slice(0, 12).join('、')}${vocabWrong.length > 12 ? '…' : ''}</p>` : ''}
     </div>
     <p class="muted">七天趋势与薄弱点排行将在后续版本提供。</p>`
   window.removeEventListener('hashchange', onHashChange)

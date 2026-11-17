@@ -31,7 +31,9 @@ for _s in (sys.stdout, sys.stderr):
         pass
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKIP_DIRS = {".git", "node_modules", "__pycache__", "artifacts"}
+SKIP_DIRS = {".git", "node_modules", "__pycache__", "artifacts",
+             # 学习助手构建产物与源码（hash 路由，非原站静态页）
+             "app-src", "app"}
 
 
 def iter_files(suffix):

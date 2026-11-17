@@ -3,7 +3,7 @@
   "private": true,
   "description": "english-materials 站点的 HTML 校验与 Lighthouse 性能检查（仅 CI 使用）",
   "scripts": {
-    "htmlvalidate": "html-validate \"**/*.html\"",
+    "htmlvalidate": "html-validate $(find . -name '*.html' -not -path './node_modules/*' -not -path './.git/*' -not -path './artifacts/*' -not -path './app-src/node_modules/*' -not -path './app/*' | sort)",
     "lighthouse": "lhci autorun",
     "extract:g7a": "node scripts/extract-g7a.mjs",
     "test:extract": "node --test \"scripts/*.test.mjs\"",

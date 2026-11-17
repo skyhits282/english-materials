@@ -118,6 +118,26 @@ describe('parseAndValidateBackup', () => {
     })
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
   })
+  it('settings.book 非法值拒绝且不写入', async () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [{ key: 'app', value: { ...DEFAULT_SETTINGS, book: 'g8a' }, updatedAt: 'x' }],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+      },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/book/)
+    // 校验在导入前拒绝，settings 表不落任何行
+    expect(await db.settings.count()).toBe(0)
+  })
   it('含 XSS 载荷 questionId 的合法 attempt 行可导入（转义在展示层）', async () => {
     const payload = '<img src=x onerror=alert(1)>'
     const file = JSON.stringify({
@@ -165,6 +185,20 @@ describe('导出→清空→导入（T08）', () => {
     expect(computeCoreMetrics(attempts)).toEqual(computeCoreMetrics([attempt('a1', 'q1', true, 'first'), attempt('a2', 'q2', false, 'first')]))
     expect(await db.questions.count()).toBe(2)
     expect((await db.settings.get('app'))?.value.dailyMinutes).toBe(25)
+  })
+
+  it('settings.book 往返保持不变（七下）', async () => {
+    await saveSettings({ ...DEFAULT_SETTINGS, book: 'g7b', currentUnit: 'v2-u3' })
+    const backup = await exportBackup()
+
+    // 清空（模拟新设备）
+    await db.settings.clear()
+
+    const parsed = parseAndValidateBackup(JSON.stringify(backup))
+    await importBackup(parsed, 'overwrite')
+    const value = (await db.settings.get('app'))?.value
+    expect(value?.book).toBe('g7b')
+    expect(value?.currentUnit).toBe('v2-u3')
   })
 
   it('合并模式不覆盖已有 attempt 历史', async () => {

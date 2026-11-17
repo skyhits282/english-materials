@@ -12,6 +12,10 @@ export function fetchContentBundle(): Promise<ContentBundle> {
       fetchJson<VocabBook[]>(`${CONTENT_BASE}/vocab.json`),
       fetchJson<ContentBundle['meta']>(`${CONTENT_BASE}/content.json`),
     ])
+    // HTTP 陈旧缓存可能返回旧版单对象结构；按加载失败处理，走既有拒绝缓存与重试路径
+    if (!Array.isArray(vocab)) {
+      throw new Error('题库加载失败：vocab.json 应为两册词汇数组（请清除缓存后重试）')
+    }
     return { questions, vocab, meta }
   })()
   return bundlePromise.catch((err) => {

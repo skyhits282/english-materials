@@ -115,11 +115,25 @@ describe('fetchContentBundle 失败后可重试', () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string) => {
       urls.push(url)
       if (urls.length <= 3) return { ok: false, status: 404 } // 第一轮三个请求全失败
-      return { ok: true, status: 200, json: async () => ({}) }
+      return { ok: true, status: 200, json: async () => (url.endsWith('vocab.json') ? [] : {}) }
     }))
     const { fetchContentBundle } = await import('./loader')
     await expect(fetchContentBundle()).rejects.toThrow('题库加载失败')
     await expect(fetchContentBundle()).resolves.toBeDefined() // 重试成功
     expect(urls.length).toBe(6) // 确实重新 fetch 了 3 个文件
+  })
+
+  it('vocab.json 返回旧单对象结构（HTTP 陈旧缓存）按加载失败拒绝并可重试', async () => {
+    let calls = 0
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      calls += 1
+      // 第一轮 vocab.json 返回旧结构；重试后返回正确数组
+      const stale = calls <= 3 && url.endsWith('vocab.json')
+      return { ok: true, status: 200, json: async () => (url.endsWith('vocab.json') ? (stale ? { book: 'g7a', units: [] } : []) : {}) }
+    }))
+    const { fetchContentBundle } = await import('./loader')
+    await expect(fetchContentBundle()).rejects.toThrow('题库加载失败')
+    await expect(fetchContentBundle()).resolves.toBeDefined()
+    expect(calls).toBe(6)
   })
 })

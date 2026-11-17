@@ -96,7 +96,7 @@ export interface Mastery {
 
 export interface Settings {
   grade: number
-  /** 教材册别（七上 g7a / 七下 g7b），影响词汇单元列表与专项分组默认展示 */
+  /** 教材册别（七上 g7a / 七下 g7b），决定词汇单元列表与单词默写来源（v1-* ↔ g7a、v2-* ↔ g7b） */
   book: 'g7a' | 'g7b'
   /** 词汇默写当前单元，取 vocab unit id（如 v1-u4 / v2-u3） */
   currentUnit: string

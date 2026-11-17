@@ -84,10 +84,17 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   })
 
   container.querySelector('#save')?.addEventListener('click', async () => {
+    const book = (container.querySelector<HTMLSelectElement>('#set-book')?.value as Settings['book'] | undefined) || settings.book
+    let currentUnit = container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit
+    // 册别-单元一致性（导入备份等可构造出不一致组合）：前缀 v1-↔g7a、v2-↔g7b，
+    // 不一致时回退所选册第一个单元（bundle 可用时）；题库不可用时保持原值等下次修正
+    if (!currentUnit.startsWith(book === 'g7b' ? 'v2-' : 'v1-')) {
+      currentUnit = vocabUnitsForBook(bundle?.vocab ?? [], book)[0]?.id ?? currentUnit
+    }
     const next: Settings = {
       ...settings,
-      book: (container.querySelector<HTMLSelectElement>('#set-book')?.value as Settings['book'] | undefined) || settings.book,
-      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit),
+      book,
+      currentUnit,
       dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,

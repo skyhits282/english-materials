@@ -935,6 +935,8 @@ describe('normalizeBlank', () => {
     expect(normalizeBlank('twelve。')).toBe('twelve.')
     expect(normalizeBlank('"unit"')).toBe('unit')
     expect(normalizeBlank('“unit”')).toBe('unit')
+    expect(normalizeBlank('" unit "')).toBe('unit')
+    expect(normalizeBlank(' "  unit  " ')).toBe('unit')
   })
 })
 
@@ -957,6 +959,10 @@ describe('gradeAnswer', () => {
   })
   it('填空：正确答案取首选（展示用）', () => {
     expect(gradeAnswer(fillVariant, 'x').correctAnswer).toBe('centre')
+  })
+  it('空串答案判错（含填空）', () => {
+    expect(gradeAnswer({ ...fill, answerSpec: { correctOptionIndex: 0 }, type: 'single_choice', options: ['a', 'b'] }, '').isCorrect).toBe(false)
+    expect(gradeAnswer(fill, '').isCorrect).toBe(false)
   })
 })
 ```
@@ -985,7 +991,7 @@ export function normalizeBlank(input: string): string {
     const first = s[0]!
     const last = s[s.length - 1]!
     if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
-      s = s.slice(1, -1)
+      s = s.slice(1, -1).trim()
     }
   }
   return s
@@ -1001,7 +1007,7 @@ export function gradeAnswer(question: Question, answer: string): GradeResult {
   if (question.type === 'single_choice') {
     const idx = Number(answer)
     const correct = question.answerSpec.correctOptionIndex
-    const isCorrect = correct !== undefined && Number.isInteger(idx) && idx === correct
+    const isCorrect = answer.trim() !== '' && correct !== undefined && Number.isInteger(idx) && idx === correct
     return { isCorrect, correctAnswer: correct !== undefined ? question.options?.[correct] ?? '' : '' }
   }
   const accepted = question.answerSpec.acceptedAnswers ?? []

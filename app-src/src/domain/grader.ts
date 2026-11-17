@@ -14,7 +14,7 @@ export function normalizeBlank(input: string): string {
     const first = s[0]!
     const last = s[s.length - 1]!
     if ((first === '"' && last === '"') || (first === "'" && last === "'")) {
-      s = s.slice(1, -1)
+      s = s.slice(1, -1).trim()
     }
   }
   return s
@@ -30,7 +30,7 @@ export function gradeAnswer(question: Question, answer: string): GradeResult {
   if (question.type === 'single_choice') {
     const idx = Number(answer)
     const correct = question.answerSpec.correctOptionIndex
-    const isCorrect = correct !== undefined && Number.isInteger(idx) && idx === correct
+    const isCorrect = answer.trim() !== '' && correct !== undefined && Number.isInteger(idx) && idx === correct
     return { isCorrect, correctAnswer: correct !== undefined ? question.options?.[correct] ?? '' : '' }
   }
   const accepted = question.answerSpec.acceptedAnswers ?? []

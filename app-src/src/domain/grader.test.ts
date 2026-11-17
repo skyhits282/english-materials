@@ -53,6 +53,8 @@ describe('normalizeBlank', () => {
     expect(normalizeBlank('twelve。')).toBe('twelve.')
     expect(normalizeBlank('"unit"')).toBe('unit')
     expect(normalizeBlank('“unit”')).toBe('unit')
+    expect(normalizeBlank('" unit "')).toBe('unit')
+    expect(normalizeBlank(' "  unit  " ')).toBe('unit')
   })
 })
 
@@ -75,5 +77,9 @@ describe('gradeAnswer', () => {
   })
   it('填空：正确答案取首选（展示用）', () => {
     expect(gradeAnswer(fillVariant, 'x').correctAnswer).toBe('centre')
+  })
+  it('空串答案判错（含填空）', () => {
+    expect(gradeAnswer({ ...fill, answerSpec: { correctOptionIndex: 0 }, type: 'single_choice', options: ['a', 'b'] }, '').isCorrect).toBe(false)
+    expect(gradeAnswer(fill, '').isCorrect).toBe(false)
   })
 })

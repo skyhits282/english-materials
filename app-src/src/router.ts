@@ -33,7 +33,9 @@ export function startRouter(pages: Record<string, PageRenderer>, container: HTML
       else a.removeAttribute('aria-current')
     }
     container.innerHTML = ''
-    void page({ container, params })
+    Promise.resolve(page({ container, params })).catch((err) => {
+      console.error('页面渲染失败', err)
+    })
   }
   addEventListener('hashchange', render)
   render()

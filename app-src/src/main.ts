@@ -6,15 +6,14 @@ import { renderReport } from './pages/report'
 import { renderSettings } from './pages/settings'
 
 const container = document.querySelector<HTMLElement>('#app')
-if (container) {
-  startRouter(
-    {
-      today: renderToday,
-      exercise: renderExercise,
-      mistakes: renderMistakes,
-      report: renderReport,
-      settings: renderSettings,
-    },
-    container,
-  )
-}
+if (!container) throw new Error('缺少 #app 容器')
+startRouter(
+  {
+    today: renderToday,
+    exercise: renderExercise,
+    mistakes: renderMistakes,
+    report: renderReport,
+    settings: renderSettings,
+  },
+  container,
+)

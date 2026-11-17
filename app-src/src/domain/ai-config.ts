@@ -43,8 +43,13 @@ export function parseAiConfigForm(raw: RawAiConfigForm, existingKey: string | un
   if (!baseUrl.startsWith('https://')) return { ok: false, message: '接口地址须以 https:// 开头。' }
   const model = raw.model.trim()
   if (model === '') return { ok: false, message: '请填写模型名。' }
-  const dailyLimit = Number(raw.dailyLimit.trim())
-  if (!Number.isInteger(dailyLimit) || dailyLimit < 1 || dailyLimit > 500) {
+  // 只接受纯十进制数字字面量：前置 /^\d+$/ 收紧，拒绝 '0x32'/'1e2'/'-3'/'+5' 等可被 Number() 解析的写法
+  const limitRaw = raw.dailyLimit.trim()
+  if (!/^\d+$/.test(limitRaw)) {
+    return { ok: false, message: '每日调用上限须为 1–500 的整数。' }
+  }
+  const dailyLimit = Number(limitRaw)
+  if (dailyLimit < 1 || dailyLimit > 500) {
     return { ok: false, message: '每日调用上限须为 1–500 的整数。' }
   }
   const apiKey = raw.apiKey.trim()

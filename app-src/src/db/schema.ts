@@ -21,7 +21,10 @@ export interface WeeklyReportRow {
 export interface AiRequestRow {
   id: string
   type: string
+  /** 'ok' | 'degraded' | 错误 kind | 'aborted'（M3 tasks 层写入） */
   status: string
+  /** 本次调用耗时（毫秒） */
+  latencyMs?: number
   localCostEstimate?: number
   createdAt: string
 }

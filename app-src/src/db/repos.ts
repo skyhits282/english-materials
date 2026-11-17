@@ -28,6 +28,18 @@ export async function saveSettings(settings: Settings): Promise<void> {
   await db.settings.put({ key: SETTINGS_KEY, value: settings, updatedAt: new Date().toISOString() })
 }
 
+/** 记录一次 AI 调用（M3）：含失败与降级；只写类型/状态/时延，不写题目内容与密钥（红线），
+ *  供配额按本地日计数与用量统计。 */
+export async function recordAiRequest(type: string, status: string, latencyMs: number): Promise<void> {
+  await db.aiRequests.add({
+    id: globalThis.crypto.randomUUID(),
+    type,
+    status,
+    latencyMs,
+    createdAt: new Date().toISOString(),
+  })
+}
+
 /** 只追加：ID 冲突直接抛错，保证历史不可改写（T02） */
 export async function saveAttempt(attempt: Attempt): Promise<void> {
   await db.attempts.add(attempt)

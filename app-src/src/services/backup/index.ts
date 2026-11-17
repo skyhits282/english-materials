@@ -94,6 +94,14 @@ export function parseAndValidateBackup(text: string): BackupFile {
   if (!isV1 && file.schemaVersion !== BACKUP_SCHEMA_VERSION) {
     throw new BackupError(`备份版本不支持（${String(file.schemaVersion)}，本应用支持 ${BACKUP_SCHEMA_VERSION} 与 ${V1_SCHEMA_VERSION}）`)
   }
+  // 文件级字段：app 标识（至少非空字符串）与导出时间（须可解析日期；v1/v2 真实导出均为 ISO 时间）
+  const app = (file as { app?: unknown }).app
+  if (typeof app !== 'string' || app === '') {
+    throw new BackupError('备份文件 app 字段缺失或不是非空字符串')
+  }
+  if (typeof file.exportedAt !== 'string' || Number.isNaN(Date.parse(file.exportedAt))) {
+    throw new BackupError('备份文件 exportedAt 缺失或不是合法日期（应为导出时刻的 ISO 时间）')
+  }
   if (!file.data || typeof file.data !== 'object') throw new BackupError('备份缺少 data 字段')
   const d = file.data as unknown as Record<string, unknown[]>
   // v1/v2 共有表：数组必须存在且为数组
@@ -180,6 +188,11 @@ function validateSettingsRow(row: unknown, line: number): void {
     if (value[f] !== undefined && typeof value[f] !== 'number') {
       throw new BackupError(`备份 settings 表第 ${line} 行 value.${f} 不是数字`)
     }
+  }
+  // aiDailyLimit 语义范围（与设置页表单校验对称：1–500 整数）
+  const limit = value.aiDailyLimit
+  if (limit !== undefined && (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 500)) {
+    throw new BackupError(`备份 settings 表第 ${line} 行 value.aiDailyLimit 须为 1–500 的整数`)
   }
   if (value.aiEnabled !== undefined && typeof value.aiEnabled !== 'boolean') {
     throw new BackupError(`备份 settings 表第 ${line} 行 value.aiEnabled 不是布尔值`)
@@ -293,6 +306,9 @@ function validateAiRequestRow(row: unknown, line: number): void {
   }
   if (typeof row.createdAt !== 'string') {
     throw new BackupError(`备份 aiRequests 表第 ${line} 行 createdAt 不是字符串`)
+  }
+  if (row.latencyMs !== undefined && typeof row.latencyMs !== 'number') {
+    throw new BackupError(`备份 aiRequests 表第 ${line} 行 latencyMs 不是数字`)
   }
 }
 

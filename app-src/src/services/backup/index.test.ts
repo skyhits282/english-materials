@@ -78,15 +78,40 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({ schemaVersion: 99, data: {} })
     expect(() => parseAndValidateBackup(file)).toThrow(/版本/)
   })
+  it('app 字段缺失或非字符串拒绝', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      exportedAt: '2026-11-17T00:00:00.000Z',
+      counts: {},
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/app/)
+    const file2 = JSON.stringify({ schemaVersion: 2, app: 42, exportedAt: '2026-11-17T00:00:00.000Z', counts: {}, data: {} })
+    expect(() => parseAndValidateBackup(file2)).toThrow(/app/)
+  })
+  it('exportedAt 不可解析日期拒绝', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'not-a-date',
+      counts: {},
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/exportedAt/)
+    const file2 = JSON.stringify({ schemaVersion: 2, app: 'english-coach', exportedAt: 123, counts: {}, data: {} })
+    expect(() => parseAndValidateBackup(file2)).toThrow(/exportedAt/)
+  })
   it('counts 与数据不一致拒绝', () => {
-    const file = JSON.stringify({ schemaVersion: 1, app: 'english-coach', exportedAt: 'x', counts: { attempts: 5 }, data: { attempts: [] } })
+    const file = JSON.stringify({ schemaVersion: 1, app: 'english-coach', exportedAt: '2026-11-17T00:00:00.000Z', counts: { attempts: 5 }, data: { attempts: [] } })
     expect(() => parseAndValidateBackup(file)).toThrow()
   })
   it('表内重复主键拒绝', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: { settings: [], contentMeta: [], questions: [q('x1'), q('x1')], attempts: [], mastery: [], weeklyReports: [] },
     })
@@ -107,7 +132,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: { settings: [{ id: 's', dailyMinutes: 40 }], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
     })
@@ -118,7 +143,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: { settings: [{ key: 'app', value: 40, updatedAt: 'x' }], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
     })
@@ -129,7 +154,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: { settings: [], contentMeta: [], questions: [{ stem: 's' }], attempts: [], mastery: [], weeklyReports: [] },
     })
@@ -139,7 +164,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 1, weeklyReports: 0 },
       data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [{ knowledgePointId: 'k', stage: 'broken' }], weeklyReports: [] },
     })
@@ -149,7 +174,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: {
         settings: [{ key: 'app', value: { ...DEFAULT_SETTINGS, book: 'g8a' }, updatedAt: 'x' }],
@@ -170,7 +195,7 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0 },
       data: {
         settings: [],
@@ -249,7 +274,7 @@ describe('覆盖导入事务性', () => {
     const file: BackupFile = {
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
@@ -278,7 +303,7 @@ describe('合并导入事务性', () => {
     const file: BackupFile = {
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 2, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
@@ -383,7 +408,7 @@ describe('备份 v2：round-trip 与行校验', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
       data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
     })
@@ -400,7 +425,7 @@ describe('备份 v2：round-trip 与行校验', () => {
     const v1File = JSON.stringify({
       schemaVersion: 1,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 1, mastery: 0, weeklyReports: 0 },
       data: {
         settings: [],
@@ -424,7 +449,7 @@ describe('备份 v2：round-trip 与行校验', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 1, aiRequests: 0 },
       data: {
         settings: [],
@@ -448,7 +473,7 @@ describe('备份 v2：round-trip 与行校验', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 1, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
@@ -469,7 +494,7 @@ describe('备份 v2：round-trip 与行校验', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 1 },
       data: {
         settings: [],
@@ -485,6 +510,27 @@ describe('备份 v2：round-trip 与行校验', () => {
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
     expect(() => parseAndValidateBackup(file)).toThrow(/aiRequests/)
   })
+
+  it('aiRequests 行 latencyMs 非数字拒绝', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: '2026-11-17T00:00:00.000Z',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 1 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [],
+        aiRequests: [{ ...aiRequest('r1'), latencyMs: 'fast' }],
+      },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/latencyMs/)
+  })
 })
 
 describe('导入前自动安全备份（默认先备份）', () => {
@@ -494,7 +540,7 @@ describe('导入前自动安全备份（默认先备份）', () => {
     const file: BackupFile = {
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
     }
@@ -511,7 +557,7 @@ describe('导入前自动安全备份（默认先备份）', () => {
     const file: BackupFile = {
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
@@ -536,7 +582,7 @@ describe('导入前自动安全备份（默认先备份）', () => {
       const file: BackupFile = {
         schemaVersion: 2,
         app: 'english-coach',
-        exportedAt: 'x',
+        exportedAt: '2026-11-17T00:00:00.000Z',
         counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
         data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
       }
@@ -560,7 +606,7 @@ describe('settings 行校验扩展（防恶意备份注入）', () => {
     JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [{ key: 'app', value, updatedAt: 'x' }],
@@ -604,6 +650,15 @@ describe('settings 行校验扩展（防恶意备份注入）', () => {
     const file = settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: '50' })
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
   })
+  it.each([0, 501, 2.5])('aiDailyLimit 超出 1–500 语义范围拒绝（%s）', (limit) => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: limit })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/aiDailyLimit/)
+  })
+  it('aiDailyLimit 边界 1 与 500 通过', () => {
+    expect(parseAndValidateBackup(settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: 1 })).counts.settings).toBe(1)
+    expect(parseAndValidateBackup(settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: 500 })).counts.settings).toBe(1)
+  })
 })
 
 describe('行校验健壮性（M1 遗留）', () => {
@@ -611,7 +666,7 @@ describe('行校验健壮性（M1 遗留）', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: { settings: [], contentMeta: [], questions: [], attempts: [null], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
     })
@@ -621,7 +676,7 @@ describe('行校验健壮性（M1 遗留）', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: { settings: 0, contentMeta: 1, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: { settings: [], contentMeta: [null], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
     })
@@ -632,7 +687,7 @@ describe('行校验健壮性（M1 遗留）', () => {
     const file = JSON.stringify({
       schemaVersion: 2,
       app: 'english-coach',
-      exportedAt: 'x',
+      exportedAt: '2026-11-17T00:00:00.000Z',
       counts: {},
       data: {
         settings: [],

@@ -53,7 +53,7 @@ describe('parseAiConfigForm（保存前校验）', () => {
     const parsed = parseAiConfigForm({ ...raw, model: ' ' }, undefined)
     expect(!parsed.ok && parsed.message).toContain('模型')
   })
-  it.each(['0', '501', '10.5', 'abc', ''])('每日上限 %s 拒绝（须 1–500 整数）', (limit) => {
+  it.each(['0', '501', '10.5', 'abc', '', '0x32', '1e2', '-3', '+5'])('每日上限 %s 拒绝（须 1–500 整数）', (limit) => {
     const parsed = parseAiConfigForm({ ...raw, dailyLimit: limit }, undefined)
     expect(parsed.ok).toBe(false)
     if (!parsed.ok) expect(parsed.message).toContain('1–500')

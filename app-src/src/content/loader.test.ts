@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { deriveVocabQuestions } from './loader'
 import type { VocabBook } from '../types'
 
@@ -47,5 +47,25 @@ describe('deriveVocabQuestions', () => {
     expect(qs[0]!.knowledgePointIds).toEqual(['vocab.g7a.u1'])
     expect(qs[0]!.explanation).toContain('unit')
     expect(qs[0]!.explanation).toContain('单元')
+  })
+})
+
+describe('fetchContentBundle 失败后可重试', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.resetModules()
+  })
+
+  it('非 2xx 拒绝后，再次调用会重新 fetch', async () => {
+    const urls: string[] = []
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      urls.push(url)
+      if (urls.length <= 3) return { ok: false, status: 404 } // 第一轮三个请求全失败
+      return { ok: true, status: 200, json: async () => ({}) }
+    }))
+    const { fetchContentBundle } = await import('./loader')
+    await expect(fetchContentBundle()).rejects.toThrow('题库加载失败')
+    await expect(fetchContentBundle()).resolves.toBeDefined() // 重试成功
+    expect(urls.length).toBe(6) // 确实重新 fetch 了 3 个文件
   })
 })

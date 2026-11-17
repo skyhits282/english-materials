@@ -14,7 +14,10 @@ export function fetchContentBundle(): Promise<ContentBundle> {
     ])
     return { questions, vocab, meta }
   })()
-  return bundlePromise
+  return bundlePromise.catch((err) => {
+    bundlePromise = undefined
+    throw err
+  })
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -28,11 +31,12 @@ function unitShortName(unitId: string): string {
   return unitId.replace(/^v1-/, '')
 }
 
-function toVocabQuestion(unitId: string, w: VocabWord): Question {
+/** contentVersion 统一用书级版本；词 ID 的可追溯性已体现在 Question.id 中 */
+function toVocabQuestion(contentVersion: string, unitId: string, w: VocabWord): Question {
   const accepted = [w.word, ...(w.variant ? [w.variant] : [])]
   return {
     id: `g7a-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
-    contentVersion: w.id,
+    contentVersion,
     grade: 7,
     term: 'A',
     unit: unitId,
@@ -51,7 +55,7 @@ function toVocabQuestion(unitId: string, w: VocabWord): Question {
 export function deriveVocabQuestions(vocab: VocabBook, unitId: string): Question[] {
   const unit = vocab.units.find((u) => u.id === unitId)
   if (!unit) return []
-  return unit.words.map((w) => toVocabQuestion(unitId, w))
+  return unit.words.map((w) => toVocabQuestion(vocab.contentVersion, unitId, w))
 }
 
 export function findVocabUnit(vocab: VocabBook, unitId: string) {

@@ -690,7 +690,7 @@ export interface ContentBundle {
 - [ ] **Step 2: 写失败测试 `app-src/src/content/loader.test.ts`**
 
 ```ts
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { deriveVocabQuestions } from './loader'
 import type { VocabBook } from '../types'
 
@@ -741,6 +741,26 @@ describe('deriveVocabQuestions', () => {
     expect(qs[0]!.explanation).toContain('单元')
   })
 })
+
+describe('fetchContentBundle 失败后可重试', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.resetModules()
+  })
+
+  it('非 2xx 拒绝后，再次调用会重新 fetch', async () => {
+    const urls: string[] = []
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      urls.push(url)
+      if (urls.length <= 3) return { ok: false, status: 404 } // 第一轮三个请求全失败
+      return { ok: true, status: 200, json: async () => ({}) }
+    }))
+    const { fetchContentBundle } = await import('./loader')
+    await expect(fetchContentBundle()).rejects.toThrow('题库加载失败')
+    await expect(fetchContentBundle()).resolves.toBeDefined() // 重试成功
+    expect(urls.length).toBe(6) // 确实重新 fetch 了 3 个文件
+  })
+})
 ```
 
 - [ ] **Step 3: 运行测试确认失败**
@@ -767,7 +787,10 @@ export function fetchContentBundle(): Promise<ContentBundle> {
     ])
     return { questions, vocab, meta }
   })()
-  return bundlePromise
+  return bundlePromise.catch((err) => {
+    bundlePromise = undefined
+    throw err
+  })
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -781,11 +804,12 @@ function unitShortName(unitId: string): string {
   return unitId.replace(/^v1-/, '')
 }
 
-function toVocabQuestion(unitId: string, w: VocabWord): Question {
+/** contentVersion 统一用书级版本；词 ID 的可追溯性已体现在 Question.id 中 */
+function toVocabQuestion(contentVersion: string, unitId: string, w: VocabWord): Question {
   const accepted = [w.word, ...(w.variant ? [w.variant] : [])]
   return {
     id: `g7a-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
-    contentVersion: w.id,
+    contentVersion,
     grade: 7,
     term: 'A',
     unit: unitId,
@@ -804,7 +828,7 @@ function toVocabQuestion(unitId: string, w: VocabWord): Question {
 export function deriveVocabQuestions(vocab: VocabBook, unitId: string): Question[] {
   const unit = vocab.units.find((u) => u.id === unitId)
   if (!unit) return []
-  return unit.words.map((w) => toVocabQuestion(unitId, w))
+  return unit.words.map((w) => toVocabQuestion(vocab.contentVersion, unitId, w))
 }
 
 export function findVocabUnit(vocab: VocabBook, unitId: string) {
@@ -812,7 +836,7 @@ export function findVocabUnit(vocab: VocabBook, unitId: string) {
 }
 ```
 
-注意：默写题的 `contentVersion` 复用词 ID（`v1-u1-1`），原词更新时可追溯。
+注意：默写题的 `contentVersion` 统一用书级版本；词 ID 的可追溯性已体现在 `Question.id` 的生成中。
 
 - [ ] **Step 5: 创建 `app-src/src/content/sets.ts`（专项元信息）**
 
@@ -834,7 +858,7 @@ export const SPECIALS: SpecialInfo[] = [
 - [ ] **Step 6: 运行测试确认通过**
 
 Run: `npm --prefix app-src run test`
-Expected: 4 个测试 PASS
+Expected: 5 个测试 PASS（4 个派生用例 + 1 个失败重试用例）
 
 - [ ] **Step 7: 提交**
 

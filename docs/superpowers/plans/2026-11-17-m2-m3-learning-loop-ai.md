@@ -245,7 +245,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/pages/exercise.ts`（`set=review`）、`app-src/src/pages/today.ts`（到期复习卡）
 - Test: `app-src/src/domain/review-picker.test.ts`
 
-- [ ] **Step 1: 写失败测试（review-picker.test.ts）**
+- [x] **Step 1: 写失败测试（review-picker.test.ts）**
 
 ```ts
 export interface ReviewPickInput {
@@ -263,11 +263,11 @@ export interface ReviewPickInput {
 // - alreadyDoneToday 的题跳过；全部跳过后返回 []
 ```
 
-- [ ] **Step 2: 实现 picker（纯函数）+ repo 查询封装**
+- [x] **Step 2: 实现 picker（纯函数）+ repo 查询封装**
 
 repo 层 `getReviewSet()`：`mastery.where('nextReviewAt').belowOr(nowIso)` → 过滤本地日到期 → 汇总每个知识点曾答错题（`attempts` 反查 `isCorrect=false` 的 questionId 去重；词题 ID 原样保留，由练习页解析器显示）→ 传给纯函数。
 
-- [ ] **Step 3: 练习页复测模式**
+- [x] **Step 3: 练习页复测模式**
 
 exercise.ts 支持 `#/exercise?set=review`：
 - 题集来自 `getReviewSet()`；标题"到期复习 · N 题"
@@ -275,7 +275,7 @@ exercise.ts 支持 `#/exercise?set=review`：
 - 题量 0：显示空态面板"今日没有到期复习"（不是错误面板）
 - today.ts 顶部加"到期复习"卡：显示到期知识点数与题数（`getReviewSet()` 概要），点击进入 `set=review`；无到期不显示该卡
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 到期复测选题引擎与练习页复测模式

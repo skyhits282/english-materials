@@ -205,12 +205,13 @@ function weeklyFactsSummary(f: WeeklyFacts): string {
 }
 
 /** 响应校验：字段齐全且为字符串→按字段截断返回；可读非空文本（解析失败或字段不全）→降级 {raw}；
- *  空白文本→AiError('invalid-response')。 */
+ *  空白文本或乱码（不可读字符占比超阈值）→AiError('invalid-response')。 */
 function validateOutput<T extends AiTask>(
   task: T,
   text: string,
 ): { degraded: boolean; value: TaskResultMap[T] | AiRawResult } {
   if (text.trim() === '') throw new AiError('invalid-response', 'AI 返回了空内容')
+  if (isGarbledText(text)) throw new AiError('invalid-response', 'AI 返回内容乱码，无法解析')
   const spec = TASK_SPECS[task]
   const parsed = tryParseJson(text)
   if (parsed !== undefined && parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
@@ -223,6 +224,20 @@ function validateOutput<T extends AiTask>(
     }
   }
   return { degraded: true, value: { raw: text } }
+}
+
+/** 乱码启发式（无法完美定义"乱码"）：统计不可读字符占比，超过 10% 视为乱码。
+ *  不可读 = 控制字符 U+0000–U+001F（除 \t\n\r）、C1 控制区 U+007F–U+009F、Unicode 替换符 U+FFFD。
+ *  取保守阈值：普通带标点中文/英文/代码围栏文本不受影响；少量替换符（如编码丢字）仍按可读降级。 */
+function isGarbledText(text: string): boolean {
+  if (text.length === 0) return false
+  let unreadable = 0
+  for (const ch of text) {
+    const code = ch.codePointAt(0) ?? 0
+    const isControl = (code >= 0x00 && code <= 0x1f && ch !== '\t' && ch !== '\n' && ch !== '\r') || (code >= 0x7f && code <= 0x9f)
+    if (isControl || code === 0xfffd) unreadable += 1
+  }
+  return unreadable / text.length > 0.1
 }
 
 /** 宽松 JSON 提取：原文、去代码块围栏、首个 { 到最后一个 } 的子串，依次尝试解析 */

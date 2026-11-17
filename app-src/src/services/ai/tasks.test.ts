@@ -323,6 +323,25 @@ describe('响应校验与降级', () => {
     })
   })
 
+  it('完全乱码（高占比替换符/控制字符）→ invalid-response', async () => {
+    // 不可读字符占比远超 10% 阈值：替换符 + C0 控制字符混杂
+    const garbled = '�\u0002��\u0007�\u0003�'
+    stubFetch(async () => okContent(garbled))
+    await expect(runAiTask('coach_turn', coachPayload, { settings: settings() })).rejects.toMatchObject({
+      kind: 'invalid-response',
+    })
+    expect((await db.aiRequests.toArray())[0]?.status).toBe('invalid-response')
+  })
+
+  it('含少量替换符但主体可读 → 仍 {raw} 降级（阈值不误伤）', async () => {
+    // 十余个可读字符中夹杂 1 个替换符（占比约 5% < 10% 阈值）：走降级而非失败
+    const mostlyReadable = '同学你好，这道题考查的是动�形式，先看主语。'
+    stubFetch(async () => okContent(mostlyReadable))
+    const result = await runAiTask('coach_turn', coachPayload, { settings: settings() })
+    expect(result).toEqual({ raw: mostlyReadable })
+    expect((await db.aiRequests.toArray())[0]?.status).toBe('degraded')
+  })
+
   it('字段缺失（非全字符串）→ 降级 {raw} 而非失败', async () => {
     stubFetch(async () => okContent(JSON.stringify({ hint: '提示', explanation: 42 })))
     const result = await runAiTask('explain_mistake', explainPayload, { settings: settings() })

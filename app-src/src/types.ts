@@ -112,6 +112,12 @@ export interface Settings {
   /** 最近两次试卷的题型分项成绩（如"语法 12/15"），手工录入、上限 8 行，
    *  仅作报告页诊断参考，不参与自动判分与指标。 */
   examScores?: ExamScoreRow[]
+  /** AI 直连配置（规格 §7.1，均可选：未配置密钥=AI 功能灰态）。
+   *  红线：aiApiKey 仅存本机浏览器，备份导出时剔除；aiModel/aiBaseUrl 缺省时 UI 展示默认值。 */
+  aiBaseUrl?: string
+  aiApiKey?: string
+  aiModel?: string
+  aiDailyLimit?: number
 }
 
 /** 试卷分项成绩一行：题型标签 + 得分/满分 */

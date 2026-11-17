@@ -215,3 +215,35 @@ describe('metrics 累加规则（跨事件序列）', () => {
     expect(m.intervalDays).toBe(7)
   })
 })
+
+describe('防御分支（Task 9 补测试）', () => {
+  it('旧行 intervalDays 不在 ADVANCE 表（如 5）→ 按 stage 兜底档推进（consolidating→3 天档→7 天）', () => {
+    const cur = row('consolidating', 5, { testedCount: 3, firstTryCorrect: 0, delayedReviewCorrect: 2 })
+    const m = nextMasteryState(cur, KP, ev('retry', true, NOW, prevDayOf(NOW)), NOW)
+    expect(m.stage).toBe('consolidating')
+    expect(m.intervalDays).toBe(7)
+    expect(m.nextReviewAt).toBe(new Date(2026, 10, 24).toISOString())
+  })
+
+  it('旧行 intervalDays 非法且 stage=new（兜底 0=未排期）→ 复测正确仍不排期', () => {
+    const cur = row('new', 5, { testedCount: 1, firstTryCorrect: 1, delayedReviewCorrect: 0 })
+    const m = nextMasteryState(cur, KP, ev('retry', true, NOW, prevDayOf(NOW)), NOW)
+    expect(m.stage).toBe('new')
+    expect(m.intervalDays).toBe(0)
+    expect(m.nextReviewAt).toBeUndefined()
+  })
+
+  it('有提交历史但 mastery 行缺失（防御）→ 隔日 retry 答错按首错处理：weak、次日', () => {
+    const m = nextMasteryState(undefined, KP, ev('retry', false, NOW, prevDayOf(NOW)), NOW)
+    expect(m.stage).toBe('weak')
+    expect(m.intervalDays).toBe(1)
+    expect(m.nextReviewAt).toBe(NEXT_DAY)
+  })
+
+  it('有提交历史但 mastery 行缺失（防御）→ 同日 retry 与无历史同口径，不因缺行抛错', () => {
+    const m = nextMasteryState(undefined, KP, ev('retry', true, NOW, localDayKey(NOW)), NOW)
+    expect(m.stage).toBe('new')
+    expect(m.intervalDays).toBe(0)
+    expect(m.metrics).toEqual({ testedCount: 1, firstTryCorrect: 0, delayedReviewCorrect: 0 })
+  })
+})

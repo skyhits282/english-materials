@@ -72,13 +72,22 @@ async function loadReviewQuestions(): Promise<{ title: string; questions: Questi
     }
   }
   const questions: Question[] = []
+  let missing = 0
   for (const id of review.questionIds) {
     const q = byId.get(id)
     if (q) questions.push(q)
-    else console.warn('复测题无法解析（内容缺失），已跳过：', id)
+    else {
+      missing += 1
+      console.warn('复测题无法解析（内容缺失），已跳过：', id)
+    }
   }
   if (questions.length === 0) {
-    return { title: '到期复习', questions: [], emptyMessage: '今日没有到期复习。' }
+    // 有到期题但内容全缺失（题库未播种/被清）：与"无到期题"区分，引导刷新题库
+    return {
+      title: '到期复习',
+      questions: [],
+      emptyMessage: missing > 0 ? '到期复习题内容缺失，请刷新题库。' : '今日没有到期复习。',
+    }
   }
   return { title: `到期复习 · ${questions.length} 题`, questions }
 }

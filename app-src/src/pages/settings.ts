@@ -2,10 +2,18 @@ import type { PageRenderer } from '../router'
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
 import { fetchContentBundle, vocabUnitsForBook } from '../content/loader'
 import type { Settings } from '../types'
-import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
+import {
+  exportBackup,
+  parseAndValidateBackup,
+  importBackup,
+  backupFileName,
+  downloadBackupFile,
+  BackupError,
+} from '../services/backup/index'
 import { escapeHtml } from '../ui/escape'
 import { PIN_LENGTH, PIN_PATTERN, isPinProtectedAction, verifyPin, type PinProtectedAction } from '../domain/pin'
 import { EXAM_MAX_ROWS, parseExamRows } from '../domain/exam-scores'
+import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, maskApiKey, parseAiConfigForm } from '../domain/ai-config'
 
 /** 卡片模块共享依赖：页内 settings 快照与持久化入口（导入备份后快照整体替换） */
 interface CardDeps {
@@ -196,11 +204,11 @@ function setupExamScoresCard(deps: CardDeps): { refresh: () => void } {
     examRows?.insertAdjacentHTML('beforeend', examRowHtml(r))
     updateAdd()
   }
-  /** 从页内 settings 重建行（初次渲染与导入备份后刷新共用） */
+  /** 从页内 settings 重建行（初次渲染与导入备份后刷新共用；超限旧库截断到 EXAM_MAX_ROWS 行） */
   const renderRows = () => {
     if (!examRows) return
     examRows.innerHTML = ''
-    for (const r of current().examScores ?? []) {
+    for (const r of (current().examScores ?? []).slice(0, EXAM_MAX_ROWS)) {
       appendRow({ label: r.label, got: String(r.got), total: String(r.total) })
     }
     if (rowCount() === 0) appendRow({ label: '', got: '', total: '' })
@@ -248,6 +256,129 @@ function setupExamScoresCard(deps: CardDeps): { refresh: () => void } {
 
   renderRows()
   return { refresh: renderRows }
+}
+
+/** AI 配置卡（规格 §7.1）：四字段 + 密钥掩码管理。已存密钥只回显掩码（sk-****+后4位），
+ *  「更换」切换为密码输入、「清除」移除密钥，任何路径不回填明文。
+ *  保存前经纯函数 parseAiConfigForm 校验（URL 须 https、每日上限 1–500 整数）；
+ *  「测试连接」的调用层在 Task 10 接入，本任务先做本地校验与占位提示。
+ *  红线：密钥仅存本机浏览器（IndexedDB settings），备份导出剔除（services/backup）。 */
+function setupAiConfigCard(
+  deps: CardDeps,
+  gate: (action: PinProtectedAction, run: () => void | Promise<void>) => void,
+): { refresh: () => void } {
+  const { container, current, persist } = deps
+  const keyArea = () => container.querySelector('#ai-key-area')
+  const msgEl = () => container.querySelector('#ai-msg')
+  const msg = (text: string) => {
+    const el = msgEl()
+    if (el) el.textContent = text
+  }
+
+  /** 密钥输入行（未设置/更换两种场景共用；不回填明文） */
+  const renderKeyInput = (change: boolean) => {
+    const area = keyArea()
+    if (!area) return
+    area.innerHTML = `
+      <div class="form-row">
+        <label for="ai-key">API 密钥（百炼 ${change ? '新密钥' : 'sk-开头'}）</label>
+        <input id="ai-key" type="password" autocomplete="off" placeholder="sk-…">
+      </div>
+      ${change ? '<div class="action-row"><button class="btn btn-secondary" id="ai-key-cancel">取消更换</button></div>' : ''}
+      ${change ? '' : '<p class="muted">未配置密钥时 AI 功能不可用（灰态）。</p>'}`
+    area.querySelector('#ai-key-cancel')?.addEventListener('click', () => {
+      msg('')
+      renderKeyArea()
+    })
+  }
+
+  /** 已存密钥：掩码 + 更换/清除；未存：直接给输入框 */
+  const renderKeyArea = () => {
+    const area = keyArea()
+    if (!area) return
+    const key = current().aiApiKey
+    if (key === undefined) {
+      renderKeyInput(false)
+      return
+    }
+    area.innerHTML = `
+      <div class="form-row">
+        <label>当前密钥</label>
+        <p><code>${escapeHtml(maskApiKey(key))}</code></p>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-secondary" id="ai-key-change">更换密钥</button>
+        <button class="btn btn-secondary" id="ai-key-clear">清除密钥</button>
+      </div>`
+    area.querySelector('#ai-key-change')?.addEventListener('click', () => {
+      msg('')
+      renderKeyInput(true)
+    })
+    area.querySelector('#ai-key-clear')?.addEventListener('click', () => {
+      msg('')
+      gate('save-settings', async () => {
+        if (await persist({ ...current(), aiApiKey: undefined })) {
+          renderKeyArea()
+          msg('已清除密钥。')
+        } else {
+          msg('清除失败，存储不可用。')
+        }
+      })
+    })
+  }
+
+  /** 从表单读取原始值（密钥输入未渲染时按空串=不更换处理） */
+  const readForm = () => ({
+    baseUrl: container.querySelector<HTMLInputElement>('#ai-base-url')?.value ?? '',
+    apiKey: container.querySelector<HTMLInputElement>('#ai-key')?.value ?? '',
+    model: container.querySelector<HTMLInputElement>('#ai-model')?.value ?? '',
+    dailyLimit: container.querySelector<HTMLInputElement>('#ai-daily-limit')?.value ?? '',
+  })
+
+  container.querySelector('#ai-save')?.addEventListener('click', () => {
+    msg('')
+    gate('save-settings', async () => {
+      const parsed = parseAiConfigForm(readForm(), current().aiApiKey)
+      if (!parsed.ok) {
+        msg(parsed.message)
+        return
+      }
+      if (await persist({ ...current(), ...parsed.value })) {
+        renderKeyArea()
+        msg('已保存 AI 配置。')
+      } else {
+        msg('保存失败，存储不可用。')
+      }
+    })
+  })
+
+  container.querySelector('#ai-test')?.addEventListener('click', () => {
+    msg('')
+    const parsed = parseAiConfigForm(readForm(), current().aiApiKey)
+    if (!parsed.ok) {
+      msg(parsed.message)
+      return
+    }
+    if (parsed.value.aiApiKey === undefined) {
+      msg('未配置密钥，无法测试连接。')
+      return
+    }
+    // 调用层（Task 10 transport）尚未接入：先本地校验后占位提示
+    msg('AI 调用层尚未接入，测试连接将在后续版本启用。')
+  })
+
+  renderKeyArea()
+  return {
+    refresh: () => {
+      const baseUrl = container.querySelector<HTMLInputElement>('#ai-base-url')
+      if (baseUrl) baseUrl.value = current().aiBaseUrl ?? AI_DEFAULT_BASE_URL
+      const model = container.querySelector<HTMLInputElement>('#ai-model')
+      if (model) model.value = current().aiModel ?? AI_DEFAULT_MODEL
+      const limit = container.querySelector<HTMLInputElement>('#ai-daily-limit')
+      if (limit) limit.value = String(current().aiDailyLimit ?? AI_DEFAULT_DAILY_LIMIT)
+      renderKeyArea()
+    },
+  }
 }
 
 export const renderSettings: PageRenderer = async ({ container }) => {
@@ -341,6 +472,28 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       <p id="exam-msg"></p>
     </div>
     <div class="card">
+      <h3>AI 配置</h3>
+      <p>联网调用外部 AI 服务（阿里云百炼 OpenAI 兼容模式）。密钥仅存本机浏览器，不会出现在备份文件中。</p>
+      <div class="form-row">
+        <label for="ai-base-url">接口地址（https）</label>
+        <input id="ai-base-url" type="text" value="${escapeHtml(settings.aiBaseUrl ?? AI_DEFAULT_BASE_URL)}">
+      </div>
+      <div id="ai-key-area"></div>
+      <div class="form-row">
+        <label for="ai-model">模型名</label>
+        <input id="ai-model" type="text" value="${escapeHtml(settings.aiModel ?? AI_DEFAULT_MODEL)}">
+      </div>
+      <div class="form-row">
+        <label for="ai-daily-limit">每日调用上限（1–500）</label>
+        <input id="ai-daily-limit" type="number" min="1" max="500" step="1" value="${escapeHtml(String(settings.aiDailyLimit ?? AI_DEFAULT_DAILY_LIMIT))}">
+      </div>
+      <div class="action-row">
+        <button class="btn" id="ai-save">保存 AI 配置</button>
+        <button class="btn btn-secondary" id="ai-test">测试连接</button>
+      </div>
+      <p id="ai-msg"></p>
+    </div>
+    <div class="card">
       <h3>备份与恢复</h3>
       <p>导出全部学习记录为 JSON 文件；恢复时先校验再写入，合并模式不会改写已有历史。</p>
       <div class="action-row">
@@ -356,6 +509,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
 
   const pinCard = setupParentPinCard(deps)
   const examCard = setupExamScoresCard(deps)
+  const aiCard = setupAiConfigCard(deps, runProtected)
 
   // 初次填充当前册的单元；currentUnit 属于另一册时不预选（浏览器默认选第一项），保存时生效
   fillUnitOptions(settings.book, settings.currentUnit)
@@ -411,13 +565,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     if (!preview) return
     try {
       const file = await exportBackup()
-      const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = backupFileName()
-      a.click()
-      URL.revokeObjectURL(url)
+      downloadBackupFile(file, backupFileName())
     } catch {
       preview.innerHTML = '<div class="error-panel">导出失败，存储不可用。</div>'
     }
@@ -453,6 +601,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
           refillMainForm()
           pinCard.refresh()
           examCard.refresh()
+          aiCard.refresh()
         }
         preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
       } catch {

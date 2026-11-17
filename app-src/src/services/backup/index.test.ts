@@ -1,10 +1,13 @@
 import 'fake-indexeddb/auto'
-import { beforeEach, describe, expect, it } from 'vitest'
-import { db } from '../../db/schema'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { db, type AiRequestRow, type TaskRow, type WeeklyReportRow } from '../../db/schema'
 import { exportBackup, parseAndValidateBackup, importBackup, BackupError, type BackupFile } from './index'
 import { saveAttempt, saveSettings, upsertQuestions, DEFAULT_SETTINGS } from '../../db/repos'
 import { computeCoreMetrics } from '../../domain/metrics'
-import type { Attempt, Question } from '../../types'
+import type { Attempt, Question, Settings } from '../../types'
+
+/** 假 Key（红线：任何真实密钥不得出现在代码/测试/提交中） */
+const FAKE_KEY = 'sk-test-fake-key-0000'
 
 const q = (id: string): Question => ({
   id,
@@ -32,13 +35,37 @@ const attempt = (id: string, questionId: string, isCorrect: boolean, phase: 'fir
   submittedAt: '2026-11-16T10:00:00.000Z',
 })
 
+const task = (id: string): TaskRow => ({
+  id,
+  day: '2026-11-17',
+  type: 'review',
+  questionIds: ['q1'],
+  status: 'planned',
+  minutesPlanned: 10,
+})
+
+const weeklyReport = (weekStart: string): WeeklyReportRow => ({
+  weekStart,
+  facts: { attempts: 1 },
+  generatedAt: '2026-11-17T08:00:00.000Z',
+})
+
+const aiRequest = (id: string): AiRequestRow => ({
+  id,
+  type: 'explain',
+  status: 'succeeded',
+  createdAt: '2026-11-17T08:00:00.000Z',
+})
+
 beforeEach(async () => {
   await Promise.all([
     db.settings.clear(),
     db.questions.clear(),
+    db.tasks.clear(),
     db.attempts.clear(),
     db.mastery.clear(),
     db.weeklyReports.clear(),
+    db.aiRequests.clear(),
     db.contentMeta.clear(),
   ])
 })
@@ -223,7 +250,7 @@ describe('覆盖导入事务性', () => {
       schemaVersion: 1,
       app: 'english-coach',
       exportedAt: 'x',
-      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
+      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
         contentMeta: [],
@@ -231,6 +258,8 @@ describe('覆盖导入事务性', () => {
         attempts: [],
         mastery: [],
         weeklyReports: [],
+        tasks: [],
+        aiRequests: [],
       },
     }
 
@@ -250,7 +279,7 @@ describe('合并导入事务性', () => {
       schemaVersion: 1,
       app: 'english-coach',
       exportedAt: 'x',
-      counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 2, mastery: 0, weeklyReports: 0 },
+      counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 2, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
       data: {
         settings: [],
         contentMeta: [],
@@ -258,6 +287,8 @@ describe('合并导入事务性', () => {
         attempts: [attempt('dup-a', 'new-q', true, 'first'), attempt('dup-a', 'new-q', true, 'first')],
         mastery: [],
         weeklyReports: [],
+        tasks: [],
+        aiRequests: [],
       },
     }
 
@@ -265,5 +296,359 @@ describe('合并导入事务性', () => {
     expect(await db.questions.get('new-q')).toBeUndefined()
     expect(await db.attempts.count()).toBe(0)
     expect(await db.questions.get('local-q')).toBeDefined()
+  })
+})
+
+describe('备份 v2：凭证剔除', () => {
+  it('导出文件不含 aiApiKey/parentPin，counts 一致', async () => {
+    const value: Settings = {
+      ...DEFAULT_SETTINGS,
+      aiBaseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      aiApiKey: FAKE_KEY,
+      aiModel: 'qwen-flash',
+      aiDailyLimit: 50,
+      parentPin: '1234',
+    }
+    await saveSettings(value)
+    const backup = await exportBackup()
+    expect(backup.counts.settings).toBe(1)
+    const exported = backup.data.settings[0]?.value
+    expect(exported).toBeDefined()
+    expect('aiApiKey' in (exported ?? {})).toBe(false)
+    expect('parentPin' in (exported ?? {})).toBe(false)
+    // 深拷贝剔除：原库行不受导出影响
+    expect((await db.settings.get('app'))?.value.aiApiKey).toBe(FAKE_KEY)
+    expect((await db.settings.get('app'))?.value.parentPin).toBe('1234')
+  })
+
+  it('剔除后导出→导入：aiBaseUrl/aiModel 等保留，aiApiKey/parentPin 为空', async () => {
+    await saveSettings({
+      ...DEFAULT_SETTINGS,
+      aiBaseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      aiApiKey: FAKE_KEY,
+      aiModel: 'qwen-flash',
+      aiDailyLimit: 30,
+      parentPin: '1234',
+    })
+    const backup = await exportBackup()
+    await db.settings.clear()
+    const parsed = parseAndValidateBackup(JSON.stringify(backup))
+    await importBackup(parsed, 'overwrite')
+    const value = (await db.settings.get('app'))?.value
+    expect(value?.aiBaseUrl).toBe('https://dashscope.aliyuncs.com/compatible-mode/v1')
+    expect(value?.aiModel).toBe('qwen-flash')
+    expect(value?.aiDailyLimit).toBe(30)
+    expect(value?.aiApiKey).toBeUndefined()
+    expect(value?.parentPin).toBeUndefined()
+  })
+})
+
+describe('备份 v2：round-trip 与行校验', () => {
+  it('含 tasks/weeklyReports/aiRequests 的 v2 round-trip 一致', async () => {
+    await upsertQuestions([q('q1')])
+    await saveSettings({ ...DEFAULT_SETTINGS })
+    await db.tasks.bulkPut([task('t1'), { ...task('t2'), type: 'unit', status: 'in_progress' }])
+    await saveAttempt(attempt('a1', 'q1', true, 'first'))
+    await db.weeklyReports.bulkPut([weeklyReport('2026-11-16')])
+    await db.aiRequests.bulkPut([aiRequest('r1'), { ...aiRequest('r2'), status: 'failed' }])
+
+    const backup = await exportBackup()
+    expect(backup.schemaVersion).toBe(2)
+    expect(backup.counts.tasks).toBe(2)
+    expect(backup.counts.weeklyReports).toBe(1)
+    expect(backup.counts.aiRequests).toBe(2)
+
+    // 清库（模拟新设备）后导入
+    await Promise.all([
+      db.settings.clear(),
+      db.questions.clear(),
+      db.tasks.clear(),
+      db.attempts.clear(),
+      db.mastery.clear(),
+      db.weeklyReports.clear(),
+      db.aiRequests.clear(),
+      db.contentMeta.clear(),
+    ])
+
+    const parsed = parseAndValidateBackup(JSON.stringify(backup))
+    const result = await importBackup(parsed, 'overwrite', { preImportDownload: () => {} })
+    expect(result.attemptsAdded).toBe(1)
+    expect((await db.tasks.toArray()).map((t) => t.id).sort()).toEqual(['t1', 't2'])
+    expect(await db.weeklyReports.count()).toBe(1)
+    expect(await db.aiRequests.count()).toBe(2)
+    expect((await db.tasks.get('t2'))?.type).toBe('unit')
+  })
+
+  it('v2 文件缺 v2 表数组按空处理', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    const parsed = parseAndValidateBackup(file)
+    expect(parsed.data.tasks).toEqual([])
+    expect(parsed.data.aiRequests).toEqual([])
+    expect(parsed.counts.tasks).toBe(0)
+    expect(parsed.counts.aiRequests).toBe(0)
+  })
+
+  it('v1 文件仍可导入且新表为空', async () => {
+    await upsertQuestions([q('q1')])
+    await saveAttempt(attempt('a1', 'q1', true, 'first'))
+    const v1File = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 1, attempts: 1, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [q('q1')],
+        attempts: [attempt('a1', 'q1', true, 'first')],
+        mastery: [],
+        weeklyReports: [],
+      },
+    })
+    const parsed = parseAndValidateBackup(v1File)
+    expect(parsed.data.tasks).toEqual([])
+    expect(parsed.data.aiRequests).toEqual([])
+    const result = await importBackup(parsed, 'overwrite', { preImportDownload: () => {} })
+    expect(result.attemptsAdded).toBe(1)
+    expect(await db.attempts.count()).toBe(1)
+    expect(await db.tasks.count()).toBe(0)
+  })
+
+  it('畸形 tasks 行拒绝且不写入', async () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 1, aiRequests: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [{ ...task('t1'), status: 'broken' }],
+        aiRequests: [],
+      },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/tasks/)
+    // 校验在导入前拒绝，tasks 表不落任何行
+    await db.tasks.bulkPut([task('local-t')])
+    expect(await db.tasks.count()).toBe(1)
+  })
+
+  it('畸形 weeklyReports 行拒绝且不写入', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 1, tasks: 0, aiRequests: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [{ ...weeklyReport('2026-11-16'), generatedAt: 123 }],
+        tasks: [],
+        aiRequests: [],
+      },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/weeklyReports/)
+  })
+
+  it('畸形 aiRequests 行拒绝且不写入', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 1 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [],
+        aiRequests: [{ ...aiRequest('r1'), status: 42 }],
+      },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/aiRequests/)
+  })
+})
+
+describe('导入前自动安全备份（默认先备份）', () => {
+  it('本地有数据时导入前自动导出并下载（-pre-import 文件名）', async () => {
+    await saveAttempt(attempt('local-a1', 'q1', true, 'first'))
+    const downloads: Array<{ file: BackupFile; fileName: string }> = []
+    const file: BackupFile = {
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+    }
+    await importBackup(file, 'merge', {
+      preImportDownload: (backup, fileName) => downloads.push({ file: backup, fileName }),
+    })
+    expect(downloads.length).toBe(1)
+    expect(downloads[0]?.file.counts.attempts).toBe(1)
+    expect(downloads[0]?.fileName).toMatch(/^english-learning-backup-\d{8}-pre-import\.json$/)
+  })
+
+  it('本地无数据时不触发下载', async () => {
+    const downloads: BackupFile[] = []
+    const file: BackupFile = {
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [],
+        attempts: [attempt('a1', 'q1', true, 'first')],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [],
+        aiRequests: [],
+      },
+    }
+    await importBackup(file, 'overwrite', { preImportDownload: (backup) => downloads.push(backup) })
+    expect(downloads.length).toBe(0)
+    expect(await db.attempts.count()).toBe(1)
+  })
+
+  it('下载失败（用户取消等）不阻断导入，仅 console.warn', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      await saveAttempt(attempt('local-a1', 'q1', true, 'first'))
+      const file: BackupFile = {
+        schemaVersion: 2,
+        app: 'english-coach',
+        exportedAt: 'x',
+        counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+        data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+      }
+      await importBackup(file, 'merge', {
+        preImportDownload: () => {
+          throw new Error('download cancelled')
+        },
+      })
+      // 导入本身成功完成，本地数据未被破坏
+      expect(await db.attempts.count()).toBe(1)
+      expect(warn).toHaveBeenCalled()
+      expect(String(warn.mock.calls[0]?.[0])).toContain('备份')
+    } finally {
+      warn.mockRestore()
+    }
+  })
+})
+
+describe('settings 行校验扩展（防恶意备份注入）', () => {
+  const settingsFile = (value: Record<string, unknown>) =>
+    JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: {
+        settings: [{ key: 'app', value, updatedAt: 'x' }],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [],
+        aiRequests: [],
+      },
+    })
+
+  it('examScores 畸形行（label 非字符串）拒绝且不写入', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, examScores: [{ label: 12, got: 1, total: 2 }] })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/examScores/)
+  })
+  it('examScores got>total 拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, examScores: [{ label: '语法', got: 15, total: 12 }] })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('examScores 非数组拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, examScores: 'x' })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('parentPin 非 4 位数字拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, parentPin: '12345' })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/parentPin/)
+  })
+  it('parentPin 合法（4 位数字）通过', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, parentPin: '1234' })
+    expect(parseAndValidateBackup(file).counts.settings).toBe(1)
+  })
+  it('aiBaseUrl 非字符串拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, aiBaseUrl: 42 })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('aiDailyLimit 非数字拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: '50' })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+})
+
+describe('行校验健壮性（M1 遗留）', () => {
+  it('attempts 行为 null 拒绝（BackupError 而非 TypeError）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 1, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: { settings: [], contentMeta: [], questions: [], attempts: [null], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+  })
+  it('contentMeta 行为 null 拒绝（BackupError 而非 TypeError）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 1, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: { settings: [], contentMeta: [null], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/contentMeta/)
+  })
+  it('counts 缺 key 时解析结果的 counts 补全实际值（预览不显示 undefined）', () => {
+    const file = JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: {},
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [q('q1')],
+        attempts: [attempt('a1', 'q1', true, 'first')],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [task('t1')],
+        aiRequests: [],
+      },
+    })
+    const parsed = parseAndValidateBackup(file)
+    expect(parsed.counts.questions).toBe(1)
+    expect(parsed.counts.attempts).toBe(1)
+    expect(parsed.counts.tasks).toBe(1)
+    expect(parsed.counts.settings).toBe(0)
   })
 })

@@ -43,8 +43,8 @@ export async function applyMasteryUpdate(
   question: Question,
   now: Date = new Date(attempt.submittedAt),
 ): Promise<void> {
-  // 上次 attempt 取提交时间最新的一条（主键为 UUID，索引序不保证时间序）
-  const history = await db.attempts.where('questionId').equals(attempt.questionId).toArray()
+  // 上次 attempt 取提交时间最新的一条（主键为 UUID，索引序不保证时间序）；复用 attemptsForQuestion 消除重复查询
+  const history = await attemptsForQuestion(attempt.questionId)
   const previous = history.reduce<Attempt | undefined>(
     (latest, a) => (latest === undefined || a.submittedAt > latest.submittedAt ? a : latest),
     undefined,
@@ -100,10 +100,14 @@ async function scanWrongQuestionIds(): Promise<Set<string>> {
   return wrong
 }
 
-/** questionId → 知识点列表的查表底座：选择题全量读 questions 表建映射（词题不在表内，由 resolveQuestionKps 兜底） */
-async function kpsByQuestionId(): Promise<Map<string, string[]>> {
+/** questionId → 知识点列表的查表底座：只按需 bulkGet 相关选择题（词题不在表内，由 resolveQuestionKps 兜底）。
+ *  调用方均以"曾答错题集"为查询域，等价于旧的全表建映射，省去无关题目的整表读取。 */
+async function kpsByQuestionId(questionIds: Iterable<string>): Promise<Map<string, string[]>> {
   const kpByQuestionId = new Map<string, string[]>()
-  for (const q of await db.questions.toArray()) kpByQuestionId.set(q.id, q.knowledgePointIds)
+  const rows = await db.questions.bulkGet([...questionIds])
+  for (const q of rows) {
+    if (q) kpByQuestionId.set(q.id, q.knowledgePointIds)
+  }
   return kpByQuestionId
 }
 
@@ -138,8 +142,10 @@ function groupWrongByKp(
 export async function getReviewSet(now: Date = new Date()): Promise<ReviewSet> {
   const nowIso = now.toISOString()
   const todayKey = localDayKey(now)
-  // 索引预筛（nextReviewAt 存本地零点转的 UTC ISO；Dexie 4 的 <= 查询为 belowOrEqual），
-  // 再按本地日口径兜底过滤：正时区下"明日本地零点"的 UTC 值可能早于 now，索引命中但本地日未到期，须剔除
+  // 索引预筛（nextReviewAt 存本地零点转的 UTC ISO；Dexie 4 的 <= 查询为 belowOrEqual）。
+  // 按当前存储约定（nextReviewAt 恒为到期日本地零点）该预筛与本地日口径严格等价：
+  // 到期行的本地零点必然不晚于 now，未到期行的本地零点必然晚于 now；
+  // 其后的本地日过滤是防御性冗余（兜底存储异常的非零点值），并非时区正确性所必需。
   const dueRows = (await db.mastery.where('nextReviewAt').belowOrEqual(nowIso).toArray()).filter(
     (row) => row.nextReviewAt !== undefined && localDayKey(new Date(row.nextReviewAt)) <= todayKey,
   )
@@ -152,7 +158,8 @@ export async function getReviewSet(now: Date = new Date()): Promise<ReviewSet> {
     if (isSameLocalDay(a.submittedAt, todayKey)) doneToday.add(a.questionId)
   })
 
-  const wrongByKp = groupWrongByKp(await scanWrongQuestionIds(), await kpsByQuestionId(), dueKps)
+  const wrong = await scanWrongQuestionIds()
+  const wrongByKp = groupWrongByKp(wrong, await kpsByQuestionId(wrong), dueKps)
 
   // dueRows 按 nextReviewAt 索引序（更逾期在前）传入，轮转顺序随之确定
   return pickReviewQuestions({ now, masteryRows: dueRows, wrongQuestionIdsByKp: wrongByKp, alreadyDoneToday: doneToday })
@@ -194,7 +201,8 @@ export interface PlanInputs {
 /** 知识点 → 全量曾答错题（含词题：不在 questions 表的按 ID 约定派生知识点）。
  *  与 getReviewSet 内部的 wrongByKp 不同：不做 dueKps 过滤，供计划生成做全量专项薄弱度聚合。 */
 async function buildWrongByKp(): Promise<Map<string, string[]>> {
-  return groupWrongByKp(await scanWrongQuestionIds(), await kpsByQuestionId())
+  const wrong = await scanWrongQuestionIds()
+  return groupWrongByKp(wrong, await kpsByQuestionId(wrong))
 }
 
 /** 任务返回顺序（与 generatePlan 生成序一致；tasks 的 day 索引查询按主键字典序返回，

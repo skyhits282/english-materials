@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../../db/schema'
-import { exportBackup, parseAndValidateBackup, importBackup } from './index'
+import { exportBackup, parseAndValidateBackup, importBackup, BackupError, type BackupFile } from './index'
 import { saveAttempt, saveSettings, upsertQuestions, DEFAULT_SETTINGS } from '../../db/repos'
 import { computeCoreMetrics } from '../../domain/metrics'
 import type { Attempt, Question } from '../../types'
@@ -55,6 +55,27 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({ schemaVersion: 1, app: 'english-coach', exportedAt: 'x', counts: { attempts: 5 }, data: { attempts: [] } })
     expect(() => parseAndValidateBackup(file)).toThrow()
   })
+  it('表内重复主键拒绝', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [], contentMeta: [], questions: [q('x1'), q('x1')], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(/重复主键/)
+  })
+  it('注入载荷原样保留在错误消息中（由 UI 转义）', () => {
+    const file = JSON.stringify({ schemaVersion: '<img src=x onerror=alert(1)>', data: {} })
+    let caught: unknown
+    try {
+      parseAndValidateBackup(file)
+    } catch (err) {
+      caught = err
+    }
+    expect(caught).toBeInstanceOf(BackupError)
+    expect((caught as Error).message).toContain('<img src=x onerror=alert(1)>')
+  })
 })
 
 describe('导出→清空→导入（T08）', () => {
@@ -91,5 +112,32 @@ describe('导出→清空→导入（T08）', () => {
     expect(result.attemptsSkipped).toBe(1)
     // 本地 a2 仍在
     expect(await db.attempts.count()).toBe(2)
+  })
+})
+
+describe('覆盖导入事务性', () => {
+  it('中途失败回滚，不清空本地数据', async () => {
+    await upsertQuestions([q('local-q')])
+    await saveAttempt(attempt('local-a1', 'local-q', true, 'first'))
+
+    const file: BackupFile = {
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [q('x1'), q('x1')],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+      },
+    }
+
+    await expect(importBackup(file, 'overwrite')).rejects.toThrow()
+    expect(await db.attempts.count()).toBe(1)
+    expect(await db.attempts.get('local-a1')).toBeDefined()
+    expect(await db.questions.get('local-q')).toBeDefined()
   })
 })

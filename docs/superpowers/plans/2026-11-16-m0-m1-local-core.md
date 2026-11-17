@@ -2589,7 +2589,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '../../db/schema'
-import { exportBackup, parseAndValidateBackup, importBackup } from './index'
+import { exportBackup, parseAndValidateBackup, importBackup, BackupError, type BackupFile } from './index'
 import { saveAttempt, saveSettings, upsertQuestions, DEFAULT_SETTINGS } from '../../db/repos'
 import { computeCoreMetrics } from '../../domain/metrics'
 import type { Attempt, Question } from '../../types'
@@ -2643,6 +2643,27 @@ describe('parseAndValidateBackup', () => {
     const file = JSON.stringify({ schemaVersion: 1, app: 'english-coach', exportedAt: 'x', counts: { attempts: 5 }, data: { attempts: [] } })
     expect(() => parseAndValidateBackup(file)).toThrow()
   })
+  it('表内重复主键拒绝', () => {
+    const file = JSON.stringify({
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: { settings: [], contentMeta: [], questions: [q('x1'), q('x1')], attempts: [], mastery: [], weeklyReports: [] },
+    })
+    expect(() => parseAndValidateBackup(file)).toThrow(/重复主键/)
+  })
+  it('注入载荷原样保留在错误消息中（由 UI 转义）', () => {
+    const file = JSON.stringify({ schemaVersion: '<img src=x onerror=alert(1)>', data: {} })
+    let caught: unknown
+    try {
+      parseAndValidateBackup(file)
+    } catch (err) {
+      caught = err
+    }
+    expect(caught).toBeInstanceOf(BackupError)
+    expect((caught as Error).message).toContain('<img src=x onerror=alert(1)>')
+  })
 })
 
 describe('导出→清空→导入（T08）', () => {
@@ -2679,6 +2700,33 @@ describe('导出→清空→导入（T08）', () => {
     expect(result.attemptsSkipped).toBe(1)
     // 本地 a2 仍在
     expect(await db.attempts.count()).toBe(2)
+  })
+})
+
+describe('覆盖导入事务性', () => {
+  it('中途失败回滚，不清空本地数据', async () => {
+    await upsertQuestions([q('local-q')])
+    await saveAttempt(attempt('local-a1', 'local-q', true, 'first'))
+
+    const file: BackupFile = {
+      schemaVersion: 1,
+      app: 'english-coach',
+      exportedAt: 'x',
+      counts: { settings: 0, contentMeta: 0, questions: 2, attempts: 0, mastery: 0, weeklyReports: 0 },
+      data: {
+        settings: [],
+        contentMeta: [],
+        questions: [q('x1'), q('x1')],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+      },
+    }
+
+    await expect(importBackup(file, 'overwrite')).rejects.toThrow()
+    expect(await db.attempts.count()).toBe(1)
+    expect(await db.attempts.get('local-a1')).toBeDefined()
+    expect(await db.questions.get('local-q')).toBeDefined()
   })
 })
 ```
@@ -2768,6 +2816,22 @@ export function parseAndValidateBackup(text: string): BackupFile {
     const actual = (d as Record<string, unknown[]>)[key]?.length ?? 0
     if (value !== actual) throw new BackupError(`counts.${key}（${value}）与实际数据（${actual}）不一致`)
   }
+  const primaryKeys: Array<[keyof BackupFile['data'], string]> = [
+    ['settings', 'key'],
+    ['contentMeta', 'contentId'],
+    ['questions', 'id'],
+    ['attempts', 'id'],
+    ['mastery', 'knowledgePointId'],
+    ['weeklyReports', 'weekStart'],
+  ]
+  for (const [table, key] of primaryKeys) {
+    const seen = new Set<unknown>()
+    for (const row of d[table] as unknown as Array<Record<string, unknown>>) {
+      const id = row[key]
+      if (seen.has(id)) throw new BackupError(`备份 ${table} 表存在重复主键：${String(id)}`)
+      seen.add(id)
+    }
+  }
   for (const a of d.attempts ?? []) {
     if (!a.id || !a.questionId || typeof a.isCorrect !== 'boolean' || (a.phase !== 'first' && a.phase !== 'retry')) {
       throw new BackupError(`存在非法 attempt 记录：${JSON.stringify(a).slice(0, 120)}`)
@@ -2783,21 +2847,27 @@ export interface ImportSummary {
 
 export async function importBackup(file: BackupFile, mode: 'merge' | 'overwrite'): Promise<ImportSummary> {
   if (mode === 'overwrite') {
-    await Promise.all([
-      db.settings.clear(),
-      db.contentMeta.clear(),
-      db.questions.clear(),
-      db.attempts.clear(),
-      db.mastery.clear(),
-      db.weeklyReports.clear(),
-    ])
-    await db.settings.bulkAdd(file.data.settings)
-    await db.contentMeta.bulkAdd(file.data.contentMeta)
-    await db.questions.bulkAdd(file.data.questions)
-    await db.mastery.bulkAdd(file.data.mastery)
-    await db.weeklyReports.bulkAdd(file.data.weeklyReports)
-    await db.attempts.bulkAdd(file.data.attempts)
-    return { attemptsAdded: file.data.attempts.length, attemptsSkipped: 0 }
+    return db.transaction(
+      'rw',
+      [db.settings, db.contentMeta, db.questions, db.attempts, db.mastery, db.weeklyReports],
+      async () => {
+        await Promise.all([
+          db.settings.clear(),
+          db.contentMeta.clear(),
+          db.questions.clear(),
+          db.attempts.clear(),
+          db.mastery.clear(),
+          db.weeklyReports.clear(),
+        ])
+        await db.settings.bulkAdd(file.data.settings)
+        await db.contentMeta.bulkAdd(file.data.contentMeta)
+        await db.questions.bulkAdd(file.data.questions)
+        await db.mastery.bulkAdd(file.data.mastery)
+        await db.weeklyReports.bulkAdd(file.data.weeklyReports)
+        await db.attempts.bulkAdd(file.data.attempts)
+        return { attemptsAdded: file.data.attempts.length, attemptsSkipped: 0 }
+      },
+    )
   }
   // 合并：题目/元数据 upsert；attempts 只补缺失，绝不改写历史；settings 跳过已有键
   await db.contentMeta.bulkPut(file.data.contentMeta)
@@ -2824,7 +2894,7 @@ export function backupFileName(date = new Date()): string {
 - [ ] **Step 4: 运行测试确认通过**
 
 Run: `npm --prefix app-src run test -- backup`
-Expected: 5 个测试 PASS
+Expected: 8 个测试 PASS
 
 - [ ] **Step 5: 设置页接入备份 UI**
 
@@ -2832,6 +2902,10 @@ Expected: 5 个测试 PASS
 
 ```ts
   import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+  }
 ```
 
 模板中追加（放在 `<div id="backup-slot"></div>` 位置，替换之）：
@@ -2876,14 +2950,14 @@ Expected: 5 个测试 PASS
     if (!preview) return
     const file = input.files?.[0]
     if (!file) return
+    input.value = ''
     let parsed
     try {
       parsed = parseAndValidateBackup(await file.text())
     } catch (err) {
-      preview.innerHTML = `<div class="error-panel">导入失败：${err instanceof BackupError ? err.message : '文件无法解析'}</div>`
+      preview.innerHTML = `<div class="error-panel">导入失败：${escapeHtml(err instanceof BackupError ? err.message : '文件无法解析')}</div>`
       return
     }
-    input.value = ''
     preview.innerHTML = `
       <p>该备份包含 ${parsed.counts.attempts} 条作答、${parsed.counts.questions} 道题、${parsed.counts.settings} 条设置（导出于 ${new Date(parsed.exportedAt).toLocaleString('zh-CN')}）。</p>
       <div class="action-row">

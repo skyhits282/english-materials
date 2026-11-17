@@ -4,6 +4,10 @@ import { fetchContentBundle } from '../content/loader'
 import type { Settings } from '../types'
 import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
 
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+}
+
 export const renderSettings: PageRenderer = async ({ container }) => {
   let stale = false
   const onHashChange = () => { stale = true }
@@ -102,14 +106,14 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     if (!preview) return
     const file = input.files?.[0]
     if (!file) return
+    input.value = ''
     let parsed
     try {
       parsed = parseAndValidateBackup(await file.text())
     } catch (err) {
-      preview.innerHTML = `<div class="error-panel">导入失败：${err instanceof BackupError ? err.message : '文件无法解析'}</div>`
+      preview.innerHTML = `<div class="error-panel">导入失败：${escapeHtml(err instanceof BackupError ? err.message : '文件无法解析')}</div>`
       return
     }
-    input.value = ''
     preview.innerHTML = `
       <p>该备份包含 ${parsed.counts.attempts} 条作答、${parsed.counts.questions} 道题、${parsed.counts.settings} 条设置（导出于 ${new Date(parsed.exportedAt).toLocaleString('zh-CN')}）。</p>
       <div class="action-row">

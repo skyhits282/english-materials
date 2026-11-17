@@ -75,6 +75,22 @@ export function parseAndValidateBackup(text: string): BackupFile {
     const actual = (d as Record<string, unknown[]>)[key]?.length ?? 0
     if (value !== actual) throw new BackupError(`counts.${key}（${value}）与实际数据（${actual}）不一致`)
   }
+  const primaryKeys: Array<[keyof BackupFile['data'], string]> = [
+    ['settings', 'key'],
+    ['contentMeta', 'contentId'],
+    ['questions', 'id'],
+    ['attempts', 'id'],
+    ['mastery', 'knowledgePointId'],
+    ['weeklyReports', 'weekStart'],
+  ]
+  for (const [table, key] of primaryKeys) {
+    const seen = new Set<unknown>()
+    for (const row of d[table] as unknown as Array<Record<string, unknown>>) {
+      const id = row[key]
+      if (seen.has(id)) throw new BackupError(`备份 ${table} 表存在重复主键：${String(id)}`)
+      seen.add(id)
+    }
+  }
   for (const a of d.attempts ?? []) {
     if (!a.id || !a.questionId || typeof a.isCorrect !== 'boolean' || (a.phase !== 'first' && a.phase !== 'retry')) {
       throw new BackupError(`存在非法 attempt 记录：${JSON.stringify(a).slice(0, 120)}`)
@@ -90,21 +106,27 @@ export interface ImportSummary {
 
 export async function importBackup(file: BackupFile, mode: 'merge' | 'overwrite'): Promise<ImportSummary> {
   if (mode === 'overwrite') {
-    await Promise.all([
-      db.settings.clear(),
-      db.contentMeta.clear(),
-      db.questions.clear(),
-      db.attempts.clear(),
-      db.mastery.clear(),
-      db.weeklyReports.clear(),
-    ])
-    await db.settings.bulkAdd(file.data.settings)
-    await db.contentMeta.bulkAdd(file.data.contentMeta)
-    await db.questions.bulkAdd(file.data.questions)
-    await db.mastery.bulkAdd(file.data.mastery)
-    await db.weeklyReports.bulkAdd(file.data.weeklyReports)
-    await db.attempts.bulkAdd(file.data.attempts)
-    return { attemptsAdded: file.data.attempts.length, attemptsSkipped: 0 }
+    return db.transaction(
+      'rw',
+      [db.settings, db.contentMeta, db.questions, db.attempts, db.mastery, db.weeklyReports],
+      async () => {
+        await Promise.all([
+          db.settings.clear(),
+          db.contentMeta.clear(),
+          db.questions.clear(),
+          db.attempts.clear(),
+          db.mastery.clear(),
+          db.weeklyReports.clear(),
+        ])
+        await db.settings.bulkAdd(file.data.settings)
+        await db.contentMeta.bulkAdd(file.data.contentMeta)
+        await db.questions.bulkAdd(file.data.questions)
+        await db.mastery.bulkAdd(file.data.mastery)
+        await db.weeklyReports.bulkAdd(file.data.weeklyReports)
+        await db.attempts.bulkAdd(file.data.attempts)
+        return { attemptsAdded: file.data.attempts.length, attemptsSkipped: 0 }
+      },
+    )
   }
   // 合并：题目/元数据 upsert；attempts 只补缺失，绝不改写历史；settings 跳过已有键
   await db.contentMeta.bulkPut(file.data.contentMeta)

@@ -1,0 +1,1732 @@
+{
+  "book": "g7a",
+  "contentVersion": "2026-11-16",
+  "units": [
+    {
+      "id": "v1-u1",
+      "order": 1,
+      "label": "Starter Unit 1",
+      "words": [
+        {
+          "id": "v1-u1-1",
+          "no": 1,
+          "word": "unit",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈjuːnɪt/",
+          "meaning": "单元"
+        },
+        {
+          "id": "v1-u1-2",
+          "no": 2,
+          "word": "greet",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/ɡriːt/",
+          "meaning": "招呼；问候"
+        },
+        {
+          "id": "v1-u1-3",
+          "no": 3,
+          "word": "each",
+          "variant": "",
+          "pos": "adj. & pron.",
+          "ipa": "/iːtʃ/",
+          "meaning": "每个；各自"
+        },
+        {
+          "id": "v1-u1-4",
+          "no": 4,
+          "word": "other",
+          "variant": "",
+          "pos": "pron. & adj.",
+          "ipa": "/ˈʌðə(r)/",
+          "meaning": "另外的人（或物）；另外的；其他的"
+        },
+        {
+          "id": "v1-u1-5",
+          "no": 5,
+          "word": "everyone",
+          "variant": "",
+          "pos": "pron.",
+          "ipa": "/ˈevriwʌn/",
+          "meaning": "每人；所有人"
+        },
+        {
+          "id": "v1-u1-6",
+          "no": 6,
+          "word": "start",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/stɑːt/",
+          "meaning": "开始；着手"
+        },
+        {
+          "id": "v1-u1-7",
+          "no": 7,
+          "word": "conversation",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˌkɒnvəˈseɪʃn/",
+          "meaning": "谈话；交谈"
+        },
+        {
+          "id": "v1-u1-8",
+          "no": 8,
+          "word": "spell",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/spel/",
+          "meaning": "用字母拼；拼写"
+        },
+        {
+          "id": "v1-u1-9",
+          "no": 9,
+          "word": "bell",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/bel/",
+          "meaning": "铃（声）；钟（声）"
+        }
+      ]
+    },
+    {
+      "id": "v1-u2",
+      "order": 2,
+      "label": "Starter Unit 2",
+      "words": [
+        {
+          "id": "v1-u2-1",
+          "no": 1,
+          "word": "bottle",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈbɒtl/",
+          "meaning": "瓶子"
+        },
+        {
+          "id": "v1-u2-2",
+          "no": 2,
+          "word": "eraser",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ɪˈreɪzə(r)/",
+          "meaning": "橡皮"
+        },
+        {
+          "id": "v1-u2-3",
+          "no": 3,
+          "word": "key",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/kiː/",
+          "meaning": "钥匙；关键"
+        },
+        {
+          "id": "v1-u2-4",
+          "no": 4,
+          "word": "thing",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/θɪŋ/",
+          "meaning": "东西；事情"
+        },
+        {
+          "id": "v1-u2-5",
+          "no": 5,
+          "word": "need",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/niːd/",
+          "meaning": "需要"
+        }
+      ]
+    },
+    {
+      "id": "v1-u3",
+      "order": 3,
+      "label": "Starter Unit 3",
+      "words": [
+        {
+          "id": "v1-u3-1",
+          "no": 1,
+          "word": "fun",
+          "variant": "",
+          "pos": "n. & adj.",
+          "ipa": "/fʌn/",
+          "meaning": "快乐；乐趣；有趣的；使人快乐的"
+        },
+        {
+          "id": "v1-u3-2",
+          "no": 2,
+          "word": "yard",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/jɑːd/",
+          "meaning": "院子；园圃"
+        },
+        {
+          "id": "v1-u3-3",
+          "no": 3,
+          "word": "carrot",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈkærət/",
+          "meaning": "胡萝卜"
+        },
+        {
+          "id": "v1-u3-4",
+          "no": 4,
+          "word": "count",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/kaʊnt/",
+          "meaning": "数数"
+        },
+        {
+          "id": "v1-u3-5",
+          "no": 5,
+          "word": "another",
+          "variant": "",
+          "pos": "adj. & pron.",
+          "ipa": "/əˈnʌðə(r)/",
+          "meaning": "另一；又一"
+        },
+        {
+          "id": "v1-u3-6",
+          "no": 6,
+          "word": "else",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/els/",
+          "meaning": "其他的；别的"
+        },
+        {
+          "id": "v1-u3-7",
+          "no": 7,
+          "word": "circle",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/ˈsɜːkl/",
+          "meaning": "圈出；圆形；圆圈"
+        }
+      ]
+    },
+    {
+      "id": "v1-u4",
+      "order": 4,
+      "label": "Unit 1",
+      "words": [
+        {
+          "id": "v1-u4-1",
+          "no": 1,
+          "word": "full",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/fʊl/",
+          "meaning": "完整的；满的"
+        },
+        {
+          "id": "v1-u4-2",
+          "no": 2,
+          "word": "grade",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ɡreɪd/",
+          "meaning": "年级；等级"
+        },
+        {
+          "id": "v1-u4-3",
+          "no": 3,
+          "word": "classmate",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈklɑːsmeɪt/",
+          "meaning": "同班同学"
+        },
+        {
+          "id": "v1-u4-4",
+          "no": 4,
+          "word": "mistake",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/mɪˈsteɪk/",
+          "meaning": "错误；失误"
+        },
+        {
+          "id": "v1-u4-5",
+          "no": 5,
+          "word": "country",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈkʌntri/",
+          "meaning": "国家"
+        },
+        {
+          "id": "v1-u4-6",
+          "no": 6,
+          "word": "same",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/seɪm/",
+          "meaning": "相同的"
+        },
+        {
+          "id": "v1-u4-7",
+          "no": 7,
+          "word": "both",
+          "variant": "",
+          "pos": "adj. & pron.",
+          "ipa": "/bəʊθ/",
+          "meaning": "两个；两个都"
+        },
+        {
+          "id": "v1-u4-8",
+          "no": 8,
+          "word": "band",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/bænd/",
+          "meaning": "乐队"
+        },
+        {
+          "id": "v1-u4-9",
+          "no": 9,
+          "word": "pot",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/pɒt/",
+          "meaning": "锅"
+        },
+        {
+          "id": "v1-u4-10",
+          "no": 10,
+          "word": "tofu",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈtəʊfuː/",
+          "meaning": "豆腐"
+        },
+        {
+          "id": "v1-u4-11",
+          "no": 11,
+          "word": "guitar",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ɡɪˈtɑː(r)/",
+          "meaning": "吉他"
+        },
+        {
+          "id": "v1-u4-12",
+          "no": 12,
+          "word": "tennis",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈtenɪs/",
+          "meaning": "网球"
+        },
+        {
+          "id": "v1-u4-13",
+          "no": 13,
+          "word": "page",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/peɪdʒ/",
+          "meaning": "页面；（书刊或纸张）页"
+        },
+        {
+          "id": "v1-u4-14",
+          "no": 14,
+          "word": "even",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ˈiːvn/",
+          "meaning": "甚至；连；愈加"
+        },
+        {
+          "id": "v1-u4-15",
+          "no": 15,
+          "word": "would",
+          "variant": "",
+          "pos": "modal v.",
+          "ipa": "/wʊd/",
+          "meaning": "想；将会"
+        },
+        {
+          "id": "v1-u4-16",
+          "no": 16,
+          "word": "information",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˌɪnfəˈmeɪʃn/",
+          "meaning": "信息；消息"
+        },
+        {
+          "id": "v1-u4-17",
+          "no": 17,
+          "word": "hobby",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈhɒbi/",
+          "meaning": "业余爱好"
+        }
+      ]
+    },
+    {
+      "id": "v1-u5",
+      "order": 5,
+      "label": "Unit 2",
+      "words": [
+        {
+          "id": "v1-u5-1",
+          "no": 1,
+          "word": "mean",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/miːn/",
+          "meaning": "意思是；打算"
+        },
+        {
+          "id": "v1-u5-2",
+          "no": 2,
+          "word": "husband",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈhʌzbənd/",
+          "meaning": "丈夫"
+        },
+        {
+          "id": "v1-u5-3",
+          "no": 3,
+          "word": "bat",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/bæt/",
+          "meaning": "球棒；球拍"
+        },
+        {
+          "id": "v1-u5-4",
+          "no": 4,
+          "word": "together",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/təˈɡeðə(r)/",
+          "meaning": "在一起；共同"
+        },
+        {
+          "id": "v1-u5-5",
+          "no": 5,
+          "word": "spend",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/spend/",
+          "meaning": "花（时间、钱等）"
+        },
+        {
+          "id": "v1-u5-6",
+          "no": 6,
+          "word": "really",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ˈrɪəli/",
+          "meaning": "非常；确实；真正地"
+        },
+        {
+          "id": "v1-u5-7",
+          "no": 7,
+          "word": "member",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈmembə(r)/",
+          "meaning": "成员；会员"
+        },
+        {
+          "id": "v1-u5-8",
+          "no": 8,
+          "word": "activity",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ækˈtɪvəti/",
+          "meaning": "活动"
+        },
+        {
+          "id": "v1-u5-9",
+          "no": 9,
+          "word": "chess",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/tʃes/",
+          "meaning": "国际象棋"
+        },
+        {
+          "id": "v1-u5-10",
+          "no": 10,
+          "word": "funny",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈfʌni/",
+          "meaning": "好笑的；奇怪的"
+        },
+        {
+          "id": "v1-u5-11",
+          "no": 11,
+          "word": "laugh",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/lɑːf/",
+          "meaning": "笑；发笑；笑声"
+        },
+        {
+          "id": "v1-u5-12",
+          "no": 12,
+          "word": "different",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈdɪfrənt/",
+          "meaning": "不同的"
+        },
+        {
+          "id": "v1-u5-13",
+          "no": 13,
+          "word": "violin",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˌvaɪəˈlɪn/",
+          "meaning": "小提琴"
+        },
+        {
+          "id": "v1-u5-14",
+          "no": 14,
+          "word": "hat",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/hæt/",
+          "meaning": "帽子"
+        },
+        {
+          "id": "v1-u5-15",
+          "no": 15,
+          "word": "handsome",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈhænsəm/",
+          "meaning": "英俊的"
+        },
+        {
+          "id": "v1-u5-16",
+          "no": 16,
+          "word": "knee",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/niː/",
+          "meaning": "膝；膝盖"
+        },
+        {
+          "id": "v1-u5-17",
+          "no": 17,
+          "word": "son",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/sʌn/",
+          "meaning": "儿子"
+        },
+        {
+          "id": "v1-u5-18",
+          "no": 18,
+          "word": "hike",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/haɪk/",
+          "meaning": "远足；徒步旅行"
+        }
+      ]
+    },
+    {
+      "id": "v1-u6",
+      "order": 6,
+      "label": "Unit 3",
+      "words": [
+        {
+          "id": "v1-u6-1",
+          "no": 1,
+          "word": "hall",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/hɔːl/",
+          "meaning": "礼堂；大厅"
+        },
+        {
+          "id": "v1-u6-2",
+          "no": 2,
+          "word": "dining hall",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈdaɪnɪŋ hɔːl/",
+          "meaning": "餐厅"
+        },
+        {
+          "id": "v1-u6-3",
+          "no": 3,
+          "word": "building",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈbɪldɪŋ/",
+          "meaning": "建筑物；房子"
+        },
+        {
+          "id": "v1-u6-4",
+          "no": 4,
+          "word": "across",
+          "variant": "",
+          "pos": "prep. & adv.",
+          "ipa": "/əˈkrɒs/",
+          "meaning": "过；穿过"
+        },
+        {
+          "id": "v1-u6-5",
+          "no": 5,
+          "word": "centre",
+          "variant": "center",
+          "pos": "n.",
+          "ipa": "/ˈsentə(r)/",
+          "meaning": "中心；中央"
+        },
+        {
+          "id": "v1-u6-6",
+          "no": 6,
+          "word": "gym",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/dʒɪm/",
+          "meaning": "体育馆；健身房；（学校）体育活动"
+        },
+        {
+          "id": "v1-u6-7",
+          "no": 7,
+          "word": "field",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/fiːld/",
+          "meaning": "场地；田地"
+        },
+        {
+          "id": "v1-u6-8",
+          "no": 8,
+          "word": "office",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈɒfɪs/",
+          "meaning": "办公室"
+        },
+        {
+          "id": "v1-u6-9",
+          "no": 9,
+          "word": "large",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/lɑːdʒ/",
+          "meaning": "大的；大号的"
+        },
+        {
+          "id": "v1-u6-10",
+          "no": 10,
+          "word": "special",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈspeʃl/",
+          "meaning": "特别的；特殊的"
+        },
+        {
+          "id": "v1-u6-11",
+          "no": 11,
+          "word": "smart",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/smɑːt/",
+          "meaning": "智能的；聪明的"
+        },
+        {
+          "id": "v1-u6-12",
+          "no": 12,
+          "word": "important",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ɪmˈpɔːtnt/",
+          "meaning": "重要的"
+        },
+        {
+          "id": "v1-u6-13",
+          "no": 13,
+          "word": "notice",
+          "variant": "",
+          "pos": "n. & v.",
+          "ipa": "/ˈnəʊtɪs/",
+          "meaning": "通知；注意；注意到；意识到"
+        },
+        {
+          "id": "v1-u6-14",
+          "no": 14,
+          "word": "locker",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈlɒkə(r)/",
+          "meaning": "有锁存物柜；寄物柜"
+        },
+        {
+          "id": "v1-u6-15",
+          "no": 15,
+          "word": "corner",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈkɔːnə(r)/",
+          "meaning": "角；墙角；街角"
+        },
+        {
+          "id": "v1-u6-16",
+          "no": 16,
+          "word": "screen",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/skriːn/",
+          "meaning": "屏幕；银幕"
+        },
+        {
+          "id": "v1-u6-17",
+          "no": 17,
+          "word": "modern",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈmɒdn/",
+          "meaning": "现代的；当代的"
+        },
+        {
+          "id": "v1-u6-18",
+          "no": 18,
+          "word": "amazing",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/əˈmeɪzɪŋ/",
+          "meaning": "令人惊奇（喜/叹）的"
+        },
+        {
+          "id": "v1-u6-19",
+          "no": 19,
+          "word": "raise",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/reɪz/",
+          "meaning": "使升高；提高"
+        },
+        {
+          "id": "v1-u6-20",
+          "no": 20,
+          "word": "flag",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/flæɡ/",
+          "meaning": "旗；旗帜"
+        },
+        {
+          "id": "v1-u6-21",
+          "no": 21,
+          "word": "most",
+          "variant": "",
+          "pos": "adj. & pron. & adv.",
+          "ipa": "/məʊst/",
+          "meaning": "大多数；最多（大）；最"
+        },
+        {
+          "id": "v1-u6-22",
+          "no": 22,
+          "word": "change",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/tʃeɪndʒ/",
+          "meaning": "改变；变化"
+        },
+        {
+          "id": "v1-u6-23",
+          "no": 23,
+          "word": "seat",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/siːt/",
+          "meaning": "座位"
+        },
+        {
+          "id": "v1-u6-24",
+          "no": 24,
+          "word": "delicious",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/dɪˈlɪʃəs/",
+          "meaning": "美味的；可口的"
+        },
+        {
+          "id": "v1-u6-25",
+          "no": 25,
+          "word": "yours",
+          "variant": "",
+          "pos": "pron.",
+          "ipa": "/jɔːz/",
+          "meaning": "你的；您的"
+        },
+        {
+          "id": "v1-u6-26",
+          "no": 26,
+          "word": "send",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/send/",
+          "meaning": "发送；邮寄"
+        },
+        {
+          "id": "v1-u6-27",
+          "no": 27,
+          "word": "similar",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈsɪmələ(r)/",
+          "meaning": "类似的；相像的"
+        },
+        {
+          "id": "v1-u6-28",
+          "no": 28,
+          "word": "sound",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/saʊnd/",
+          "meaning": "听起来；好像；声音；响声"
+        }
+      ]
+    },
+    {
+      "id": "v1-u7",
+      "order": 7,
+      "label": "Unit 4",
+      "words": [
+        {
+          "id": "v1-u7-1",
+          "no": 1,
+          "word": "biology",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/baɪˈɒlədʒi/",
+          "meaning": "生物学"
+        },
+        {
+          "id": "v1-u7-2",
+          "no": 2,
+          "word": "geography",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/dʒiˈɒɡrəfi/",
+          "meaning": "地理（学）"
+        },
+        {
+          "id": "v1-u7-3",
+          "no": 3,
+          "word": "history",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈhɪstri/",
+          "meaning": "历史；历史课"
+        },
+        {
+          "id": "v1-u7-4",
+          "no": 4,
+          "word": "boring",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈbɔːrɪŋ/",
+          "meaning": "乏味的；令人生厌的"
+        },
+        {
+          "id": "v1-u7-5",
+          "no": 5,
+          "word": "useful",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈjuːsfl/",
+          "meaning": "有用的；有益的"
+        },
+        {
+          "id": "v1-u7-6",
+          "no": 6,
+          "word": "exciting",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ɪkˈsaɪtɪŋ/",
+          "meaning": "令人激动的；使人兴奋的"
+        },
+        {
+          "id": "v1-u7-7",
+          "no": 7,
+          "word": "past",
+          "variant": "",
+          "pos": "n. & adj. & prep.",
+          "ipa": "/pɑːst/",
+          "meaning": "过去；过去的事情；过去的；在……之后"
+        },
+        {
+          "id": "v1-u7-8",
+          "no": 8,
+          "word": "number",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈnʌmbə(r)/",
+          "meaning": "数字；号码"
+        },
+        {
+          "id": "v1-u7-9",
+          "no": 9,
+          "word": "reason",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈriːzn/",
+          "meaning": "原因；理由"
+        },
+        {
+          "id": "v1-u7-10",
+          "no": 10,
+          "word": "remember",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/rɪˈmembə(r)/",
+          "meaning": "记住；记起"
+        },
+        {
+          "id": "v1-u7-11",
+          "no": 11,
+          "word": "as",
+          "variant": "",
+          "pos": "prep. & conj.",
+          "ipa": "/əz/",
+          "meaning": "如同；作为；当……时；由于"
+        },
+        {
+          "id": "v1-u7-12",
+          "no": 12,
+          "word": "AM",
+          "variant": "",
+          "pos": "abbr.",
+          "ipa": "/ˌeɪ ˈem/",
+          "meaning": "上午"
+        },
+        {
+          "id": "v1-u7-13",
+          "no": 13,
+          "word": "PM",
+          "variant": "",
+          "pos": "abbr.",
+          "ipa": "/ˌpiː ˈem/",
+          "meaning": "下午；午后"
+        },
+        {
+          "id": "v1-u7-14",
+          "no": 14,
+          "word": "excellent",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈeksələnt/",
+          "meaning": "优秀的；极好的"
+        },
+        {
+          "id": "v1-u7-15",
+          "no": 15,
+          "word": "instrument",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈɪnstrəmənt/",
+          "meaning": "器械；工具"
+        },
+        {
+          "id": "v1-u7-16",
+          "no": 16,
+          "word": "singer",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈsɪŋə(r)/",
+          "meaning": "歌手"
+        },
+        {
+          "id": "v1-u7-17",
+          "no": 17,
+          "word": "future",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈfjuːtʃə(r)/",
+          "meaning": "将来；未来"
+        },
+        {
+          "id": "v1-u7-18",
+          "no": 18,
+          "word": "term",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/tɜːm/",
+          "meaning": "学期"
+        },
+        {
+          "id": "v1-u7-19",
+          "no": 19,
+          "word": "problem",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈprɒbləm/",
+          "meaning": "难题；困难"
+        },
+        {
+          "id": "v1-u7-20",
+          "no": 20,
+          "word": "magic",
+          "variant": "",
+          "pos": "n. & adj.",
+          "ipa": "/ˈmædʒɪk/",
+          "meaning": "魔法；魔力；魔术；有魔力的；有神奇力量的"
+        },
+        {
+          "id": "v1-u7-21",
+          "no": 21,
+          "word": "life",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/laɪf/",
+          "meaning": "生命；生活"
+        },
+        {
+          "id": "v1-u7-22",
+          "no": 22,
+          "word": "scientist",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈsaɪəntɪst/",
+          "meaning": "科学家"
+        }
+      ]
+    },
+    {
+      "id": "v1-u8",
+      "order": 8,
+      "label": "Unit 5",
+      "words": [
+        {
+          "id": "v1-u8-1",
+          "no": 1,
+          "word": "club",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/klʌb/",
+          "meaning": "俱乐部；社团"
+        },
+        {
+          "id": "v1-u8-2",
+          "no": 2,
+          "word": "join",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/dʒɔɪn/",
+          "meaning": "参加；加入"
+        },
+        {
+          "id": "v1-u8-3",
+          "no": 3,
+          "word": "choose",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/tʃuːz/",
+          "meaning": "选择；挑选"
+        },
+        {
+          "id": "v1-u8-4",
+          "no": 4,
+          "word": "drama",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈdrɑːmə/",
+          "meaning": "戏剧；戏剧表演"
+        },
+        {
+          "id": "v1-u8-5",
+          "no": 5,
+          "word": "feeling",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈfiːlɪŋ/",
+          "meaning": "感觉；情感"
+        },
+        {
+          "id": "v1-u8-6",
+          "no": 6,
+          "word": "news",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/njuːz/",
+          "meaning": "消息；新闻"
+        },
+        {
+          "id": "v1-u8-7",
+          "no": 7,
+          "word": "musical",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈmjuːzɪkl/",
+          "meaning": "音乐的；有音乐天赋的"
+        },
+        {
+          "id": "v1-u8-8",
+          "no": 8,
+          "word": "exactly",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ɪɡˈzæktli/",
+          "meaning": "正是如此；准确地"
+        },
+        {
+          "id": "v1-u8-9",
+          "no": 9,
+          "word": "ability",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/əˈbɪləti/",
+          "meaning": "能力；才能"
+        },
+        {
+          "id": "v1-u8-10",
+          "no": 10,
+          "word": "paint",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/peɪnt/",
+          "meaning": "用颜料画；在……上刷油漆；油漆；涂料"
+        },
+        {
+          "id": "v1-u8-11",
+          "no": 11,
+          "word": "climb",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/klaɪm/",
+          "meaning": "攀登；爬"
+        },
+        {
+          "id": "v1-u8-12",
+          "no": 12,
+          "word": "more",
+          "variant": "",
+          "pos": "adj. & pron.",
+          "ipa": "/mɔː(r)/",
+          "meaning": "更多（的）"
+        },
+        {
+          "id": "v1-u8-13",
+          "no": 13,
+          "word": "act",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/ækt/",
+          "meaning": "扮演；行动；（戏剧等）一幕；行动"
+        },
+        {
+          "id": "v1-u8-14",
+          "no": 14,
+          "word": "interested",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈɪntrəstɪd/",
+          "meaning": "感兴趣的"
+        },
+        {
+          "id": "v1-u8-15",
+          "no": 15,
+          "word": "nature",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈneɪtʃə(r)/",
+          "meaning": "自然界；大自然"
+        },
+        {
+          "id": "v1-u8-16",
+          "no": 16,
+          "word": "beef",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/biːf/",
+          "meaning": "牛肉"
+        },
+        {
+          "id": "v1-u8-17",
+          "no": 17,
+          "word": "soon",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/suːn/",
+          "meaning": "不久；很快"
+        },
+        {
+          "id": "v1-u8-18",
+          "no": 18,
+          "word": "than",
+          "variant": "",
+          "pos": "prep. & conj.",
+          "ipa": "/ðən/",
+          "meaning": "比"
+        },
+        {
+          "id": "v1-u8-19",
+          "no": 19,
+          "word": "mind",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/maɪnd/",
+          "meaning": "头脑；心思"
+        },
+        {
+          "id": "v1-u8-20",
+          "no": 20,
+          "word": "fall",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/fɔːl/",
+          "meaning": "进入；掉落；跌倒；（美式）秋天"
+        },
+        {
+          "id": "v1-u8-21",
+          "no": 21,
+          "word": "collect",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/kəˈlekt/",
+          "meaning": "收集；采集"
+        },
+        {
+          "id": "v1-u8-22",
+          "no": 22,
+          "word": "insect",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈɪnsekt/",
+          "meaning": "昆虫"
+        },
+        {
+          "id": "v1-u8-23",
+          "no": 23,
+          "word": "discover",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/dɪˈskʌvə(r)/",
+          "meaning": "发现；发觉"
+        }
+      ]
+    },
+    {
+      "id": "v1-u9",
+      "order": 9,
+      "label": "Unit 6",
+      "words": [
+        {
+          "id": "v1-u9-1",
+          "no": 1,
+          "word": "quarter",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈkwɔːtə(r)/",
+          "meaning": "一刻钟；四等份之一"
+        },
+        {
+          "id": "v1-u9-2",
+          "no": 2,
+          "word": "shower",
+          "variant": "",
+          "pos": "n. & v.",
+          "ipa": "/ˈʃaʊə(r)/",
+          "meaning": "淋浴；淋浴器；洗淋浴"
+        },
+        {
+          "id": "v1-u9-3",
+          "no": 3,
+          "word": "brush",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/brʌʃ/",
+          "meaning": "（用刷子）刷；刷子；画笔"
+        },
+        {
+          "id": "v1-u9-4",
+          "no": 4,
+          "word": "tooth",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/tuːθ/",
+          "meaning": "牙齿"
+        },
+        {
+          "id": "v1-u9-5",
+          "no": 5,
+          "word": "duty",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈdjuːti/",
+          "meaning": "值班；职责"
+        },
+        {
+          "id": "v1-u9-6",
+          "no": 6,
+          "word": "usually",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ˈjuːʒuəli/",
+          "meaning": "通常地；一般地"
+        },
+        {
+          "id": "v1-u9-7",
+          "no": 7,
+          "word": "reporter",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/rɪˈpɔːtə(r)/",
+          "meaning": "记者"
+        },
+        {
+          "id": "v1-u9-8",
+          "no": 8,
+          "word": "around",
+          "variant": "",
+          "pos": "prep. & adv.",
+          "ipa": "/əˈraʊnd/",
+          "meaning": "大约；环绕；到处"
+        },
+        {
+          "id": "v1-u9-9",
+          "no": 9,
+          "word": "homework",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈhəʊmwɜːk/",
+          "meaning": "家庭作业"
+        },
+        {
+          "id": "v1-u9-10",
+          "no": 10,
+          "word": "rise",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/raɪz/",
+          "meaning": "起床；升起；增长；增加；增强"
+        },
+        {
+          "id": "v1-u9-11",
+          "no": 11,
+          "word": "stay",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/steɪ/",
+          "meaning": "停留；待"
+        },
+        {
+          "id": "v1-u9-12",
+          "no": 12,
+          "word": "restaurant",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈrestrɒnt/",
+          "meaning": "餐馆；餐厅"
+        },
+        {
+          "id": "v1-u9-13",
+          "no": 13,
+          "word": "housework",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈhaʊswɜːk/",
+          "meaning": "家务劳动"
+        },
+        {
+          "id": "v1-u9-14",
+          "no": 14,
+          "word": "while",
+          "variant": "",
+          "pos": "n. & conj.",
+          "ipa": "/waɪl/",
+          "meaning": "一段时间；一会儿；在……期间；当……的时候"
+        },
+        {
+          "id": "v1-u9-15",
+          "no": 15,
+          "word": "weekend",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˌwiːkˈend/",
+          "meaning": "周末"
+        },
+        {
+          "id": "v1-u9-16",
+          "no": 16,
+          "word": "daily",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈdeɪli/",
+          "meaning": "每日的；日常的"
+        },
+        {
+          "id": "v1-u9-17",
+          "no": 17,
+          "word": "only",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ˈəʊnli/",
+          "meaning": "只；仅"
+        },
+        {
+          "id": "v1-u9-18",
+          "no": 18,
+          "word": "break",
+          "variant": "",
+          "pos": "n. & v.",
+          "ipa": "/breɪk/",
+          "meaning": "休息；间断；使（破碎）；损坏"
+        },
+        {
+          "id": "v1-u9-19",
+          "no": 19,
+          "word": "finish",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/ˈfɪnɪʃ/",
+          "meaning": "结束；完成"
+        },
+        {
+          "id": "v1-u9-20",
+          "no": 20,
+          "word": "already",
+          "variant": "",
+          "pos": "adv.",
+          "ipa": "/ɔːlˈredi/",
+          "meaning": "已经；早已"
+        },
+        {
+          "id": "v1-u9-21",
+          "no": 21,
+          "word": "dark",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/dɑːk/",
+          "meaning": "昏暗的；深色的"
+        },
+        {
+          "id": "v1-u9-22",
+          "no": 22,
+          "word": "outside",
+          "variant": "",
+          "pos": "adv. & adj. & prep.",
+          "ipa": "/ˌaʊtˈsaɪd/",
+          "meaning": "在外面；外面的；在……外面"
+        },
+        {
+          "id": "v1-u9-23",
+          "no": 23,
+          "word": "part",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/pɑːt/",
+          "meaning": "部分"
+        },
+        {
+          "id": "v1-u9-24",
+          "no": 24,
+          "word": "everyday",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈevrideɪ/",
+          "meaning": "每天的；日常的"
+        },
+        {
+          "id": "v1-u9-25",
+          "no": 25,
+          "word": "prepare",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/prɪˈpeə(r)/",
+          "meaning": "把……预备好；准备"
+        }
+      ]
+    },
+    {
+      "id": "v1-u10",
+      "order": 10,
+      "label": "Unit 7",
+      "words": [
+        {
+          "id": "v1-u10-1",
+          "no": 1,
+          "word": "celebrate",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/ˈselɪbreɪt/",
+          "meaning": "庆祝；庆贺"
+        },
+        {
+          "id": "v1-u10-2",
+          "no": 2,
+          "word": "surprise",
+          "variant": "",
+          "pos": "n. & v.",
+          "ipa": "/səˈpraɪz/",
+          "meaning": "惊奇；惊讶；使感到意外"
+        },
+        {
+          "id": "v1-u10-3",
+          "no": 3,
+          "word": "something",
+          "variant": "",
+          "pos": "pron.",
+          "ipa": "/ˈsʌmθɪŋ/",
+          "meaning": "某物；某事"
+        },
+        {
+          "id": "v1-u10-4",
+          "no": 4,
+          "word": "sale",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/seɪl/",
+          "meaning": "出售；销售"
+        },
+        {
+          "id": "v1-u10-5",
+          "no": 5,
+          "word": "kilo",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈkiːləʊ/",
+          "meaning": "千克；公斤"
+        },
+        {
+          "id": "v1-u10-6",
+          "no": 6,
+          "word": "yogurt",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈjɒɡət/",
+          "meaning": "酸奶"
+        },
+        {
+          "id": "v1-u10-7",
+          "no": 7,
+          "word": "total",
+          "variant": "",
+          "pos": "n. & adj.",
+          "ipa": "/ˈtəʊtl/",
+          "meaning": "总数；合计；总的；全体的"
+        },
+        {
+          "id": "v1-u10-8",
+          "no": 8,
+          "word": "price",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/praɪs/",
+          "meaning": "价格"
+        },
+        {
+          "id": "v1-u10-9",
+          "no": 9,
+          "word": "balloon",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/bəˈluːn/",
+          "meaning": "气球"
+        },
+        {
+          "id": "v1-u10-10",
+          "no": 10,
+          "word": "chocolate",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈtʃɒklət/",
+          "meaning": "巧克力"
+        },
+        {
+          "id": "v1-u10-11",
+          "no": 11,
+          "word": "pizza",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈpiːtsə/",
+          "meaning": "比萨饼"
+        },
+        {
+          "id": "v1-u10-12",
+          "no": 12,
+          "word": "list",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/lɪst/",
+          "meaning": "列表；列清单；名单；清单"
+        },
+        {
+          "id": "v1-u10-13",
+          "no": 13,
+          "word": "own",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/əʊn/",
+          "meaning": "自己的；本人的"
+        },
+        {
+          "id": "v1-u10-14",
+          "no": 14,
+          "word": "example",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ɪɡˈzɑːmpl/",
+          "meaning": "例子；范例"
+        },
+        {
+          "id": "v1-u10-15",
+          "no": 15,
+          "word": "language",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈlæŋɡwɪdʒ/",
+          "meaning": "语言"
+        },
+        {
+          "id": "v1-u10-16",
+          "no": 16,
+          "word": "international",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˌɪntəˈnæʃnəl/",
+          "meaning": "国际的"
+        },
+        {
+          "id": "v1-u10-17",
+          "no": 17,
+          "word": "mark",
+          "variant": "",
+          "pos": "v. & n.",
+          "ipa": "/mɑːk/",
+          "meaning": "做记号；纪念；打分；记号"
+        },
+        {
+          "id": "v1-u10-18",
+          "no": 18,
+          "word": "national",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈnæʃnəl/",
+          "meaning": "国家的；民族的"
+        },
+        {
+          "id": "v1-u10-19",
+          "no": 19,
+          "word": "found",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/faʊnd/",
+          "meaning": "创建；创立"
+        },
+        {
+          "id": "v1-u10-20",
+          "no": 20,
+          "word": "meaningful",
+          "variant": "",
+          "pos": "adj.",
+          "ipa": "/ˈmiːnɪŋfl/",
+          "meaning": "有意义的；重要的"
+        },
+        {
+          "id": "v1-u10-21",
+          "no": 21,
+          "word": "celebration",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˌselɪˈbreɪʃn/",
+          "meaning": "庆典；庆祝（活动）"
+        },
+        {
+          "id": "v1-u10-22",
+          "no": 22,
+          "word": "post",
+          "variant": "",
+          "pos": "n. & v.",
+          "ipa": "/pəʊst/",
+          "meaning": "帖子；邮政；邮寄；发布"
+        },
+        {
+          "id": "v1-u10-23",
+          "no": 23,
+          "word": "symbol",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈsɪmbl/",
+          "meaning": "象征；符号"
+        },
+        {
+          "id": "v1-u10-24",
+          "no": 24,
+          "word": "village",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/ˈvɪlɪdʒ/",
+          "meaning": "村庄；村镇"
+        },
+        {
+          "id": "v1-u10-25",
+          "no": 25,
+          "word": "grow",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/ɡrəʊ/",
+          "meaning": "成长；长大；增长"
+        },
+        {
+          "id": "v1-u10-26",
+          "no": 26,
+          "word": "blow",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/bləʊ/",
+          "meaning": "吹；刮"
+        },
+        {
+          "id": "v1-u10-27",
+          "no": 27,
+          "word": "enjoy",
+          "variant": "",
+          "pos": "v.",
+          "ipa": "/ɪnˈdʒɔɪ/",
+          "meaning": "享受……的乐趣；喜欢"
+        },
+        {
+          "id": "v1-u10-28",
+          "no": 28,
+          "word": "height",
+          "variant": "",
+          "pos": "n.",
+          "ipa": "/haɪt/",
+          "meaning": "身高；高度"
+        },
+        {
+          "id": "v1-u10-29",
+          "no": 29,
+          "word": "later",
+          "variant": "",
+          "pos": "adv. & adj.",
+          "ipa": "/ˈleɪtə(r)/",
+          "meaning": "以后（的）；后来（的）"
+        },
+        {
+          "id": "v1-u10-30",
+          "no": 30,
+          "word": "whom",
+          "variant": "",
+          "pos": "pron.",
+          "ipa": "/huːm/",
+          "meaning": "谁；什么人"
+        }
+      ]
+    }
+  ]
+}

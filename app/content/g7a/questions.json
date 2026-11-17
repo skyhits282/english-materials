@@ -1,0 +1,4802 @@
+[
+  {
+    "id": "g7a-present-l1-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "一般现在时不能表示 ___。",
+    "options": [
+      "现在的状态",
+      "经常发生的动作",
+      "性格和能力",
+      "过去某时正在进行的动作"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 3
+    },
+    "explanation": "过去某时正在进行用过去进行时；一般现在时表状态、习惯、能力。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "My school ___ at 9:00.",
+    "options": [
+      "begins",
+      "began",
+      "will begin",
+      "beginning"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示经常性安排，用一般现在时三单 begins；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "I often ___ music on the way.",
+    "options": [
+      "listen to",
+      "listened to",
+      "listening to",
+      "listens to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "often 表习惯，用一般现在时；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "Colin's father ___ hard.",
+    "options": [
+      "works",
+      "worked",
+      "work",
+      "working"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示性格特点，主语单数用 works；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ have a brother.",
+    "options": [
+      "doesn't",
+      "don't",
+      "didn't",
+      "isn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示现在的状态，主语 she 用 doesn't；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "一般现在时可以表示经常发生的或 ___ 的动作。",
+    "options": [
+      "习惯性",
+      "一次性",
+      "将来",
+      "过去"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：表示经常发生的或习惯性的动作。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ to music every day.",
+    "options": [
+      "listen",
+      "listens",
+      "listened",
+      "listening"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "every day 表习惯，主语 they 用原形。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l1-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l1",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.meaning"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ English very well.",
+    "options": [
+      "speaks",
+      "speak",
+      "spoke",
+      "speaking"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示能力，主语 he 用三单 speaks。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ 12 years old.",
+    "options": [
+      "am",
+      "is",
+      "are",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 I 用 am；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ a student.",
+    "options": [
+      "is",
+      "are",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 he 用 is。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ my friends.",
+    "options": [
+      "are",
+      "is",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 用 are。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ happy today.",
+    "options": [
+      "are",
+      "is",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 you 用 are；教材例句 You look happy today 类似结构。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ not at home.",
+    "options": [
+      "is",
+      "are",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 用 is not。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "___ you from China?",
+    "options": [
+      "Are",
+      "Is",
+      "Am",
+      "Be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 you 的疑问句用 Are。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ in Class 2.",
+    "options": [
+      "are",
+      "is",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 we 用 are。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l2-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l2",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.be"
+    ],
+    "type": "single_choice",
+    "stem": "It ___ a cat.",
+    "options": [
+      "is",
+      "are",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 it 用 is。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (like) oranges.",
+    "options": [
+      "likes",
+      "like",
+      "liking",
+      "liked"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "一般情况加 -s；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (study) hard.",
+    "options": [
+      "studies",
+      "studys",
+      "study",
+      "studyes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "辅音字母 + y 结尾，变 y 为 i 加 -es；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (go) to school by bus.",
+    "options": [
+      "goes",
+      "gos",
+      "go",
+      "goies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -o 结尾加 -es（常见变化）。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (watch) TV every day.",
+    "options": [
+      "watches",
+      "watchs",
+      "watch",
+      "watchies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -ch 结尾加 -es；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (play) football.",
+    "options": [
+      "plays",
+      "plaies",
+      "play",
+      "playes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "元音字母 + y 结尾，直接加 -s。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (teach) English.",
+    "options": [
+      "teaches",
+      "teachs",
+      "teach",
+      "teachies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -ch 结尾加 -es；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (fix) bikes.",
+    "options": [
+      "fixes",
+      "fixs",
+      "fix",
+      "fixies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -x 结尾加 -es；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l3-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l3",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.third-person"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (finish) her homework.",
+    "options": [
+      "finishes",
+      "finishs",
+      "finish",
+      "finishies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -sh 结尾加 -es；教材表11。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (not like) oranges.",
+    "options": [
+      "doesn't like",
+      "don't like",
+      "isn't like",
+      "not likes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词否定用 doesn't + 动词原形。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "___ he like oranges?",
+    "options": [
+      "Does",
+      "Do",
+      "Is",
+      "Are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 he 的疑问句用 Does。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ (not go) to school on Sunday.",
+    "options": [
+      "don't go",
+      "doesn't go",
+      "aren't go",
+      "not go"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 用 don't + 动词原形。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "___ you like music?",
+    "options": [
+      "Do",
+      "Does",
+      "Are",
+      "Is"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 you 的疑问句用 Do。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (not watch) TV.",
+    "options": [
+      "doesn't watch",
+      "don't watch",
+      "isn't watch",
+      "not watches"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 用 doesn't + 动词原形。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "___ she play the piano?",
+    "options": [
+      "Does",
+      "Do",
+      "Is",
+      "Are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 的疑问句用 Does。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ (not have) a brother.",
+    "options": [
+      "don't have",
+      "doesn't have",
+      "am not have",
+      "not have"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 I 用 don't + 动词原形；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l4-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l4",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.negation-question"
+    ],
+    "type": "single_choice",
+    "stem": "___ they live here?",
+    "options": [
+      "Do",
+      "Does",
+      "Are",
+      "Is"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 的疑问句用 Do。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "Ella's cap ___ in her schoolbag.（肯定）",
+    "options": [
+      "is",
+      "isn't",
+      "are",
+      "aren't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "肯定结构，系动词 be 用 is；教材表12。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "Emma's cap ___ in her schoolbag.（否定）",
+    "options": [
+      "isn't",
+      "is",
+      "aren't",
+      "are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "否定结构 be + not；教材表12。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "He has some ping-pong bats. 否定形式：He ___ any ping-pong balls.",
+    "options": [
+      "doesn't have",
+      "doesn't has",
+      "isn't have",
+      "don't have"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词否定用 doesn't + 动词原形；教材表12。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "They usually take showers in the morning. 否定：They ___ take showers in the afternoon.",
+    "options": [
+      "never",
+      "not",
+      "doesn't",
+      "isn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "用否定词 never；教材表12。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "陈述句句末用 ___。",
+    "options": [
+      "句号",
+      "问号",
+      "感叹号",
+      "逗号"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：陈述句句末用句号。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "否定结构中，系动词 be、助动词或情态动词后加 ___。",
+    "options": [
+      "not",
+      "no",
+      "never",
+      "nothing"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：在否定结构中加 not（常用缩略形式）。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "He is a teacher. 否定形式：He ___ a teacher.",
+    "options": [
+      "isn't",
+      "is",
+      "aren't",
+      "doesn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be 动词否定用 is not / isn't。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l5-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l5",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.statement"
+    ],
+    "type": "single_choice",
+    "stem": "She likes music. 否定形式：She ___ music.",
+    "options": [
+      "doesn't like",
+      "don't like",
+      "isn't like",
+      "not like"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词否定用 doesn't + 动词原形。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "My sister ___ (be) a doctor.",
+    "options": [
+      "is",
+      "are",
+      "am",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 my sister 单数用 is。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ (not be) at school today.",
+    "options": [
+      "isn't",
+      "don't",
+      "doesn't",
+      "aren't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be 动词否定用 isn't。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ (play) basketball every day.",
+    "options": [
+      "play",
+      "plays",
+      "played",
+      "playing"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 用原形。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ (not like) coffee.",
+    "options": [
+      "doesn't like",
+      "don't like",
+      "isn't like",
+      "not likes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 用 doesn't + 动词原形。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ your father work in a hospital?",
+    "options": [
+      "Does",
+      "Do",
+      "Is",
+      "Are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 your father 单数，疑问句用 Does。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ (be) 13 years old.",
+    "options": [
+      "am",
+      "is",
+      "are",
+      "be"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 I 用 am。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ (not have) any classes on Sunday.",
+    "options": [
+      "don't have",
+      "doesn't have",
+      "aren't have",
+      "not have"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 we 用 don't + 动词原形。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-present-l6-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-present-l6",
+    "sourceUrl": "g7a-present/",
+    "knowledgePointIds": [
+      "grammar.present_simple.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "Lily ___ (watch) TV in the evening.",
+    "options": [
+      "watches",
+      "watchs",
+      "watch",
+      "watching"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 -ch 结尾加 -es。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "Peter、January、Singapore 属于哪类名词？",
+    "options": [
+      "专有名词",
+      "普通名词",
+      "不可数名词",
+      "抽象名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "特定的人、时间、地点的专有名称是专有名词；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "son、tennis、family 属于哪类名词？",
+    "options": [
+      "专有名词",
+      "普通名词",
+      "数词",
+      "代词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "表示一般人或事物的名称，是普通名词。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "专有名词的第一个字母一般要 ___。",
+    "options": [
+      "大写",
+      "小写",
+      "斜体",
+      "加粗"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材明确：专有名词的第一个字母一般要大写。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "表示人或事物名称的词是 ___。",
+    "options": [
+      "名词",
+      "动词",
+      "形容词",
+      "副词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "名词（Noun）表示人或事物的名称；表1。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "表示动作或状态的词是 ___。",
+    "options": [
+      "名词",
+      "动词",
+      "形容词",
+      "数词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "动词（Verb）表示动作或状态；表1。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "用于修饰名词、表示人或事物特征的词是 ___。",
+    "options": [
+      "形容词",
+      "副词",
+      "介词",
+      "连词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "形容词（Adjective）用于修饰名词；表1。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "用于代替名词以及起名词作用的短语、分句或句子的词是 ___。",
+    "options": [
+      "代词",
+      "数词",
+      "冠词",
+      "感叹词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "代词（Pronoun）；表1。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l1-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l1",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.categories"
+    ],
+    "type": "single_choice",
+    "stem": "表示数量或顺序的词是 ___。",
+    "options": [
+      "数词",
+      "名词",
+      "副词",
+      "动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "数词（Numeral）；表1。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "milk 属于哪类名词？",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "复数名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "milk 一般没有复数形式，是不可数名词；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "eight rabbits 中 rabbits 是 ___。",
+    "options": [
+      "可数名词复数",
+      "不可数名词",
+      "专有名词",
+      "动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "rabbit 有复数形式，是可数名词；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "bread 属于哪类名词？",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "数词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "bread 一般没有复数形式，是不可数名词；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "yogurt 属于哪类名词？",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "复数名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "yogurt 是不可数名词；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "apple 的复数形式是 ___。",
+    "options": [
+      "apples",
+      "apple's",
+      "apples'",
+      "apple"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "可数名词一般加 -s 构成复数。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "water 有复数形式吗？",
+    "options": [
+      "有",
+      "没有",
+      "只有 waters'",
+      "只有 water's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "不可数名词一般没有复数形式。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "some trees 中 trees 是 ___。",
+    "options": [
+      "可数名词复数",
+      "不可数名词",
+      "专有名词",
+      "形容词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "tree 有复数形式，是可数名词。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l2-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l2",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability"
+    ],
+    "type": "single_choice",
+    "stem": "book 的复数形式是 ___。",
+    "options": [
+      "books",
+      "book's",
+      "books'",
+      "book"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "可数名词一般加 -s。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "Mike 的篮球：___。",
+    "options": [
+      "Mike's basketball",
+      "Mikes basketball",
+      "Mike basketball",
+      "Mike's basketball's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单数名词所有格加 's；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "Children's Day 中 's 加在 ___ 上。",
+    "options": [
+      "复数名词（不以 -s 结尾）",
+      "单数名词",
+      "复数名词（以 -s 结尾）",
+      "动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "children 是复数但不以 -s 结尾，加 's；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "她祖父母的（所有格）：___。",
+    "options": [
+      "grandparents'",
+      "grandparents's",
+      "grandparent's",
+      "grandparents"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "复数名词以 -s 结尾，只加 '；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "Kate 的猫：___。",
+    "options": [
+      "Kate's cat",
+      "Kates cat",
+      "Kate cat",
+      "Kates' cat"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单数名词加 's；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "Alice 的 vlog：___。",
+    "options": [
+      "Alice's vlog",
+      "Alices vlog",
+      "Alice vlog",
+      "Alices' vlog"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单数名词加 's；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "复数名词以 -s 结尾，所有格加 ___。",
+    "options": [
+      "'",
+      "'s",
+      "s'",
+      "s"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "只加一个撇号；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "单数名词所有格加 ___。",
+    "options": [
+      "'s",
+      "'",
+      "s",
+      "不变化"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单数名词加 's；教材表2。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l3-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l3",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "那位女演员的名字：___。",
+    "options": [
+      "the actress's name",
+      "the actress' name",
+      "the actresses name",
+      "the actress name"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单数名词加 's；教材表2 例句 the actress's name。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "Mike's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/t/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "在清辅音 /k/ 后读 /s/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "your mum's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/d/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "在浊辅音 /m/ 后读 /z/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "Kate's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/eɪ/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "在清辅音 /t/ 后读 /s/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "Alice's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/iː/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /s/ 音后读 /ɪz/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "George's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/dʒ/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /dʒ/ 后读 /ɪz/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "复数名词以 -s 结尾时，所有格读音 ___。",
+    "options": [
+      "不变",
+      "加 /z/",
+      "加 /ɪz/",
+      "加 /s/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表2：读音不变。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "her dad's 中 's 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/d/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "在浊辅音 /d/ 后读 /z/；教材表2。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l4-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l4",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.possessive-sound"
+    ],
+    "type": "single_choice",
+    "stem": "在元音后，'s 通常读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/eɪ/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "教材表2：在浊辅音和元音后读 /z/。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "funny、different、excited 属于哪一词类？",
+    "options": [
+      "形容词",
+      "副词",
+      "名词",
+      "动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "形容词（adj.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "in、on、at、of 属于哪一词类？",
+    "options": [
+      "介词",
+      "连词",
+      "冠词",
+      "副词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "介词（prep.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "and、but、because、when 属于哪一词类？",
+    "options": [
+      "连词",
+      "介词",
+      "副词",
+      "代词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "连词（conj.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "we、her、that、what 属于哪一词类？",
+    "options": [
+      "代词",
+      "名词",
+      "形容词",
+      "数词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "代词（pron.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "nine、thirteen、first 属于哪一词类？",
+    "options": [
+      "数词",
+      "代词",
+      "副词",
+      "冠词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "数词（num.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "not、too、there、usually 属于哪一词类？",
+    "options": [
+      "副词",
+      "介词",
+      "连词",
+      "形容词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "副词（adv.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "a、an、the 属于哪一词类？",
+    "options": [
+      "冠词",
+      "代词",
+      "数词",
+      "介词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "冠词（art.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l5-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l5",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.word-class"
+    ],
+    "type": "single_choice",
+    "stem": "well、hello、oh、hey 属于哪一词类？",
+    "options": [
+      "感叹词",
+      "副词",
+      "连词",
+      "名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "感叹词（interj.）；表1。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "名词按可数性分为 ___。",
+    "options": [
+      "可数名词和不可数名词",
+      "专有名词和普通名词",
+      "单数和复数",
+      "具体和抽象"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：名词按其可数性可分为可数名词和不可数名词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "Singapore 这类专有名词首字母 ___。",
+    "options": [
+      "必须大写",
+      "必须小写",
+      "可大写可小写",
+      "加引号"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "专有名词的第一个字母一般要大写。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "the students' books 表示 ___。",
+    "options": [
+      "学生们的书",
+      "一个学生的书",
+      "书的名称",
+      "学生和书"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "复数以 -s 结尾加 '，表示「……们的」。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "单数名词所有格 ___。",
+    "options": [
+      "加 's",
+      "只加 '",
+      "加 s",
+      "不变"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表2。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "复数名词不以 -s 结尾时，所有格 ___。",
+    "options": [
+      "加 's",
+      "只加 '",
+      "加 s'",
+      "不变"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "如 Children's Day；教材表2。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "milk 是不可数名词，___ 复数形式。",
+    "options": [
+      "没有",
+      "有",
+      "有两种",
+      "只有 milk's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不可数名词一般没有复数形式。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "表示顺序先后的数词叫 ___。",
+    "options": [
+      "序数词",
+      "基数词",
+      "数词",
+      "名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：数词包括基数词和序数词，序数词表示顺序的先后。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-nouns-l6-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-nouns-l6",
+    "sourceUrl": "g7a-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "用于连接单词、短语或句子的词类是 ___。",
+    "options": [
+      "连词",
+      "介词",
+      "副词",
+      "冠词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "连词（Conjunction）；表1。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "7 的英语是 ___。",
+    "options": [
+      "seven",
+      "seventh",
+      "seven's",
+      "seventeen"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "基数词 seven；教材基数词表。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "12 的英语是 ___。",
+    "options": [
+      "twelve",
+      "twelveth",
+      "twelfth",
+      "twenty"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "基数词 twelve。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "20 的英语是 ___。",
+    "options": [
+      "twenty",
+      "twentieth",
+      "twoty",
+      "twelve"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "基数词 twenty。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "40 的英语是 ___。",
+    "options": [
+      "forty",
+      "fourty",
+      "fourteen",
+      "four"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "注意 forty 不含 u。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "100 的英语是 ___。",
+    "options": [
+      "one hundred",
+      "one hundreds",
+      "a hundred's",
+      "hundred"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材基数词表：one hundred。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "99 的英语是 ___。",
+    "options": [
+      "ninety-nine",
+      "ninetynine",
+      "ninety-ninth",
+      "ninty-nine"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "整十与个位之间加连字符。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "21 的英语是 ___。",
+    "options": [
+      "twenty-one",
+      "twenty one",
+      "twentyfirst",
+      "twentieth-one"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材基数词表：twenty-one。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l1-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l1",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.cardinal"
+    ],
+    "type": "single_choice",
+    "stem": "101 的英语是 ___。",
+    "options": [
+      "one hundred and one",
+      "one hundred one",
+      "hundred and one",
+      "one hundreds and one"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材基数词表：one hundred and one。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 1 的英语是 ___。",
+    "options": [
+      "first",
+      "one",
+      "firist",
+      "oneth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 first (1st)；教材序数词表。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 2 的英语是 ___。",
+    "options": [
+      "second",
+      "two",
+      "secend",
+      "twoth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 second (2nd)。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 3 的英语是 ___。",
+    "options": [
+      "third",
+      "three",
+      "thirth",
+      "threeth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 third (3rd)。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 5 的英语是 ___。",
+    "options": [
+      "fifth",
+      "fiveth",
+      "five",
+      "fivth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 fifth (5th)，拼写特殊。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 8 的英语是 ___。",
+    "options": [
+      "eighth",
+      "eightth",
+      "eight",
+      "eightst"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 eighth (8th)，只加 h。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 9 的英语是 ___。",
+    "options": [
+      "ninth",
+      "nineth",
+      "nine",
+      "ninthth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 ninth (9th)，去掉 e。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 20 的英语是 ___。",
+    "options": [
+      "twentieth",
+      "twentyth",
+      "twenty",
+      "twentith"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "整十 y 变 ie 加 th。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l2-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l2",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.ordinal"
+    ],
+    "type": "single_choice",
+    "stem": "第 21 的英语是 ___。",
+    "options": [
+      "twenty-first",
+      "twenty-firsth",
+      "twentieth-first",
+      "twenty-one"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "几十几只把个位变序数；教材序数词表。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ 3 o'clock",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at 用于钟点；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ Thursday",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "on 用于星期几；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ spring",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "in 用于季节；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ 1949",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "in 用于年份；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ New Year's Day",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "on 用于节假日；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ night",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at night 是固定搭配；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ the afternoon",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "in the afternoon；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l3-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l3",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.time-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ the age of 20",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at the age of；教材表7。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ school（在某地点）",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at 表示在某个地点；教材。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ the desk（在某表面上）",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "on 表示在某个表面上。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "___ China（在某范围内）",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "in 表示在某个范围内。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "The shoes are ___ the bed.（在……下面）",
+    "options": [
+      "under",
+      "on",
+      "in",
+      "behind"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "under 在……下面；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "The dining hall is ___ our classroom building.（在……对面）",
+    "options": [
+      "across from",
+      "behind",
+      "next to",
+      "between"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "across from 在……对面；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "A baby duck is ___ the big tree.（在……后面）",
+    "options": [
+      "behind",
+      "in front of",
+      "next to",
+      "under"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "behind 在……后面；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "This week I sit ___ my best friend, Han Lin.（紧邻）",
+    "options": [
+      "next to",
+      "across from",
+      "between",
+      "behind"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "next to 紧邻；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l4-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l4",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.place-prep"
+    ],
+    "type": "single_choice",
+    "stem": "The student centre is ___ the library and the gym.（在……中间）",
+    "options": [
+      "between",
+      "among",
+      "in",
+      "next to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "between ... and ... 在两者之间；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "be good ___ English",
+    "options": [
+      "at",
+      "in",
+      "for",
+      "to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be good at 擅长；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "be famous ___",
+    "options": [
+      "at",
+      "for",
+      "in",
+      "to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "be famous for 因……而出名。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "be interested ___",
+    "options": [
+      "at",
+      "for",
+      "in",
+      "to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "be interested in 对……感兴趣。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "look ___（看）",
+    "options": [
+      "at",
+      "to",
+      "for",
+      "in"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "look at 看；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "listen ___（听）",
+    "options": [
+      "at",
+      "to",
+      "for",
+      "in"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "listen to 听；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "ask ___（请求）",
+    "options": [
+      "at",
+      "to",
+      "for",
+      "in"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "ask for 请求；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "on the way ___ school",
+    "options": [
+      "to",
+      "for",
+      "at",
+      "in"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "on the way to 在去……的路上；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l5-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l5",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.collocation"
+    ],
+    "type": "single_choice",
+    "stem": "be similar ___",
+    "options": [
+      "at",
+      "to",
+      "in",
+      "for"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "be similar to 与……相似；教材搭配表。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "介词宾语若是人称代词，要用 ___。",
+    "options": [
+      "宾格",
+      "主格",
+      "所有格",
+      "反身代词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：介词宾语若是人称代词，则要用宾格。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ Sunday morning",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "某一天的某段时间用 on；教材表7。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ October",
+    "options": [
+      "at",
+      "on",
+      "in",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "月份前用 in；教材表7。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "第 12 的英语是 ___。",
+    "options": [
+      "twelfth",
+      "twelveth",
+      "twelve",
+      "twelth"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "序数词 twelfth，拼写特殊。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "第 40 的英语是 ___。",
+    "options": [
+      "fortieth",
+      "fourtieth",
+      "forty",
+      "fourty"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "整十 y 变 ie 加 th。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ duty（值日）",
+    "options": [
+      "on",
+      "in",
+      "at",
+      "for"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "on duty 值日；教材搭配表。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ the future（将来）",
+    "options": [
+      "on",
+      "in",
+      "at",
+      "for"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "in the future 将来；教材搭配表。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-numbers-l6-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-numbers-l6",
+    "sourceUrl": "g7a-numbers/",
+    "knowledgePointIds": [
+      "grammar.number_prep.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "at the music studio 中 at 表示 ___。",
+    "options": [
+      "在某个地点",
+      "在某个表面",
+      "在某个范围",
+      "在……下面"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at 表示在某个地点；教材地点介词部分。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "Where is ___ library?",
+    "options": [
+      "the",
+      "a",
+      "an",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "双方都知道的那个图书馆，特指用 the；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "___ glasses are on her dad's nose.",
+    "options": [
+      "The",
+      "A",
+      "An",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "特指那副眼镜，用 the；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "___ milk is on the table.",
+    "options": [
+      "The",
+      "A",
+      "An",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "特指桌上的牛奶，用 the；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "定冠词的基本概念是 ___。",
+    "options": [
+      "特指",
+      "非特指",
+      "泛指",
+      "任指"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：定冠词的基本概念是「特指」。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "定冠词在辅音前读 ___。",
+    "options": [
+      "/ðə/",
+      "/ði/",
+      "/θə/",
+      "/θi/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：定冠词在辅音前读 /ðə/。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "定冠词在元音前读 ___。",
+    "options": [
+      "/ðə/",
+      "/ði/",
+      "/θə/",
+      "/zi/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "教材：在元音前读 /ði/。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "___ sun rises in the east.",
+    "options": [
+      "The",
+      "A",
+      "An",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "世界上独一无二的事物前用 the。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l1-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l1",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.the"
+    ],
+    "type": "single_choice",
+    "stem": "定冠词可与 ___ 一起使用。",
+    "options": [
+      "单数可数、复数可数和不可数名词",
+      "只能单数可数名词",
+      "只能复数名词",
+      "只能不可数名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：可与单数可数名词、复数可数名词或不可数名词一起使用。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "I have ___ pet dog.",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "pet 以辅音音素开头，用 a；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "Sometimes I play basketball for ___ hour.",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "hour 以元音音素开头（h 不发音），用 an；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "We have three lessons ___ day.",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "a day 表示「每一天」；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "an 放在以 ___ 开头的名词前面。",
+    "options": [
+      "元音音素",
+      "辅音音素",
+      "元音字母",
+      "辅音字母"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：an 放在以元音（音素）开头的名词前面。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "___ eraser",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "eraser 以元音音素开头，用 an；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "___ book",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "book 以辅音音素开头，用 a。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "不定冠词只能与 ___ 一起使用。",
+    "options": [
+      "单数可数名词",
+      "复数可数名词",
+      "不可数名词",
+      "任何名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：不定冠词只能与单数可数名词一起使用。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l2-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l2",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.a-an"
+    ],
+    "type": "single_choice",
+    "stem": "不定冠词的基本含义有「该类中的一例」「只有一个」「___」。",
+    "options": [
+      "每一个",
+      "全部",
+      "某些",
+      "任何一个"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：其基本含义有「该类中的一例」「只有一个」「每一个」等。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "My favourite subject is ___.",
+    "options": [
+      "English",
+      "the English",
+      "an English",
+      "a English"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "学科名前用零冠词；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "It's time for me to go to ___.",
+    "options": [
+      "bed",
+      "the bed",
+      "a bed",
+      "an bed"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "go to bed 固定搭配，用零冠词；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "Binbin is good with ___.",
+    "options": [
+      "numbers",
+      "the numbers",
+      "a numbers",
+      "an numbers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "泛指数字，用零冠词；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "零冠词指名词前 ___ 的情况。",
+    "options": [
+      "不加冠词",
+      "加 the",
+      "加 a",
+      "加 an"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材定义。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "有的语法书 ___ 把零冠词列为冠词的一种。",
+    "options": [
+      "并不",
+      "也会",
+      "必须",
+      "一定"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材注释：有的语法书并不把零冠词列为冠词中的一种。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "早饭前：___。",
+    "options": [
+      "before breakfast",
+      "before the breakfast",
+      "before a breakfast",
+      "before an breakfast"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "三餐名前用零冠词。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "球类运动前一般 ___。",
+    "options": [
+      "不加冠词",
+      "加 the",
+      "加 a",
+      "加 an"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "play basketball 等球类运动前用零冠词。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l3-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l3",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.zero-article"
+    ],
+    "type": "single_choice",
+    "stem": "在学校：___。",
+    "options": [
+      "at school",
+      "at the school",
+      "at a school",
+      "at an school"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at school 是固定搭配，用零冠词。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "I 的宾格是 ___。",
+    "options": [
+      "me",
+      "my",
+      "mine",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "人称代词宾格；教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "he 的宾格是 ___。",
+    "options": [
+      "him",
+      "his",
+      "he",
+      "her"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "they 的宾格是 ___。",
+    "options": [
+      "them",
+      "their",
+      "they",
+      "theirs"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "we 的宾格是 ___。",
+    "options": [
+      "us",
+      "our",
+      "we",
+      "ours"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "she 的宾格是 ___。",
+    "options": [
+      "her",
+      "hers",
+      "she",
+      "he"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "you 的宾格是 ___。",
+    "options": [
+      "you",
+      "your",
+      "yours",
+      "you's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "you 的主格和宾格同形；教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "it 的宾格是 ___。",
+    "options": [
+      "it",
+      "its",
+      "it's",
+      "itself"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "it 的主格和宾格同形；教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l4-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l4",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.personal-pronoun"
+    ],
+    "type": "single_choice",
+    "stem": "「他们」的主格是 ___。",
+    "options": [
+      "they",
+      "them",
+      "their",
+      "theirs"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "I 的形容词性物主代词是 ___。",
+    "options": [
+      "my",
+      "me",
+      "mine",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "形容词性物主代词相当于形容词，置于名词前作定语。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "they 的形容词性物主代词是 ___。",
+    "options": [
+      "their",
+      "them",
+      "they",
+      "theirs"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "their children 等。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "she 的形容词性物主代词是 ___。",
+    "options": [
+      "her",
+      "hers",
+      "she",
+      "him"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "her favourite subject 等；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "___ is my uncle's farm.（这个）",
+    "options": [
+      "This",
+      "That",
+      "These",
+      "Those"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "this 指较近的事物；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "___ are my friends.（这些）",
+    "options": [
+      "This",
+      "That",
+      "These",
+      "Those"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "these 是 this 的复数；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "Do you see ___ red house by the river?（那个）",
+    "options": [
+      "this",
+      "that",
+      "these",
+      "those"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "that 指较远的事物；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "___ ping-pong bats in the corner are my grandpa's.（那些）",
+    "options": [
+      "This",
+      "That",
+      "These",
+      "Those"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 3
+    },
+    "explanation": "those 是 that 的复数；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l5-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l5",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.possessive-demo"
+    ],
+    "type": "single_choice",
+    "stem": "this / these 指时间或空间上 ___ 的事物。",
+    "options": [
+      "较近",
+      "较远",
+      "中间",
+      "两边"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表5。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0001",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ sun is shining brightly.",
+    "options": [
+      "The",
+      "A",
+      "An",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "独一无二的事物前用 the。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0002",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "I want to be ___ doctor.",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "非特指的单数可数名词用 a。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0003",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "Look at ___ elephant!",
+    "options": [
+      "a",
+      "an",
+      "the",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "elephant 以元音音素开头，用 an。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0004",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ is my schoolbag.（这个）",
+    "options": [
+      "This",
+      "That",
+      "These",
+      "Those"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "this 指近处单数事物。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0005",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He is good at ___ English.",
+    "options": [
+      "不填",
+      "the",
+      "a",
+      "an"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "学科名前用零冠词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0006",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ girl in red is my sister.",
+    "options": [
+      "The",
+      "A",
+      "An",
+      "不填"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "in red 限定了范围，特指用 the。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0007",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "I have ___ uncle and ___ aunt.",
+    "options": [
+      "an; an",
+      "a; a",
+      "an; a",
+      "a; an"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "uncle 和 aunt 都以元音音素开头，都用 an。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7a-articles-l6-0008",
+    "contentVersion": "2026-11-16",
+    "grade": 7,
+    "term": "A",
+    "unit": "g7a-articles-l6",
+    "sourceUrl": "g7a-articles/",
+    "knowledgePointIds": [
+      "grammar.article_pronoun.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "that / those 指时间或空间上 ___ 的事物。",
+    "options": [
+      "较远",
+      "较近",
+      "中间",
+      "两边"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表5。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  }
+]

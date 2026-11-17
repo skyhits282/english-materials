@@ -6,7 +6,10 @@
     "htmlvalidate": "html-validate \"**/*.html\"",
     "lighthouse": "lhci autorun",
     "extract:g7a": "node scripts/extract-g7a.mjs",
-    "test:extract": "node --test \"scripts/*.test.mjs\""
+    "test:extract": "node --test \"scripts/*.test.mjs\"",
+    "dev:app": "npm --prefix app-src run dev",
+    "build:app": "npm --prefix app-src run build",
+    "test:app": "npm --prefix app-src run test"
   },
   "engines": {
     "node": ">=22.6"

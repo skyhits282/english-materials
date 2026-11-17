@@ -1776,7 +1776,7 @@ export const renderExercise: PageRenderer = async ({ container, params }) => {
         const input = container.querySelector<HTMLInputElement>('#fill-input')
         void submit(input?.value ?? '')
       })
-      container.querySelector('#fill-input')?.addEventListener('keydown', (e) => {
+      container.querySelector<HTMLInputElement>('#fill-input')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') container.querySelector<HTMLButtonElement>('#submit')?.click()
       })
     }
@@ -1793,7 +1793,10 @@ export const renderExercise: PageRenderer = async ({ container, params }) => {
     let sub: Submission
     try {
       sub = await session.submit(answer, opts)
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.message === '正在处理上一次提交') return
+      container.innerHTML = `<h1>${escapeHtml(data.title)}</h1><div class="error-panel">提交失败，学习记录未能保存。${escapeHtml(String(err))}<div class="action-row"><button class="btn" id="retry-submit">重试本题</button></div></div>`
+      container.querySelector('#retry-submit')?.addEventListener('click', () => renderQuestion())
       return
     }
     if (sub.isCorrect) stats.correct += 1

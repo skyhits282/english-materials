@@ -19,6 +19,8 @@ export interface DashscopeConfig {
 
 /** 一次请求的守卫：超时计时器与"用户 signal ∪ 超时 signal"的组合 signal 覆盖本次尝试的全程 */
 interface TimeoutGuard {
+  /** 组合 signal（用户 ∪ 超时）：传给 fetch 与 body 读取——取消/超时能真正中止底层 HTTP 请求 */
+  readonly signal: AbortSignal
   /** 包装一次异步操作（发请求 / 读 body）：与超时、用户取消竞速；
    *  超时→AiError('timeout')；用户取消→原样上抛（combined.reason）；操作自身结果照常透传 */
   race<T>(p: Promise<T>): Promise<T>
@@ -38,6 +40,7 @@ function createTimeoutGuard(timeoutMs: number, signal: AbortSignal | undefined):
   const combined =
     signal !== undefined ? AbortSignal.any([signal, timeoutController.signal]) : timeoutController.signal
   return {
+    signal: combined,
     race<T>(p: Promise<T>): Promise<T> {
       return new Promise<T>((resolve, reject) => {
         const cleanup = () => combined.removeEventListener('abort', onAbort)
@@ -48,6 +51,11 @@ function createTimeoutGuard(timeoutMs: number, signal: AbortSignal | undefined):
         }
         if (combined.aborted) {
           onAbort()
+          // 预取消短路后 p 未挂接处理器：补挂空处理器，避免 p 后续拒绝产生 unhandledrejection 噪声
+          void p.then(
+            () => undefined,
+            () => undefined,
+          )
           return
         }
         combined.addEventListener('abort', onAbort)
@@ -85,7 +93,8 @@ export function createDashscopeTransport(cfg: DashscopeConfig): AiTransport {
         try {
           let res: Response
           try {
-            res = await guard.race(doFetch(url, buildInit(cfg, req, jsonMode)))
+            // signal 传守卫组合 signal：取消/超时真正中止底层请求（服务端停止生成计费、释放连接槽）
+            res = await guard.race(doFetch(url, { ...buildInit(cfg, req, jsonMode), signal: guard.signal }))
           } catch (err) {
             if (err instanceof AiError || signal?.aborted === true) throw err // 超时 / 用户取消
             throw new AiError('network', `网络请求失败：${err instanceof Error ? err.message : String(err)}`)

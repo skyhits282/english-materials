@@ -68,14 +68,6 @@ const okContent = (content: string, finishReason = 'stop') =>
     headers: { 'content-type': 'application/json' },
   })
 
-/** 永不 resolve 的 fetch mock：signal 中止时以 signal.reason reject */
-function hanging(signal: AbortSignal | null | undefined): Promise<Response> {
-  return new Promise((_resolve, reject) => {
-    if (signal?.aborted === true) reject(signal.reason)
-    else signal?.addEventListener('abort', () => reject(signal.reason))
-  })
-}
-
 /** 释放若干真实 macrotask 轮次：fake timers（只假 setTimeout）下让 fake-indexeddb 的 setImmediate 队列走完 */
 const flushTasks = async (rounds = 6): Promise<void> => {
   for (let i = 0; i < rounds; i++) await new Promise<void>((r) => setImmediate(r))
@@ -124,6 +116,8 @@ describe('runAiTask 成功路径', () => {
     const headers = calls[0]?.init.headers as Record<string, string>
     expect(headers.authorization).toBe(`Bearer ${FAKE_KEY}`)
     expect(headers['content-type']).toBe('application/json')
+    // fetch 收到守卫 signal（取消/超时可真正中止请求）
+    expect(calls[0]?.init.signal).toBeInstanceOf(AbortSignal)
     const body = lastBody()
     expect(body.model).toBe('qwen-test')
     expect(body.max_tokens).toBeGreaterThan(0)
@@ -244,29 +238,66 @@ describe('runAiTask 错误映射（含失败记录）', () => {
 })
 
 describe('超时与用户取消', () => {
-  it('超时：挂起请求 20s 无响应 → AiError timeout 并记录', async () => {
+  it('超时：挂起请求 20s 无响应 → AiError timeout 并记录，请求真被中止', async () => {
     // 只假 setTimeout/clearTimeout：fake-indexeddb 依赖 setImmediate（保持真实），Date 也保持真实
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
-    stubFetch((_url, init) => hanging(init.signal))
+    let requestAborted = false
+    stubFetch((_url, init) => {
+      // fetch 收到守卫 signal：超时能真正中止底层请求（而非仅本地短路拒绝）
+      expect(init.signal).toBeInstanceOf(AbortSignal)
+      return new Promise<Response>((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => {
+          requestAborted = true
+          reject(init.signal!.reason)
+        })
+      })
+    })
     const p = runAiTask('coach_turn', coachPayload, { settings: settings(), timeoutMs: 20_000 })
     await flushTasks()
     await vi.advanceTimersByTimeAsync(20_000)
     await expect(p).rejects.toMatchObject({ name: 'AiError', kind: 'timeout' })
+    expect(requestAborted).toBe(true)
     const rows = await db.aiRequests.toArray()
     expect(rows).toHaveLength(1)
     expect(rows[0]?.status).toBe('timeout')
   })
 
-  it('用户 AbortSignal 取消：请求中止、原样抛 AbortError、记录 aborted', async () => {
-    stubFetch((_url, init) => hanging(init.signal))
+  it('用户 AbortSignal 取消：请求真被中止、原样抛 AbortError、记录 aborted', async () => {
+    let requestAborted = false
+    stubFetch((_url, init) => {
+      // fetch 收到守卫 signal：取消能真正中止底层 HTTP 请求（服务端不再继续生成计费）
+      expect(init.signal).toBeInstanceOf(AbortSignal)
+      return new Promise<Response>((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => {
+          requestAborted = true
+          reject(init.signal!.reason)
+        })
+      })
+    })
     const controller = new AbortController()
     const p = runAiTask('coach_turn', coachPayload, { settings: settings() }, controller.signal)
     await flushTasks(2)
     controller.abort()
     await expect(p).rejects.toSatisfy((err: unknown) => err instanceof Error && err.name === 'AbortError')
+    expect(requestAborted).toBe(true)
     const rows = await db.aiRequests.toArray()
     expect(rows).toHaveLength(1)
     expect(rows[0]?.status).toBe('aborted')
+  })
+
+  it('调用前已取消（signal 预中止）→ 立即拒绝、记录 aborted', async () => {
+    stubFetch((_url, init) => {
+      expect(init.signal).toBeInstanceOf(AbortSignal)
+      return new Promise<Response>((_resolve, reject) => {
+        if (init.signal?.aborted === true) reject(init.signal.reason)
+        else init.signal?.addEventListener('abort', () => reject(init.signal!.reason))
+      })
+    })
+    const controller = new AbortController()
+    controller.abort()
+    const p = runAiTask('coach_turn', coachPayload, { settings: settings() }, controller.signal)
+    await expect(p).rejects.toSatisfy((err: unknown) => err instanceof Error && err.name === 'AbortError')
+    expect((await db.aiRequests.toArray())[0]?.status).toBe('aborted')
   })
 
   it('响应体挂起：头 200 后 body 无限期不返回 → 超时仍生效', async () => {

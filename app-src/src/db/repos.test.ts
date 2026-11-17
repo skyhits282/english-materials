@@ -308,6 +308,26 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     expect(await db.tasks.count()).toBe(3)
   })
 
+  it('同日重复调用返回顺序与首次一致（review→unit→special→summary，day 索引按主键字典序返回会打乱）', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    // 昨日 deferred 提供结转 → 今日四类任务齐全，锁定完整顺序
+    await db.tasks.put({
+      id: 'task-2026-11-16-unit',
+      day: '2026-11-16',
+      type: 'unit',
+      questionIds: ['carry-1'],
+      status: 'deferred',
+      minutesPlanned: 14,
+    })
+    const inputs = { vocab: [vocabBook('v1-u4', 5)] }
+    const first = await getOrCreatePlan(inputs, STUDY_DAY)
+    expect(first.map((t) => t.type)).toEqual(['review', 'unit', 'special', 'summary'])
+    const again = await getOrCreatePlan(inputs, STUDY_DAY)
+    expect(again.map((t) => t.type)).toEqual(['review', 'unit', 'special', 'summary'])
+    expect(again).toEqual(first)
+  })
+
   it('同一天重复调用不重建（返回已有行，改动保留）', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()

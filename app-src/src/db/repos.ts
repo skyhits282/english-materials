@@ -1,4 +1,4 @@
-import { db, type ContentMetaRow, type TaskRow } from './schema'
+import { db, type ContentMetaRow, type TaskRow, type TaskType } from './schema'
 import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
 import { localDayKey, isSameLocalDay } from '../domain/metrics'
@@ -90,6 +90,49 @@ export interface ReviewSet {
   availableCount: number
 }
 
+/** 全表扫描 attempts 汇总曾答错题 ID（attempts 无 isCorrect 索引：量级 <2 万，单次全表扫描
+ *  比按 questionId 索引逐题反查（<1000 题 × N 次索引往返）更省；getReviewSet 与 buildWrongByKp 共用） */
+async function scanWrongQuestionIds(): Promise<Set<string>> {
+  const wrong = new Set<string>()
+  await db.attempts.each((a) => {
+    if (!a.isCorrect) wrong.add(a.questionId)
+  })
+  return wrong
+}
+
+/** questionId → 知识点列表的查表底座：选择题全量读 questions 表建映射（词题不在表内，由 resolveQuestionKps 兜底） */
+async function kpsByQuestionId(): Promise<Map<string, string[]>> {
+  const kpByQuestionId = new Map<string, string[]>()
+  for (const q of await db.questions.toArray()) kpByQuestionId.set(q.id, q.knowledgePointIds)
+  return kpByQuestionId
+}
+
+/** questionId → 知识点列表：选择题查 questions 表；词题不在表内，按 ID 约定派生（loader.vocabKpFromQuestionId） */
+function resolveQuestionKps(qid: string, kpByQuestionId: Map<string, string[]>): string[] {
+  const kps = kpByQuestionId.get(qid)
+  if (kps !== undefined) return kps
+  const vocabKp = vocabKpFromQuestionId(qid)
+  return vocabKp !== undefined ? [vocabKp] : []
+}
+
+/** 曾答错题 → 按知识点分组（可选 dueKps 过滤：getReviewSet 只保留到期知识点，buildWrongByKp 全量不过滤） */
+function groupWrongByKp(
+  wrongQuestionIds: Set<string>,
+  kpByQuestionId: Map<string, string[]>,
+  dueKps?: Set<string>,
+): Map<string, string[]> {
+  const wrongByKp = new Map<string, string[]>()
+  for (const qid of wrongQuestionIds) {
+    for (const kp of resolveQuestionKps(qid, kpByQuestionId)) {
+      if (dueKps !== undefined && !dueKps.has(kp)) continue
+      const list = wrongByKp.get(kp)
+      if (list) list.push(qid)
+      else wrongByKp.set(kp, [qid])
+    }
+  }
+  return wrongByKp
+}
+
 /** 复测选题（规格 §1.2）：到期 mastery 知识点 × 历史曾答错题，交纯函数 pickReviewQuestions 均衡抽取。
  *  now 可注入（测试与跨日边界用），默认当前时刻。 */
 export async function getReviewSet(now: Date = new Date()): Promise<ReviewSet> {
@@ -103,33 +146,13 @@ export async function getReviewSet(now: Date = new Date()): Promise<ReviewSet> {
   if (dueRows.length === 0) return { questionIds: [], dueKpCount: 0, availableCount: 0 }
   const dueKps = new Set(dueRows.map((row) => row.knowledgePointId))
 
-  // attempts 无 isCorrect 索引：量级 <2 万，单次全表扫描同时汇总"曾答错题"与"当日已答"，
-  // 比按 questionId 索引逐题反查（<1000 题 × N 次索引往返）更省
-  const wrongQuestionIds = new Set<string>()
+  // 当日已答（含当日复测答对）的题剔除，避免立即重复（attempts 全表扫描，口径同 scanWrongQuestionIds）
   const doneToday = new Set<string>()
   await db.attempts.each((a) => {
-    if (!a.isCorrect) wrongQuestionIds.add(a.questionId)
     if (isSameLocalDay(a.submittedAt, todayKey)) doneToday.add(a.questionId)
   })
 
-  // questionId → 知识点：选择题查 questions 表；词题不在表内，按 ID 约定派生（loader.vocabKpFromQuestionId）
-  const kpByQuestionId = new Map<string, string[]>()
-  for (const q of await db.questions.toArray()) kpByQuestionId.set(q.id, q.knowledgePointIds)
-
-  const wrongByKp = new Map<string, string[]>()
-  for (const qid of wrongQuestionIds) {
-    let kps = kpByQuestionId.get(qid)
-    if (kps === undefined) {
-      const vocabKp = vocabKpFromQuestionId(qid)
-      kps = vocabKp !== undefined ? [vocabKp] : []
-    }
-    for (const kp of kps) {
-      if (!dueKps.has(kp)) continue
-      const list = wrongByKp.get(kp)
-      if (list) list.push(qid)
-      else wrongByKp.set(kp, [qid])
-    }
-  }
+  const wrongByKp = groupWrongByKp(await scanWrongQuestionIds(), await kpsByQuestionId(), dueKps)
 
   // dueRows 按 nextReviewAt 索引序（更逾期在前）传入，轮转顺序随之确定
   return pickReviewQuestions({ now, masteryRows: dueRows, wrongQuestionIdsByKp: wrongByKp, alreadyDoneToday: doneToday })
@@ -159,29 +182,17 @@ export interface PlanInputs {
 }
 
 /** 知识点 → 全量曾答错题（含词题：不在 questions 表的按 ID 约定派生知识点）。
- *  与 getReviewSet 内部的 wrongByKp 不同：不过滤到期知识点，供计划生成做全量专项薄弱度聚合。 */
+ *  与 getReviewSet 内部的 wrongByKp 不同：不做 dueKps 过滤，供计划生成做全量专项薄弱度聚合。 */
 async function buildWrongByKp(): Promise<Map<string, string[]>> {
-  const wrongIds = new Set<string>()
-  await db.attempts.each((a) => {
-    if (!a.isCorrect) wrongIds.add(a.questionId)
-  })
-  const map = new Map<string, string[]>()
-  if (wrongIds.size === 0) return map
-  const kpByQuestionId = new Map<string, string[]>()
-  for (const question of await db.questions.toArray()) kpByQuestionId.set(question.id, question.knowledgePointIds)
-  for (const qid of wrongIds) {
-    let kps = kpByQuestionId.get(qid)
-    if (kps === undefined) {
-      const vocabKp = vocabKpFromQuestionId(qid)
-      kps = vocabKp !== undefined ? [vocabKp] : []
-    }
-    for (const kp of kps) {
-      const list = map.get(kp)
-      if (list) list.push(qid)
-      else map.set(kp, [qid])
-    }
-  }
-  return map
+  return groupWrongByKp(await scanWrongQuestionIds(), await kpsByQuestionId())
+}
+
+/** 任务返回顺序（与 generatePlan 生成序一致；tasks 的 day 索引查询按主键字典序返回，
+ *  须统一排序，否则同日第二次调用（今日页刷新）会出现顺序跳变） */
+const TASK_TYPE_ORDER: TaskType[] = ['review', 'unit', 'special', 'summary']
+
+function sortTasksByType(tasks: TaskRow[]): TaskRow[] {
+  return [...tasks].sort((a, b) => TASK_TYPE_ORDER.indexOf(a.type) - TASK_TYPE_ORDER.indexOf(b.type))
 }
 
 /** 每日计划（规格 §2.1）：当日（本地日 key）无任务才生成，同一天重复打开不重建（按 day 查重）。
@@ -190,9 +201,11 @@ async function buildWrongByKp(): Promise<Map<string, string[]>> {
 export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()): Promise<TaskRow[]> {
   const dayKey = localDayKey(now)
   const existing = await db.tasks.where('day').equals(dayKey).toArray()
-  if (existing.length > 0) return existing
+  if (existing.length > 0) return sortTasksByType(existing)
 
   const settings = await getSettings()
+  // 已知边界：结转只回看恰好"昨天"一日——周六 deferred、周日休息时，周一生成计划查不到该 deferred（丢结转）。
+  // 改进方向为"回溯至最近一个学习日"再查 deferred，暂按 Task 5 计划口径保持现行为。
   const yesterdayKey = localDayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1))
   const yesterdayUnfinished = (await db.tasks.where('day').equals(yesterdayKey).toArray()).filter(
     (t) => t.status === 'deferred' || t.status === 'skipped',
@@ -216,7 +229,7 @@ export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()
   await db.transaction('rw', db.tasks, async () => {
     await db.tasks.bulkPut(plan)
   })
-  return plan
+  return sortTasksByType(plan)
 }
 
 /** 任务状态合法转移表：planned→in_progress→completed 主线，planned/in_progress 可转 skipped/deferred；

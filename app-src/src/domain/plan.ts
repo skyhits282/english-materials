@@ -1,5 +1,5 @@
 import type { Question, Settings, VocabBook } from '../types'
-import type { TaskRow } from '../db/schema'
+import type { TaskRow, TaskType } from '../db/schema'
 import { deriveVocabQuestions } from '../content/loader'
 
 /** 每日计划四段时长比例（百分比，规格 §2.2：到期复习 30 / 单元词汇 40 / 专项巩固 20 / 学习小结 10） */
@@ -116,7 +116,7 @@ export function generatePlan(ctx: PlanContext): TaskRow[] {
   }
 
   const tasks: TaskRow[] = []
-  const mkTask = (type: 'review' | 'unit' | 'special' | 'summary', questionIds: string[], minutes: number): TaskRow => ({
+  const mkTask = (type: TaskType, questionIds: string[], minutes: number): TaskRow => ({
     id: `task-${ctx.day}-${type}`,
     day: ctx.day,
     type,
@@ -134,6 +134,7 @@ export function generatePlan(ctx: PlanContext): TaskRow[] {
   }
 
   // unit 任务：当前 book/currentUnit 派生词汇默写题，按预算估取、上限 20
+  // （词题估计用时 20s/题是 content/loader.ts toVocabQuestion 的定值 estimatedSeconds，预算换算据此进行）
   const vocabQuestions = deriveVocabQuestions(ctx.vocab, ctx.settings.currentUnit)
   const unitIds = pickByBudget(vocabQuestions, unitMinutes * 60, UNIT_QUESTION_MAX, used)
   let summaryMinutes = alloc.summary

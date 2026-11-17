@@ -26,10 +26,13 @@ export interface AiRequestRow {
   createdAt: string
 }
 
+/** 每日计划任务类型（规格 §2.1：到期复习 / 单元词汇 / 专项巩固 / 学习小结） */
+export type TaskType = 'review' | 'unit' | 'special' | 'summary'
+
 export interface TaskRow {
   id: string
   day: string
-  type: string
+  type: TaskType
   questionIds: string[]
   status: 'planned' | 'in_progress' | 'completed' | 'skipped' | 'deferred'
   minutesPlanned: number

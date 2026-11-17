@@ -35,12 +35,18 @@ function unitShortName(unitId: string): string {
   return unitId.replace(/^v[12]-/, '')
 }
 
+/** 词汇默写题 questionId 拼法：`<book>-vocab-<短单元名>-<4 位词序号>`。
+ *  派生（toVocabQuestion）与解析（content/vocab-resolve.ts）共用本函数，避免两处拼接漂移。 */
+export function vocabQuestionId(book: string, unitId: string, no: number): string {
+  return `${book}-vocab-${unitShortName(unitId)}-${String(no).padStart(4, '0')}`
+}
+
 /** contentVersion 统一用书级版本；词 ID 的可追溯性已体现在 Question.id 中 */
 function toVocabQuestion(book: VocabBook, unitId: string, w: VocabWord): Question {
   const accepted = [w.word, ...(w.variant ? [w.variant] : [])]
   return {
     // 七上沿用 M1 的 `g7a-vocab-u*-*` 格式，保证历史作答记录仍可关联
-    id: `${book.book}-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
+    id: vocabQuestionId(book.book, unitId, w.no),
     contentVersion: book.contentVersion,
     grade: 7,
     term: book.book === 'g7b' ? 'B' : 'A',

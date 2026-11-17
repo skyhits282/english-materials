@@ -3132,3 +3132,5 @@ Task 1 → 2 → 3 → 4 → 5（4、5 可并行）→ 6 → 7 → 8 → 9（可
 - 转换脚本分册统计按 term 字母归册、main() 按位置索引取 books——第三册复用 term 字母会错位（M2+M3 Task 1 质量审查 Minor，两册无虞的 latent 假设）。
 - repos.applyMasteryUpdate 内联重写了 attemptsForQuestion 查询、`ADVANCE[intervalDays]!` 非空断言依赖隐式不变量、STAGE_DEFAULT_INTERVAL 兜底与"有历史无 mastery 行"防御分支零测试覆盖（M2+M3 Task 3 质量审查 Minor 1/3/6，Approved 不阻塞，Task 9 backup 校验同批顺手处理）。
 - getReviewSet 预筛兜底过滤的注释依据不成立（当前存储约定下与索引预筛严格等价，实为死防御）、`db.questions.toArray()` 建全表 map 可改 bulkGet、复测题内容全缺失分支复用"今日没有到期复习"空态文案语义不符、vocabKpFromQuestionId 短单元名不含连字符约定未注释（M2+M3 Task 4 质量审查 Minor 1-4，Approved 不阻塞，一行级改动，Task 9 同批顺手处理）。
+- 每日计划 review 任务 minutesPlanned 恒为 30% 份额，规格 §2.1"时长上限 min(30% 总时长, 到期题量)"未实现（规格-计划不一致，计划断言明确"不截断"，按计划执行）；薄弱度口径为曾错率而非规格字面"首测错误率"；非默认 dailyMinutes(20/45) 与 isStudyDay 跨月/跨年边界测试覆盖度；结转只回看恰好昨日（周六 deferred 周日休息 → 周一丢结转，已注释）；getOrCreatePlan 查重-生成非原子（单用户可接受）；plan/repos 测试 fixture 跨文件重复、专项查询顺序 await（M2+M3 Task 5 规格审查 6 条 + 质量审查未修 Minor，均不阻塞）。
+- Task 6 集成要求（Task 5 质量审查提醒）：exercise 页进入任务时必须先置任务 in_progress 再在完成时置 completed（planned→completed 视为非法转移会抛错）。

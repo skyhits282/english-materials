@@ -292,7 +292,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/db/repos.ts`（tasks repo：getOrCreatePlan、updateTaskStatus）
 - Test: `app-src/src/domain/plan.test.ts`
 
-- [ ] **Step 1: 写失败测试（plan.test.ts）**
+- [x] **Step 1: 写失败测试（plan.test.ts）**
 
 纯函数签名：
 
@@ -321,11 +321,11 @@ export function generatePlan(ctx: PlanContext): TaskRow[]
 - 任务 id 稳定：`task-<day>-<type>`（同日幂等的前提）；`status: 'planned'`
 - 去重：同一 questionId 不得出现在两个任务
 
-- [ ] **Step 2: 实现 plan.ts**
+- [x] **Step 2: 实现 plan.ts**
 
 按测试实现，纯函数无 IO；时长/题数换算写明常量。`isStudyDay` 判定单独导出 `isStudyDay(day: string, studyDaysPerWeek: number): boolean`：以周一起始的 `studyDaysPerWeek` 天为学习日（周一…周六学习、周日休息，默认 6），纯日期数学。
 
-- [ ] **Step 3: repos 封装与幂等**
+- [x] **Step 3: repos 封装与幂等**
 
 `getOrCreatePlan(ctxInputs, now)`：
 - `tasks.where('day').equals(dayKey)` 非空 → 直接返回已有（**不重建**）
@@ -333,7 +333,7 @@ export function generatePlan(ctx: PlanContext): TaskRow[]
 - `updateTaskStatus(id, status)`：只允许 planned→in_progress→completed 与 →skipped/deferred 的合法转移，非法转移抛错
 - yesterdayUnfinished 查询：`tasks.where('day').equals(昨日key)` 过滤 `deferred`（skipped 不结转）
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 每日计划生成——比例分配、幂等与结转

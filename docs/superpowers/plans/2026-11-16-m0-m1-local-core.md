@@ -2268,7 +2268,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   container.querySelector('#save')?.addEventListener('click', async () => {
     const next: Settings = {
       ...settings,
-      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value ?? settings.currentUnit),
+      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit),
       dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
@@ -2338,6 +2338,10 @@ git commit -m "feat(app): 今日学习/错题本/报告/设置页面，启动播
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
+
+**已知局限（M2 处理）：**
+- 词汇默写题运行时派生、不入 questions 表：错题本对词汇题显示 questionId 作题干、正确答案"—"，报告"易错词"显示原始 ID。修复方向：两页从 bundle 派生词汇题建补充 qMap，或播种时写入词汇题。
+- today/report/settings 页对内容 JSON 来源字符串（u.label、acceptedAnswers、currentUnit）未做 HTML 转义：当前内容为仓库内一方数据，未来引入外部供稿前需补齐 escapeHtml。
 
 ---
 

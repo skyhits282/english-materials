@@ -46,7 +46,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   container.querySelector('#save')?.addEventListener('click', async () => {
     const next: Settings = {
       ...settings,
-      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value ?? settings.currentUnit),
+      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit),
       dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,

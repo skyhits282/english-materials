@@ -2349,9 +2349,11 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 隐私模式等场景下 IndexedDB 打不开：应用不崩溃，做题仍可用（记录不保存，页面明确提示）。纯降级路径无单测，以代码结构与浏览器验证为准。
 
+除记录写入降级外，专项练习的题源（IndexedDB）与 settings 页的读取同样需要兜底，否则存储不可用时专项页显示"暂无题目"、settings 卡在"加载中…"，与规格 §3 冲突。
+
 **Files:**
 - Create: `app-src/src/db/availability.ts`
-- Modify: `app-src/src/main.ts`、`app-src/src/pages/exercise.ts`、`app-src/src/pages/today.ts`、`app-src/src/pages/mistakes.ts`、`app-src/src/pages/report.ts`
+- Modify: `app-src/src/main.ts`、`app-src/src/pages/exercise.ts`、`app-src/src/pages/today.ts`、`app-src/src/pages/mistakes.ts`、`app-src/src/pages/report.ts`、`app-src/src/pages/settings.ts`
 
 - [ ] **Step 1: 创建 `app-src/src/db/availability.ts`**
 
@@ -2376,61 +2378,187 @@ export function isStorageAvailable(): Promise<boolean> {
 
 - [ ] **Step 2: `main.ts` 顶部横幅**
 
-在 `startRouter(...)` 之前插入：
+import 置顶，在 `startRouter(...)` 之前插入：
 
 ```ts
-  import { isStorageAvailable } from './db/availability'
-  // ...
-  void isStorageAvailable().then((ok) => {
-    if (!ok) {
-      const banner = document.createElement('div')
-      banner.className = 'error-panel'
-      banner.setAttribute('role', 'alert')
-      banner.textContent = '无法保存学习记录（浏览器存储不可用）。可以继续练习，但刷新后记录不会保留。'
-      container.prepend(banner)
-    }
-  })
+import { isStorageAvailable } from './db/availability'
+
+// ...
+void isStorageAvailable().then((ok) => {
+  if (!ok) {
+    const banner = document.createElement('div')
+    banner.className = 'error-panel'
+    banner.setAttribute('role', 'alert')
+    banner.textContent = '无法保存学习记录（浏览器存储不可用）。可以继续练习，但刷新后记录不会保留。'
+    container.prepend(banner)
+    // 页面渲染会整体替换 container.innerHTML，横幅需在每次渲染后重新置顶
+    const observer = new MutationObserver(() => {
+      if (!banner.isConnected) container.prepend(banner)
+    })
+    observer.observe(container, { childList: true })
+  }
+})
 ```
 
-- [ ] **Step 3: `exercise.ts` 降级注入（替换 session 构造处）**
+- [ ] **Step 3: `exercise.ts` 降级注入与专项题源回退**
+
+专项练习题来自 `questionsByUnitPrefix`（IndexedDB）。存储不可用时改为从内容 bundle 前缀过滤，保证专项练习仍可做题：
 
 ```ts
-  import { isStorageAvailable } from '../db/availability'
-  // 替换原来的 session 构造：
-  const storageOk = await isStorageAvailable()
-  const session = new PracticeSession(data.questions, {
-    hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
-    recordAttempt: storageOk
-      ? saveAttempt
-      : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
-  })
+import { isStorageAvailable } from '../db/availability'
+
+async function loadQuestions(params: URLSearchParams): Promise<{ title: string; questions: Question[] }> {
+  const vocabUnit = params.get('vocab')
+  if (vocabUnit) {
+    const bundle = await fetchContentBundle()
+    const unit = bundle.vocab.units.find((u) => u.id === vocabUnit)
+    return { title: `单词默写 · ${unit?.label ?? vocabUnit}`, questions: shuffle(deriveVocabQuestions(bundle.vocab, vocabUnit)) }
+  }
+  const special = params.get('special')
+  if (special) {
+    const storageOk = await isStorageAvailable()
+    if (storageOk) {
+      const questions = await questionsByUnitPrefix(special)
+      return { title: '专项练习', questions: shuffle(questions) }
+    }
+    const bundle = await fetchContentBundle()
+    const questions = bundle.questions.filter((q) => q.unit.startsWith(special))
+    return { title: '专项练习', questions: shuffle(questions) }
+  }
+  return { title: '练习', questions: [] }
+}
+```
+
+`start()` 的数据加载阶段探测存储（与 stale 守卫协调），并按探测结果替换 session 依赖：
+
+```ts
+    let data: { title: string; questions: Question[] }
+    let storageOk = false
+    try {
+      storageOk = await isStorageAvailable()
+      data = await loadQuestions(params)
+    } catch (err) {
+      window.removeEventListener('hashchange', onHashChange)
+      if (stale) return
+      container.innerHTML = `<h1>学习练习</h1><div class="error-panel">题库加载失败：${escapeHtml(String(err))}<div class="action-row"><button class="btn" id="retry">重试</button></div></div>`
+      container.querySelector('#retry')?.addEventListener('click', () => void start())
+      return
+    }
+    if (stale) return
+    if (data.questions.length === 0) {
+      window.removeEventListener('hashchange', onHashChange)
+      container.innerHTML = `<h1>学习练习</h1><div class="card"><h3>${escapeHtml(data.title)}</h3><p>该内容暂无题目。</p><div class="action-row"><button class="btn btn-secondary" id="back">返回今日学习</button></div></div>`
+      container.querySelector('#back')?.addEventListener('click', () => navigate('today'))
+      return
+    }
+
+    const session = new PracticeSession(data.questions, {
+      hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
+      recordAttempt: storageOk
+        ? saveAttempt
+        : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
+    })
 ```
 
 并在 `renderQuestion` 模板的 `<p class="muted">第 … 题</p>` 后追加：`${storageOk ? '' : '<p class="muted">存储不可用，本次练习不会保存记录。</p>'}`
 
 - [ ] **Step 4: today / mistakes / report 页 DB 读取兜底**
 
-三页把现有的数据读取段包进 try/catch。以 mistakes 页为例（today/report 同构）：
+三页把现有的数据读取段包进 try/catch（保留 bundle fetch 自身的 catch；catch 内同样先做 stale 守卫并移除哈希监听）：
+
+today 页：
+
+```ts
+  let settings: Awaited<ReturnType<typeof getSettings>>
+  let attempts: Awaited<ReturnType<typeof listAttempts>>
+  let bundle: Awaited<ReturnType<typeof fetchContentBundle>> | undefined
+  try {
+    [settings, attempts, bundle] = await Promise.all([
+      getSettings(),
+      listAttempts(),
+      fetchContentBundle().catch(() => undefined),
+    ])
+  } catch {
+    if (stale) return
+    window.removeEventListener('hashchange', onHashChange)
+    container.innerHTML = '<h1>今日学习</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>'
+    return
+  }
+```
+
+mistakes 页（report 同构，替换标题与错误文案）：
 
 ```ts
   let attempts: Awaited<ReturnType<typeof listAttempts>> = []
+  let questions: Awaited<ReturnType<typeof listAllQuestions>> = []
   try {
-    attempts = await listAttempts()
+    [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
   } catch {
+    if (stale) return
+    window.removeEventListener('hashchange', onHashChange)
     container.innerHTML = '<h1>错题本</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>'
     return
   }
 ```
 
-（`listAllQuestions` 等其余 DB 调用同样包进同一 try 块。）
+report 页：同上，错误文案 `<h1>学习报告</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>`。
 
-- [ ] **Step 5: 构建、测试、提交**
+- [ ] **Step 5: `settings.ts` 读取与保存兜底**
+
+`getSettings()` 失败时使用 `DEFAULT_SETTINGS` 并显示提示，避免隐私模式下卡在"加载中…"：
+
+```ts
+import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
+
+// ...
+  const bundlePromise = fetchContentBundle().catch(() => undefined)
+  let settings: Settings
+  let storageError = false
+  try {
+    settings = await getSettings()
+  } catch {
+    storageError = true
+    settings = DEFAULT_SETTINGS
+  }
+  const bundle = await bundlePromise
+  if (stale) return
+```
+
+模板在 `<h1>家长设置</h1>` 后插入提示行：
+
+```ts
+    ${storageError ? '<div class="error-panel" role="alert">无法读取设置（浏览器存储不可用）。</div>' : ''}
+```
+
+保存处理器包 try/catch，失败时替换成功提示、不静默吞错：
+
+```ts
+  container.querySelector('#save')?.addEventListener('click', async () => {
+    const next: Settings = {
+      ...settings,
+      currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit),
+      dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
+      studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
+      aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
+    }
+    try {
+      await saveSettings(next)
+      if (stale) return
+      message.textContent = '已保存。'
+    } catch {
+      if (stale) return
+      message.textContent = '保存失败，存储不可用。'
+    }
+  })
+```
+
+- [ ] **Step 6: 构建、测试、提交**
 
 Run: `npm --prefix app-src run build && npm --prefix app-src run test`
 Expected: 通过（降级路径不影响既有测试）
 
 ```bash
-git add app-src/src
+git add app-src/src docs/superpowers/plans/2026-11-16-m0-m1-local-core.md app
 git commit -m "feat(app): 存储不可用时降级——可做题不保存，页面明确提示
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"

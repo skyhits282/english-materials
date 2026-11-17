@@ -14,7 +14,16 @@ export const renderMistakes: PageRenderer = async ({ container }) => {
   const onHashChange = () => { stale = true }
   window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>错题本</h1><p class="muted">加载中…</p>'
-  const [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  let attempts: Awaited<ReturnType<typeof listAttempts>> = []
+  let questions: Awaited<ReturnType<typeof listAllQuestions>> = []
+  try {
+    [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  } catch {
+    if (stale) return
+    window.removeEventListener('hashchange', onHashChange)
+    container.innerHTML = '<h1>错题本</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>'
+    return
+  }
   if (stale) return
   const qMap = new Map(questions.map((q) => [q.id, q]))
   const wrong = attempts.filter((a) => !a.isCorrect)

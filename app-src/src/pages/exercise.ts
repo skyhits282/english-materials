@@ -4,6 +4,7 @@ import type { Question } from '../types'
 import { fetchContentBundle, deriveVocabQuestions } from '../content/loader'
 import { questionsByUnitPrefix } from '../db/repos'
 import { saveAttempt, hasPriorAttempt } from '../db/repos'
+import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
 
 const LETTERS = ['A', 'B', 'C', 'D']
@@ -30,7 +31,13 @@ async function loadQuestions(params: URLSearchParams): Promise<{ title: string; 
   }
   const special = params.get('special')
   if (special) {
-    const questions = await questionsByUnitPrefix(special)
+    const storageOk = await isStorageAvailable()
+    if (storageOk) {
+      const questions = await questionsByUnitPrefix(special)
+      return { title: '专项练习', questions: shuffle(questions) }
+    }
+    const bundle = await fetchContentBundle()
+    const questions = bundle.questions.filter((q) => q.unit.startsWith(special))
     return { title: '专项练习', questions: shuffle(questions) }
   }
   return { title: '练习', questions: [] }
@@ -43,7 +50,9 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     window.addEventListener('hashchange', onHashChange, { once: true })
     container.innerHTML = '<h1>学习练习</h1><p class="muted">加载中…</p>'
     let data: { title: string; questions: Question[] }
+    let storageOk = false
     try {
+      storageOk = await isStorageAvailable()
       data = await loadQuestions(params)
     } catch (err) {
       window.removeEventListener('hashchange', onHashChange)
@@ -61,8 +70,10 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     }
 
     const session = new PracticeSession(data.questions, {
-      hasPriorAttempt,
-      recordAttempt: saveAttempt,
+      hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
+      recordAttempt: storageOk
+        ? saveAttempt
+        : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
     })
     const stats = { correct: 0, total: session.total }
 
@@ -73,6 +84,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
         <h1>${escapeHtml(data.title)}</h1>
         <div class="progress-bar"><div style="width:${progress}%"></div></div>
         <p class="muted">第 ${session.done + 1} / ${session.total} 题</p>
+        ${storageOk ? '' : '<p class="muted">存储不可用，本次练习不会保存记录。</p>'}
         <div class="card">
           <h3 style="font-size:1.25rem">${escapeHtml(q.stem)}</h3>
           ${q.type === 'single_choice' ? renderOptions(q) : renderFill()}

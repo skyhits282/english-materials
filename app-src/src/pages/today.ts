@@ -10,11 +10,21 @@ export const renderToday: PageRenderer = async ({ container }) => {
   const onHashChange = () => { stale = true }
   window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>今日学习</h1><p class="muted">加载中…</p>'
-  const [settings, attempts, bundle] = await Promise.all([
-    getSettings(),
-    listAttempts(),
-    fetchContentBundle().catch(() => undefined),
-  ])
+  let settings: Awaited<ReturnType<typeof getSettings>>
+  let attempts: Awaited<ReturnType<typeof listAttempts>>
+  let bundle: Awaited<ReturnType<typeof fetchContentBundle>> | undefined
+  try {
+    [settings, attempts, bundle] = await Promise.all([
+      getSettings(),
+      listAttempts(),
+      fetchContentBundle().catch(() => undefined),
+    ])
+  } catch {
+    if (stale) return
+    window.removeEventListener('hashchange', onHashChange)
+    container.innerHTML = '<h1>今日学习</h1><div class="error-panel" role="alert">无法读取学习记录（浏览器存储不可用）。</div>'
+    return
+  }
   if (stale) return
   const today = localDayKey()
   const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))

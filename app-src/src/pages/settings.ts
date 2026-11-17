@@ -1,5 +1,5 @@
 import type { PageRenderer } from '../router'
-import { getSettings, saveSettings } from '../db/repos'
+import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
 import { fetchContentBundle } from '../content/loader'
 import type { Settings } from '../types'
 
@@ -8,16 +8,23 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   const onHashChange = () => { stale = true }
   window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>家长设置</h1><p class="muted">加载中…</p>'
-  const [settings, bundle] = await Promise.all([
-    getSettings(),
-    fetchContentBundle().catch(() => undefined),
-  ])
+  const bundlePromise = fetchContentBundle().catch(() => undefined)
+  let settings: Settings
+  let storageError = false
+  try {
+    settings = await getSettings()
+  } catch {
+    storageError = true
+    settings = DEFAULT_SETTINGS
+  }
+  const bundle = await bundlePromise
   if (stale) return
   const units = bundle?.vocab.units ?? []
   const message = document.createElement('p')
 
   container.innerHTML = `
     <h1>家长设置</h1>
+    ${storageError ? '<div class="error-panel" role="alert">无法读取设置（浏览器存储不可用）。</div>' : ''}
     <div class="card">
       <div class="form-row">
         <label for="set-unit">单词默写当前单元</label>
@@ -51,9 +58,14 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
     }
-    await saveSettings(next)
-    if (stale) return
-    message.textContent = '已保存。'
+    try {
+      await saveSettings(next)
+      if (stale) return
+      message.textContent = '已保存。'
+    } catch {
+      if (stale) return
+      message.textContent = '保存失败，存储不可用。'
+    }
   })
 }
 

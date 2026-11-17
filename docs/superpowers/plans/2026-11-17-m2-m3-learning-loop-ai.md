@@ -167,7 +167,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/types.ts`（Mastery 扩展）、`app-src/src/db/repos.ts`（mastery 写入）、`app-src/src/pages/exercise.ts`（提交后挂钩）
 - Test: `app-src/src/domain/review.test.ts`
 
-- [ ] **Step 1: 类型扩展（types.ts）**
+- [x] **Step 1: 类型扩展（types.ts）**
 
 ```ts
 export interface Mastery {
@@ -183,7 +183,7 @@ export interface Mastery {
 
 （`'new'` stage 保留给播种前的默认态；实际首条 mastery 行在第一次相关提交时创建。）
 
-- [ ] **Step 2: 写失败测试（review.test.ts）**
+- [x] **Step 2: 写失败测试（review.test.ts）**
 
 覆盖规格 §1.1 全部转移边：
 - 首测错误（无 mastery 行）→ `stage:'weak'`、`intervalDays:1`、`nextReviewAt` 为本地次日（相对传入基准时间）
@@ -196,7 +196,7 @@ export interface Mastery {
 - metrics 聚合正确（testedCount/firstTryCorrect/delayedReviewCorrect 累加规则：first 计入 tested+firstTryCorrect；隔日 retry 计入 delayedReviewCorrect；同日 retry 只计 tested）
 - 基准时间用注入参数（`now: Date`），本地日推算用现有 `localDayKey`（metrics.ts）
 
-- [ ] **Step 3: 实现 review.ts**
+- [x] **Step 3: 实现 review.ts**
 
 ```ts
 import type { Attempt, Mastery } from '../types'
@@ -219,7 +219,7 @@ export function nextMasteryState(current: Mastery | undefined, knowledgePointId:
 
 实现要点：同日判定 `event.localDay === event.previousLocalDay` 时不改 stage/interval/nextReviewAt；`advanceNextReview(now, days)` 用本地日历日加 days 再取本地零点的 UTC ISO（可复用 metrics.ts 的日历工具，必要时抽公共 `time.ts`）。
 
-- [ ] **Step 4: repos 与提交挂钩**
+- [x] **Step 4: repos 与提交挂钩**
 
 `repos.ts` 新增 `applyMasteryUpdate(attempt: Attempt, question: Question, now?: Date)`：
 - 取题目 `knowledgePointIds`（词题无行则用 `questionId` 派生的知识点 ID——统一格式 `vocab.<unitId>`）
@@ -228,7 +228,7 @@ export function nextMasteryState(current: Mastery | undefined, knowledgePointId:
 - 写入包在 `db.transaction('rw', [attempts, mastery], …)` 内，与 saveAttempt 同事务；saveAttempt 返回后挂钩调用（存储不可用降级路径跳过）
 - exercise.ts：`recordAttempt` 成功后调用挂钩（失败仅 console.warn，不影响判分主链路——与现有降级哲学一致）
 
-- [ ] **Step 5: 全量验证 + Commit**
+- [x] **Step 5: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): mastery 状态机——间隔 1/3/7/14 天转移与提交挂钩

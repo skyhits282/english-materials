@@ -3130,3 +3130,4 @@ Task 1 → 2 → 3 → 4 → 5（4、5 可并行）→ 6 → 7 → 8 → 9（可
 - `.playwright-mcp/` 未加入 .gitignore（Task 13 规格审查观察；未入库，仅防误提交）。
 - 专项清单三处平行描述（extract-questions.mjs BOOKS、app-src/src/content/sets.ts SPECIALS、测试 SPECIAL_COUNTS）无自动交叉校验，拼错会静默 0 题（M2+M3 Task 1 质量审查 Minor）。建议应用侧断言 SPECIALS id ⊆ questions unit 前缀集合。
 - 转换脚本分册统计按 term 字母归册、main() 按位置索引取 books——第三册复用 term 字母会错位（M2+M3 Task 1 质量审查 Minor，两册无虞的 latent 假设）。
+- repos.applyMasteryUpdate 内联重写了 attemptsForQuestion 查询、`ADVANCE[intervalDays]!` 非空断言依赖隐式不变量、STAGE_DEFAULT_INTERVAL 兜底与"有历史无 mastery 行"防御分支零测试覆盖（M2+M3 Task 3 质量审查 Minor 1/3/6，Approved 不阻塞，Task 9 backup 校验同批顺手处理）。

@@ -4,7 +4,7 @@ import { SPECIALS } from '../content/sets'
 import { fetchContentBundle, findVocabUnit } from '../content/loader'
 import { seedContent } from '../content/seed'
 import { isStorageAvailable } from '../db/availability'
-import { clearDayTasks, getOrCreatePlan, getSettings, getTask, listAttempts, updateTaskStatus } from '../db/repos'
+import { clearDayTasks, completeTask, getOrCreatePlan, getSettings, isPlanIncomplete, listAttempts } from '../db/repos'
 import { isStudyDay } from '../domain/plan'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
 import { escapeHtml } from '../ui/escape'
@@ -32,31 +32,34 @@ const rerender = (container: HTMLElement) => {
   if (stillOnToday()) void renderPage(container).catch((err) => console.error('今日页重渲染失败：', err))
 }
 
-/** 学习小结勾选完成：planned→completed 为非法直转，走 planned→in_progress（瞬态）→completed 两步 */
-async function completeSummary(taskId: string | undefined, container: HTMLElement): Promise<void> {
+/** 学习小结勾选完成：状态机转移下沉在 completeTask（planned 先补 in_progress 瞬态再 completed）；
+ *  回写失败或被拒（终态）时回滚勾选框 */
+async function completeSummary(cb: HTMLInputElement, taskId: string | undefined, container: HTMLElement): Promise<void> {
   if (!taskId) return
+  let ok = false
   try {
-    const task = await getTask(taskId)
-    if (!task || task.status === 'completed' || task.status === 'deferred' || task.status === 'skipped') return
-    if (task.status === 'planned') await updateTaskStatus(taskId, 'in_progress')
-    await updateTaskStatus(taskId, 'completed')
+    ok = await completeTask(taskId)
   } catch (err) {
     console.warn('学习小结完成回写失败：', err)
+  }
+  if (!ok) {
+    cb.checked = false
     return
   }
   rerender(container)
 }
 
 /** 播种重试（技术债清偿）：重新拉取 bundle（fetch 失败后缓存已自清）并播种。
- *  当日计划若是在题库缺失时生成的残缺计划（缺 unit/special 段），删除后由重渲染经 getOrCreatePlan 重建——
- *  残缺模式下练习入口基本不可用，重建造成的任务状态重置可接受（真实作答记录在 attempts 表，不受影响）。 */
-async function retrySeed(btn: HTMLButtonElement, opts: { container: HTMLElement; today: string; degraded: boolean }): Promise<void> {
+ *  仅当当日计划本身残缺（isPlanIncomplete：缺专项段）才清除当日任务重建——残缺模式下练习入口
+ *  基本不可用，重建造成的任务状态重置可接受（真实作答记录在 attempts 表，不受影响）；
+ *  瞬时 bundle 失败但计划完整时不清任务，已完成状态保留（只刷新题目内容）。 */
+async function retrySeed(btn: HTMLButtonElement, opts: { container: HTMLElement; today: string; rebuild: boolean }): Promise<void> {
   btn.disabled = true
   btn.textContent = '重试中…'
   try {
     const bundle = await fetchContentBundle()
     if (await isStorageAvailable()) await seedContent(bundle)
-    if (opts.degraded) await clearDayTasks(opts.today)
+    if (opts.rebuild) await clearDayTasks(opts.today)
   } catch {
     // 仍失败：重渲染恢复重试入口（bundle 失败时缓存自清，下次重试会真正重新拉取）
   }
@@ -141,9 +144,11 @@ async function renderPage(container: HTMLElement): Promise<void> {
   const vocabUnit = findVocabUnit(bundle?.vocab ?? ([] as VocabBook[]), settings.currentUnit)
   const completedCount = tasks.filter((t) => t.status === 'completed').length
 
-  // 播种失败判定（M1 技术债清偿）：bundle 拉取/播种失败，或学习日计划缺专项段
-  //（questions 表无题可选时 generatePlan 不会产出 special 任务）→ 显示错误与重试，不再静默 0 题
-  const seedDegraded = bundle === undefined || !tasks.some((t) => t.type === 'special')
+  // 播种失败/计划残缺判定（M1 技术债清偿，两者都给重试入口）：
+  //  - seedError：bundle fetch 失败或 seedContent 抛错——计划可能仍完整（此前已生成），但题目停留旧版本；
+  //  - isPlanIncomplete：当日计划缺专项段（questions 表无题可选时 generatePlan 不会产出 special 任务）
+  const planIncomplete = isPlanIncomplete(tasks)
+  const seedFailed = seedError !== undefined
 
   interface TaskCard {
     title: string
@@ -155,6 +160,9 @@ async function renderPage(container: HTMLElement): Promise<void> {
   const cards: TaskCard[] = tasks.map((task) => {
     switch (task.type) {
       case 'review':
+        // 已知留办（规格审查 M7）：review 任务 questionIds 是生成时快照，而练习页 set=review 走
+        // getReviewSet 实时选题（剔除当日已答）——极端情况下进入时已无到期题（空态），任务停留
+        // planned 无法完成；暂接受该边缘场景，待后续按任务快照出题时一并处理
         return {
           title: '到期复习',
           desc: `${task.questionIds.length} 题 · ${task.minutesPlanned} 分钟`,
@@ -213,9 +221,12 @@ async function renderPage(container: HTMLElement): Promise<void> {
       <p>预计 ${settings.dailyMinutes} 分钟 · 任务 ${completedCount}/${tasks.length} 已完成 · 今日已练 ${todayAttempts.length} 题</p>
       <p>${m.firstTryCorrectRate === null ? '暂无首测数据' : `首测正确率 ${Math.round(m.firstTryCorrectRate * 100)}%`}</p>
     </div>
-    ${seedDegraded ? `
+    ${seedFailed || planIncomplete ? `
     <div class="error-panel" role="alert">
-      题库加载或播种不完整，部分任务未能生成。${seedError ? `<p>${escapeHtml(String(seedError))}</p>` : ''}
+      <p>${seedFailed
+        ? `题库内容加载或播种失败${planIncomplete ? '，部分任务未能生成' : ''}。`
+        : '题库播种不完整，部分任务未能生成。'}</p>
+      ${seedError ? `<p>${escapeHtml(String(seedError))}</p>` : ''}
       <div class="action-row"><button class="btn" id="seed-retry">重试</button></div>
     </div>` : ''}
     ${cardHtml}`
@@ -229,12 +240,12 @@ async function renderPage(container: HTMLElement): Promise<void> {
   }
   for (const cb of container.querySelectorAll<HTMLInputElement>('input[data-summary]')) {
     cb.addEventListener('change', () => {
-      if (cb.checked) void completeSummary(tasks[Number(cb.dataset.summary)]?.id, container)
+      if (cb.checked) void completeSummary(cb, tasks[Number(cb.dataset.summary)]?.id, container)
     })
   }
   container.querySelector('#seed-retry')?.addEventListener('click', (e) => {
     const btn = e.currentTarget
-    if (btn instanceof HTMLButtonElement) void retrySeed(btn, { container, today, degraded: seedDegraded })
+    if (btn instanceof HTMLButtonElement) void retrySeed(btn, { container, today, rebuild: planIncomplete })
   })
   window.removeEventListener('hashchange', onHashChange)
 }

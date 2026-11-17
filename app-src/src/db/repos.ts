@@ -252,6 +252,27 @@ export async function clearDayTasks(day: string): Promise<void> {
   await db.tasks.where('day').equals(day).delete()
 }
 
+/** 任务一步完成回写（练习页完成节点与今日页小结勾选共用）：单 rw 事务内读取+校验+写入，
+ *  planned 先补 in_progress（瞬态）再 completed（规避 planned→completed 非法直转）、in_progress 直转；
+ *  任务不存在或终态（completed/deferred/skipped）返回 false 且不落库。 */
+export async function completeTask(id: string): Promise<boolean> {
+  return db.transaction('rw', db.tasks, async () => {
+    const row = await db.tasks.get(id)
+    if (row === undefined) return false
+    if (row.status !== 'planned' && row.status !== 'in_progress') return false
+    if (row.status === 'planned') await db.tasks.update(id, { status: 'in_progress' })
+    await db.tasks.update(id, { status: 'completed' })
+    return true
+  })
+}
+
+/** 播种重试是否需要清除当日任务重建：仅当计划本身残缺（学习日生成的计划缺专项段——
+ *  questions 表无题可选时 generatePlan 不会产出 special 任务）。瞬时 bundle 失败但计划完整时
+ *  返回 false：重试只重拉 bundle 与播种，不得重置已完成任务状态。 */
+export function isPlanIncomplete(tasks: TaskRow[]): boolean {
+  return tasks.length > 0 && !tasks.some((t) => t.type === 'special')
+}
+
 /** 更新任务状态：非法转移（含终态再转移）抛错且不落库 */
 export async function updateTaskStatus(id: string, status: TaskRow['status']): Promise<void> {
   await db.transaction('rw', db.tasks, async () => {

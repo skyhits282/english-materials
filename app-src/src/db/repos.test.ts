@@ -19,6 +19,8 @@ import {
   updateTaskStatus,
   getTask,
   clearDayTasks,
+  completeTask,
+  isPlanIncomplete,
 } from './repos'
 import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 
@@ -445,5 +447,52 @@ describe('getTask / clearDayTasks（任务查询与当日残缺计划清除）',
     await clearDayTasks('2026-11-17')
     expect(await db.tasks.count()).toBe(1)
     expect((await db.tasks.toArray())[0]?.id).toBe('task-2026-11-16-unit')
+  })
+})
+
+describe('completeTask（任务一步完成回写：单事务内两步转移）', () => {
+  const putTask = (status: TaskRow['status']): Promise<unknown> =>
+    db.tasks.put({ id: 't1', day: '2026-11-17', type: 'unit', questionIds: ['q1'], status, minutesPlanned: 14 })
+
+  it('planned → completed（事务内先补 in_progress 瞬态再 completed），返回 true', async () => {
+    await putTask('planned')
+    await expect(completeTask('t1')).resolves.toBe(true)
+    expect((await db.tasks.get('t1'))?.status).toBe('completed')
+  })
+
+  it('in_progress → completed 直转，返回 true', async () => {
+    await putTask('in_progress')
+    await expect(completeTask('t1')).resolves.toBe(true)
+    expect((await db.tasks.get('t1'))?.status).toBe('completed')
+  })
+
+  it('终态拒绝返回 false 且不落库；任务不存在返回 false', async () => {
+    for (const terminal of ['completed', 'deferred', 'skipped'] as const) {
+      await putTask(terminal)
+      await expect(completeTask('t1')).resolves.toBe(false)
+      expect((await db.tasks.get('t1'))?.status).toBe(terminal)
+    }
+    await expect(completeTask('nope')).resolves.toBe(false)
+  })
+})
+
+describe('isPlanIncomplete（播种重试是否重建当日计划的判定）', () => {
+  const task = (type: TaskRow['type'], status: TaskRow['status'] = 'planned'): TaskRow => ({
+    id: `t-${type}`, day: '2026-11-17', type, questionIds: type === 'special' ? ['g7a-present-l1-0001'] : [], status, minutesPlanned: 10,
+  })
+
+  it('学习日计划缺专项段（残缺计划）返回 true；空计划与完整计划返回 false', () => {
+    expect(isPlanIncomplete([task('unit'), task('summary')])).toBe(true)
+    expect(isPlanIncomplete([])).toBe(false)
+    expect(isPlanIncomplete([task('review'), task('unit'), task('special'), task('summary')])).toBe(false)
+  })
+
+  it('回归：bundle 瞬时失败但计划完整——重试判定不清任务，已完成状态保留', async () => {
+    // 完整计划（含 special），其中 unit 已完成（如练习页回写后）
+    await db.tasks.bulkPut([task('unit', 'completed'), task('special'), task('summary')])
+    // 重试触发条件为"纯计划残缺"：完整计划 → 不 clearDayTasks 重建
+    expect(isPlanIncomplete(await db.tasks.toArray())).toBe(false)
+    // 未清任务 → 完成状态保留
+    expect((await db.tasks.get('t-unit'))?.status).toBe('completed')
   })
 })

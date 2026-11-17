@@ -106,6 +106,19 @@ export interface Settings {
   studyDaysPerWeek: number
   aiEnabled: boolean
   studentLabel: string
+  /** 家长保护 PIN：4 位数字，明文存储（仅防误操作，不参与任何加密）；undefined=未设置。
+   *  备份导出剔除该字段（Task 9 统一处理）。 */
+  parentPin?: string
+  /** 最近两次试卷的题型分项成绩（如"语法 12/15"），手工录入、上限 8 行，
+   *  仅作报告页诊断参考，不参与自动判分与指标。 */
+  examScores?: ExamScoreRow[]
+}
+
+/** 试卷分项成绩一行：题型标签 + 得分/满分 */
+export interface ExamScoreRow {
+  label: string
+  got: number
+  total: number
 }
 
 export interface ContentBundle {

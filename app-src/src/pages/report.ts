@@ -1,6 +1,6 @@
 import type { PageRenderer } from '../router'
-import type { VocabBook } from '../types'
-import { listAllMastery, listAllTasks, listAttempts, listAllQuestions } from '../db/repos'
+import type { Settings, VocabBook } from '../types'
+import { getSettings, listAllMastery, listAllTasks, listAttempts, listAllQuestions } from '../db/repos'
 import { computeCoreMetrics, localDayKey, isSameLocalDay } from '../domain/metrics'
 import {
   knowledgePointCoverage,
@@ -39,10 +39,11 @@ export const renderReport: PageRenderer = async ({ container }) => {
   let vocab: VocabBook[] = []
   let tasks: TaskRow[] = []
   let mastery: Awaited<ReturnType<typeof listAllMastery>> = []
+  let settings: Settings
   try {
     // 词题不在 questions 表中：bundle 失败时降级为空数组，易错词沿用原始 ID 显示（不比 M1 差）；
     // 词题知识点派生不依赖 bundle（按 questionId 约定），薄弱点/周报不受此降级影响
-    [attempts, questions, vocab, tasks, mastery] = await Promise.all([
+    ;[attempts, questions, vocab, tasks, mastery, settings] = await Promise.all([
       listAttempts(),
       listAllQuestions(),
       fetchContentBundle().then((b) => b.vocab).catch(() => {
@@ -51,6 +52,7 @@ export const renderReport: PageRenderer = async ({ container }) => {
       }),
       listAllTasks(),
       listAllMastery(),
+      getSettings(),
     ])
   } catch {
     if (stale) return
@@ -123,6 +125,14 @@ export const renderReport: PageRenderer = async ({ container }) => {
       </ul>
       ${vocabWrong.length > 0 ? `<p class="muted">易错词：${vocabWrong.map((id) => escapeHtml(vocabResolver.resolve(id)?.answer ?? qMap.get(id)?.answerSpec.acceptedAnswers?.[0] ?? id)).slice(0, 12).join('、')}${vocabWrong.length > 12 ? '…' : ''}</p>` : ''}
     </div>
+    ${settings.examScores && settings.examScores.length > 0 ? `
+    <div class="card">
+      <h3>试卷成绩（手工录入）</h3>
+      <ul class="list">
+        ${settings.examScores.map((r) => `<li>${escapeHtml(r.label)} ${r.got}/${r.total}</li>`).join('')}
+      </ul>
+      <p class="muted">手工录入，仅供参考；不参与自动判分与指标。</p>
+    </div>` : ''}
     <div class="card">
       <h3>本周周报（${facts.weekStart} 起）</h3>
       <ul class="list">

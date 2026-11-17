@@ -91,3 +91,7 @@ h2 { font-size: 1.2rem; }
   min-height: 48px; font-size: 1rem; cursor: pointer;
 }
 .check-row input { width: 22px; height: 22px; margin: 0; }
+
+/* 试卷成绩录入行（Task 8）：题型 + 得分/满分 三列，窄屏不换行 */
+.exam-row { display: grid; grid-template-columns: 1fr 88px 88px; gap: 8px; margin: 8px 0; }
+.exam-row input { min-height: 44px; font-size: 1rem; padding: 6px 10px; border: 2px solid var(--line); border-radius: 10px; }

@@ -2312,10 +2312,12 @@ startRouter(
   container,
 )
 // 路由先行渲染，播种在后台完成；失败不阻塞做题以外页面
-void isStorageAvailable()
-  .then((ok) => (ok ? fetchContentBundle().then(seedContent) : undefined))
+void fetchContentBundle()
+  .then((bundle) => seedContent(bundle))
   .catch((err) => console.error('题库播种失败：', err))
 ```
+
+（Task 11 Step 2 会把该播种改为按存储可用性 gating，Task 12 保持不变。）
 
 - [ ] **Step 6: 类型检查、测试、构建**
 
@@ -2398,6 +2400,14 @@ void isStorageAvailable().then((ok) => {
     observer.observe(container, { childList: true })
   }
 })
+```
+
+同时把启动播种改为按存储可用性 gating（隐私模式不白跑 seedContent）：
+
+```ts
+void isStorageAvailable()
+  .then((ok) => (ok ? fetchContentBundle().then(seedContent) : undefined))
+  .catch((err) => console.error('题库播种失败：', err))
 ```
 
 - [ ] **Step 3: `exercise.ts` 降级注入与专项题源回退**

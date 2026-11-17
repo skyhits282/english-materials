@@ -242,6 +242,16 @@ const TASK_TRANSITIONS: Record<TaskRow['status'], TaskRow['status'][]> = {
   deferred: [],
 }
 
+/** 按 id 取任务（练习页回写前预查状态、规避非法转移用） */
+export async function getTask(id: string): Promise<TaskRow | undefined> {
+  return db.tasks.get(id)
+}
+
+/** 清除某日全部任务行（今日页播种重试用：当日计划是在题库缺失时生成的残缺计划，重建前调用） */
+export async function clearDayTasks(day: string): Promise<void> {
+  await db.tasks.where('day').equals(day).delete()
+}
+
 /** 更新任务状态：非法转移（含终态再转移）抛错且不落库 */
 export async function updateTaskStatus(id: string, status: TaskRow['status']): Promise<void> {
   await db.transaction('rw', db.tasks, async () => {

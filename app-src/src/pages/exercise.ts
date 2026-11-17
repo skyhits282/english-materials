@@ -3,12 +3,40 @@ import { navigate } from '../router'
 import type { Question } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { questionsByUnitPrefix } from '../db/repos'
-import { saveAttempt, hasPriorAttempt, applyMasteryUpdate, getReviewSet, listAllQuestions } from '../db/repos'
+import { saveAttempt, hasPriorAttempt, applyMasteryUpdate, getReviewSet, listAllQuestions, getTask, updateTaskStatus } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
 import { escapeHtml } from '../ui/escape'
 
 const LETTERS = ['A', 'B', 'C', 'D']
+
+/** 任务回写辅助：预查当前状态规避非法转移（重复进入已 in_progress 的任务、终态旧链接等）；
+ *  回写失败仅告警，不阻塞练习主链路（沿用 M1 降级哲学） */
+async function markTaskStarted(taskId: string): Promise<void> {
+  try {
+    const task = await getTask(taskId)
+    if (!task) return // 旧链接/跨日任务不存在：按自由练处理，不回写
+    if (task.status !== 'planned') return
+    await updateTaskStatus(taskId, 'in_progress')
+  } catch (err) {
+    console.warn('任务置 in_progress 失败：', err)
+  }
+}
+
+async function markTaskCompleted(taskId: string): Promise<void> {
+  try {
+    const task = await getTask(taskId)
+    if (!task) return
+    if (task.status === 'completed' || task.status === 'deferred' || task.status === 'skipped') return
+    if (task.status === 'planned') {
+      // 正常路径进入时已置 in_progress；此处两步补齐，避免 planned→completed 非法直转抛错
+      await updateTaskStatus(taskId, 'in_progress')
+    }
+    await updateTaskStatus(taskId, 'completed')
+  } catch (err) {
+    console.warn('任务完成回写失败：', err)
+  }
+}
 
 function shuffle<T>(items: T[]): T[] {
   const arr = [...items]
@@ -64,7 +92,8 @@ async function loadQuestions(
     const unit = findVocabUnit(bundle.vocab, vocabUnit)
     return { title: `单词默写 · ${unit?.label ?? vocabUnit}`, questions: shuffle(deriveVocabQuestions(bundle.vocab, vocabUnit)) }
   }
-  const special = params.get('special')
+  // set=<专项 id>（今日页任务卡入口）与 special=<专项 id>（既有入口）共用同一加载路径
+  const special = params.get('set') || params.get('special')
   if (special) {
     const storageOk = await isStorageAvailable()
     if (storageOk) {
@@ -79,6 +108,9 @@ async function loadQuestions(
 }
 
 export const renderExercise: PageRenderer = ({ container, params }) => {
+  // 任务驱动练习（今日页卡片带 task=<id>）：进入即置 in_progress，renderSummary 完成节点回写 completed；
+  // 无 task 参数为自由练，不回写。中途退出（hashchange 离开）保持 in_progress。
+  const taskId = params.get('task') || undefined
   const start = async (): Promise<void> => {
     let stale = false
     const onHashChange = () => { stale = true }
@@ -103,6 +135,10 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       container.querySelector('#back')?.addEventListener('click', () => navigate('today'))
       return
     }
+
+    // 任务驱动练习：题目加载成功（非空）即视为"进入练习"，把任务置 in_progress；
+    // 加载失败或空态（无题可练）时不转移，任务保持 planned
+    if (taskId) await markTaskStarted(taskId)
 
     // 提交挂钩：attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；
     // 挂钩失败仅 console.warn 并回退为单独保存 attempt，不影响判分主链路（沿用 M1 降级哲学）
@@ -203,6 +239,8 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
 
     const renderSummary = () => {
       window.removeEventListener('hashchange', onHashChange)
+      // 完成节点（全部题目提交完 → 查看总结）：任务回写 completed（真实作答完成才计，规格 §2.2）
+      if (taskId) void markTaskCompleted(taskId)
       container.innerHTML = `
         <h1>${escapeHtml(data.title)}</h1>
         <div class="card">

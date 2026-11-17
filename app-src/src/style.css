@@ -80,3 +80,12 @@ h2 { font-size: 1.2rem; }
 .error-panel { background: var(--bad-bg); padding: 14px; border-radius: var(--radius); }
 .muted { color: var(--muted); font-size: 0.9rem; }
 .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+/* 今日页任务卡状态（Task 6）：完成置灰、进行中高亮 */
+.task-done { opacity: 0.6; }
+.task-done h3 { color: var(--muted); }
+.task-active { border-color: var(--brand); box-shadow: 0 0 0 1px var(--brand); }
+.check-row {
+  display: flex; align-items: center; gap: 10px;
+  min-height: 48px; font-size: 1rem; cursor: pointer;
+}
+.check-row input { width: 22px; height: 22px; margin: 0; }

@@ -17,6 +17,8 @@ import {
   getReviewSet,
   getOrCreatePlan,
   updateTaskStatus,
+  getTask,
+  clearDayTasks,
 } from './repos'
 import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 
@@ -425,5 +427,23 @@ describe('updateTaskStatus（任务状态机）', () => {
 
   it('任务不存在抛错', async () => {
     await expect(updateTaskStatus('nope', 'in_progress')).rejects.toThrow('任务不存在')
+  })
+})
+
+describe('getTask / clearDayTasks（任务查询与当日残缺计划清除）', () => {
+  it('getTask 按 id 取任务行，不存在返回 undefined', async () => {
+    await db.tasks.put({ id: 't1', day: '2026-11-17', type: 'summary', questionIds: [], status: 'planned', minutesPlanned: 4 })
+    expect(await getTask('t1')).toMatchObject({ id: 't1', type: 'summary' })
+    expect(await getTask('nope')).toBeUndefined()
+  })
+
+  it('clearDayTasks 只删当日任务行，其他日期保留（播种重试重建当日计划用）', async () => {
+    await db.tasks.bulkPut([
+      { id: 'task-2026-11-16-unit', day: '2026-11-16', type: 'unit', questionIds: ['q1'], status: 'deferred', minutesPlanned: 14 },
+      { id: 'task-2026-11-17-summary', day: '2026-11-17', type: 'summary', questionIds: [], status: 'planned', minutesPlanned: 4 },
+    ])
+    await clearDayTasks('2026-11-17')
+    expect(await db.tasks.count()).toBe(1)
+    expect((await db.tasks.toArray())[0]?.id).toBe('task-2026-11-16-unit')
   })
 })

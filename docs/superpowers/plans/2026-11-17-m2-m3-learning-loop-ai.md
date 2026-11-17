@@ -91,11 +91,11 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/pages/mistakes.ts`、`app-src/src/pages/report.ts`
 - Test: `app-src/src/content/vocab-resolve.test.ts`
 
-- [ ] **Step 0: 核对现有词题 ID 格式**
+- [x] **Step 0: 核对现有词题 ID 格式**
 
 先读 `app-src/src/content/` 里 `deriveVocabQuestions` 的 questionId 拼法与 `vocab.json` 的 unit id 实际形态（M1 已定型，Task 1 之后以两册前缀 `v1-*`/`v2-*` 为准）。**本任务所有正则与示例必须以实际格式为准**——下方示例假设 `g7a-vocab-<unitId>-<序号>`，若实际拼接不同（例如 book 前缀位置不同），按实际调整测试与实现，并在提交信息注明。
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```ts
 import { describe, expect, it } from 'vitest'
@@ -124,7 +124,7 @@ describe('buildVocabResolver', () => {
 })
 ```
 
-- [ ] **Step 2: 实现 `vocab-resolve.ts`**
+- [x] **Step 2: 实现 `vocab-resolve.ts`**
 
 ```ts
 import type { VocabBook } from '../types'
@@ -144,13 +144,13 @@ export function buildVocabResolver(vocab: VocabBook[]) {
 }
 ```
 
-- [ ] **Step 3: 页面接入**
+- [x] **Step 3: 页面接入**
 
 - `mistakes.ts`：列表渲染时对每条 attempt 先查解析器（bundle 加载已有）；命中则题干显示解析结果 stem、正确答案显示 answer（不再显示原始 questionId 与"—"）
 - `report.ts`：`vocabWrong` 的 `qMap.get(id)?.…?? id` 兜底改为先走解析器，仍无才回退 `escapeHtml(id)`；易错词显示单词而非 ID
 - bundle 加载失败/为空：解析器返回 undefined，页面沿用现状（不比 M1 更差）
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 词汇默写题统一解析，错题本与报告显示真实题干

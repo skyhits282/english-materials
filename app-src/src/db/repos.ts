@@ -1,8 +1,10 @@
-import { db, type ContentMetaRow } from './schema'
-import type { Attempt, Mastery, Question, Settings } from '../types'
+import { db, type ContentMetaRow, type TaskRow } from './schema'
+import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
 import { localDayKey, isSameLocalDay } from '../domain/metrics'
 import { pickReviewQuestions } from '../domain/review-picker'
+import { generatePlan, isStudyDay } from '../domain/plan'
+import { SPECIALS } from '../content/sets'
 import { vocabKpFromQuestionId } from '../content/loader'
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -148,4 +150,93 @@ export async function putContentMeta(meta: ContentMetaRow): Promise<void> {
 
 export async function getContentMeta(contentId: string): Promise<ContentMetaRow | undefined> {
   return db.contentMeta.get(contentId)
+}
+
+/** 每日计划生成的调用方输入：题库内容（生成器是纯函数无 IO，页面经 fetchContentBundle 取得后传入） */
+export interface PlanInputs {
+  /** 两册词汇（unit 任务派生词题用） */
+  vocab: VocabBook[]
+}
+
+/** 知识点 → 全量曾答错题（含词题：不在 questions 表的按 ID 约定派生知识点）。
+ *  与 getReviewSet 内部的 wrongByKp 不同：不过滤到期知识点，供计划生成做全量专项薄弱度聚合。 */
+async function buildWrongByKp(): Promise<Map<string, string[]>> {
+  const wrongIds = new Set<string>()
+  await db.attempts.each((a) => {
+    if (!a.isCorrect) wrongIds.add(a.questionId)
+  })
+  const map = new Map<string, string[]>()
+  if (wrongIds.size === 0) return map
+  const kpByQuestionId = new Map<string, string[]>()
+  for (const question of await db.questions.toArray()) kpByQuestionId.set(question.id, question.knowledgePointIds)
+  for (const qid of wrongIds) {
+    let kps = kpByQuestionId.get(qid)
+    if (kps === undefined) {
+      const vocabKp = vocabKpFromQuestionId(qid)
+      kps = vocabKp !== undefined ? [vocabKp] : []
+    }
+    for (const kp of kps) {
+      const list = map.get(kp)
+      if (list) list.push(qid)
+      else map.set(kp, [qid])
+    }
+  }
+  return map
+}
+
+/** 每日计划（规格 §2.1）：当日（本地日 key）无任务才生成，同一天重复打开不重建（按 day 查重）。
+ *  review 段取 Task 4 引擎（getReviewSet）产出；昨日 deferred/skipped 任务一并传入，deferred 由
+ *  generatePlan 优先编入复习段（skipped 不结转）；now 可注入（测试与跨日边界用）。 */
+export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()): Promise<TaskRow[]> {
+  const dayKey = localDayKey(now)
+  const existing = await db.tasks.where('day').equals(dayKey).toArray()
+  if (existing.length > 0) return existing
+
+  const settings = await getSettings()
+  const yesterdayKey = localDayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1))
+  const yesterdayUnfinished = (await db.tasks.where('day').equals(yesterdayKey).toArray()).filter(
+    (t) => t.status === 'deferred' || t.status === 'skipped',
+  )
+  const specialSets = SPECIALS.map((s) => s.id)
+  const specialQuestions = new Map<string, Question[]>()
+  for (const sid of specialSets) specialQuestions.set(sid, await questionsByUnitPrefix(sid))
+
+  const plan = generatePlan({
+    day: dayKey,
+    settings,
+    isStudyDay: isStudyDay(dayKey, settings.studyDaysPerWeek),
+    reviewQuestions: (await getReviewSet(now)).questionIds,
+    wrongByKp: await buildWrongByKp(),
+    yesterdayUnfinished,
+    specialSets,
+    vocab: inputs.vocab,
+    specialQuestions,
+  })
+  if (plan.length === 0) return plan // 非学习日：不写任务（今日页显示"今日休息"）
+  await db.transaction('rw', db.tasks, async () => {
+    await db.tasks.bulkPut(plan)
+  })
+  return plan
+}
+
+/** 任务状态合法转移表：planned→in_progress→completed 主线，planned/in_progress 可转 skipped/deferred；
+ *  completed/skipped/deferred 为终态（结转与否由次日计划生成处理，不在此回改） */
+const TASK_TRANSITIONS: Record<TaskRow['status'], TaskRow['status'][]> = {
+  planned: ['in_progress', 'skipped', 'deferred'],
+  in_progress: ['completed', 'skipped', 'deferred'],
+  completed: [],
+  skipped: [],
+  deferred: [],
+}
+
+/** 更新任务状态：非法转移（含终态再转移）抛错且不落库 */
+export async function updateTaskStatus(id: string, status: TaskRow['status']): Promise<void> {
+  await db.transaction('rw', db.tasks, async () => {
+    const row = await db.tasks.get(id)
+    if (row === undefined) throw new Error(`任务不存在：${id}`)
+    if (!TASK_TRANSITIONS[row.status].includes(status)) {
+      throw new Error(`非法任务状态转移：${row.status} → ${status}（任务 ${id}）`)
+    }
+    await db.tasks.update(id, { status })
+  })
 }

@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { db } from './schema'
+import { db, type TaskRow } from './schema'
 import {
   DEFAULT_SETTINGS,
   getSettings,
@@ -15,8 +15,10 @@ import {
   getContentMeta,
   applyMasteryUpdate,
   getReviewSet,
+  getOrCreatePlan,
+  updateTaskStatus,
 } from './repos'
-import type { Attempt, Mastery, Question, Settings } from '../types'
+import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 
 const q = (id: string, unit: string): Question => ({
   id,
@@ -52,6 +54,7 @@ beforeEach(async () => {
     db.contentMeta.clear(),
     db.aiRequests.clear(),
     db.mastery.clear(),
+    db.tasks.clear(),
   ])
 })
 
@@ -250,5 +253,157 @@ describe('getReviewSet（复测选题 repo 封装）', () => {
     const r = await getReviewSet(NOW)
     expect(r.questionIds).toEqual([])
     expect(r.availableCount).toBe(0)
+  })
+})
+
+/** 词汇册 fixture（与 domain/plan.test.ts 同构：词题 ID 派生自 no 序号） */
+const vocabBook = (unitId: string, wordCount: number): VocabBook => ({
+  book: unitId.startsWith('v1') ? 'g7a' : 'g7b',
+  contentVersion: 'test-v1',
+  units: [
+    {
+      id: unitId,
+      order: 1,
+      label: 'U1',
+      words: Array.from({ length: wordCount }, (_, i) => ({
+        id: `${unitId}-w${i + 1}`,
+        no: i + 1,
+        word: `word${i + 1}`,
+        variant: '',
+        pos: 'n.',
+        ipa: '/w/',
+        meaning: `测试词${i + 1}`,
+      })),
+    },
+  ],
+})
+
+describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
+  /** 本地固定时刻：2026-11-17 周二（学习日）、2026-11-22 周日（休息日） */
+  const at = (y: number, m: number, d: number, h = 10): Date => new Date(y, m - 1, d, h)
+  const STUDY_DAY = at(2026, 11, 17)
+  const REST_DAY = at(2026, 11, 22)
+
+  /** 专项题入库（g7a-present，12 题 × 45s） */
+  const seedSpecialQuestions = async (): Promise<void> => {
+    await upsertQuestions(
+      Array.from({ length: 12 }, (_, i) => q(`g7a-present-l1-${String(i + 1).padStart(4, '0')}`, 'g7a-present-l1')),
+    )
+  }
+
+  it('学习日：生成 unit/special/summary 三任务并写入 tasks 表', async () => {
+    await saveSettings(DEFAULT_SETTINGS) // currentUnit v1-u4、35 分钟、每周 6 天
+    await seedSpecialQuestions()
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, STUDY_DAY)
+    expect(tasks.map((t) => t.id)).toEqual([
+      'task-2026-11-17-unit',
+      'task-2026-11-17-special',
+      'task-2026-11-17-summary',
+    ])
+    const unit = tasks.find((t) => t.type === 'unit')!
+    expect(unit.questionIds).toEqual(['g7a-vocab-u4-0001', 'g7a-vocab-u4-0002', 'g7a-vocab-u4-0003', 'g7a-vocab-u4-0004', 'g7a-vocab-u4-0005'])
+    expect(unit.minutesPlanned).toBe(24) // 无到期复习，review 份额并入 unit
+    expect(tasks.find((t) => t.type === 'special')?.minutesPlanned).toBe(7)
+    expect(tasks.find((t) => t.type === 'summary')).toMatchObject({ questionIds: [], minutesPlanned: 4 })
+    expect(await db.tasks.count()).toBe(3)
+  })
+
+  it('同一天重复调用不重建（返回已有行，改动保留）', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    const inputs = { vocab: [vocabBook('v1-u4', 5)] }
+    await getOrCreatePlan(inputs, STUDY_DAY)
+    await updateTaskStatus('task-2026-11-17-unit', 'in_progress')
+    const again = await getOrCreatePlan(inputs, STUDY_DAY)
+    expect(again).toHaveLength(3)
+    expect(again.find((t) => t.id === 'task-2026-11-17-unit')?.status).toBe('in_progress')
+    expect(await db.tasks.count()).toBe(3)
+  })
+
+  it('非学习日：返回 [] 且不写任务（今日页显示"今日休息"）', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, REST_DAY)
+    expect(tasks).toEqual([])
+    expect(await db.tasks.count()).toBe(0)
+  })
+
+  it('昨日 deferred 结转为今日 review 任务；skipped 不结转', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    const yesterday: TaskRow[] = [
+      { id: 'task-2026-11-16-unit', day: '2026-11-16', type: 'unit', questionIds: ['carry-1'], status: 'deferred', minutesPlanned: 14 },
+      { id: 'task-2026-11-16-special', day: '2026-11-16', type: 'special', questionIds: ['skip-1'], status: 'skipped', minutesPlanned: 7 },
+    ]
+    await db.tasks.bulkPut(yesterday)
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, STUDY_DAY)
+    const review = tasks.find((t) => t.type === 'review')
+    expect(review?.questionIds).toEqual(['carry-1'])
+    expect(review?.minutesPlanned).toBe(10)
+    for (const t of tasks) expect(t.questionIds).not.toContain('skip-1')
+    // 有结转承载的 review 任务存在时，unit 不再吸收 review 份额
+    expect(tasks.find((t) => t.type === 'unit')?.minutesPlanned).toBe(14)
+  })
+
+  it('review 段与 Task 4 引擎联动：到期复测题进入今日 review 任务', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    const due = { ...q('g7a-present-l1-0001', 'g7a-present-l1'), knowledgePointIds: ['grammar.present'] }
+    await upsertQuestions([due])
+    await db.mastery.put({
+      knowledgePointId: 'grammar.present',
+      stage: 'weak',
+      nextReviewAt: new Date(2026, 10, 16).toISOString(),
+      intervalDays: 1,
+      metrics: { testedCount: 1, firstTryCorrect: 0, delayedReviewCorrect: 0 },
+    })
+    await db.attempts.bulkAdd([
+      { id: 'a1', questionId: due.id, answer: '0', isCorrect: false, phase: 'first', submittedAt: at(2026, 11, 16).toISOString() },
+    ])
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, STUDY_DAY)
+    const review = tasks.find((t) => t.type === 'review')
+    expect(review?.questionIds).toEqual([due.id])
+    expect(review?.minutesPlanned).toBe(10)
+    // 去重：同一题不得再出现在 unit/special 任务
+    for (const t of tasks.filter((t) => t.type !== 'review')) {
+      expect(t.questionIds).not.toContain(due.id)
+    }
+  })
+})
+
+describe('updateTaskStatus（任务状态机）', () => {
+  const putTask = (status: TaskRow['status']): Promise<unknown> =>
+    db.tasks.put({ id: 't1', day: '2026-11-17', type: 'unit', questionIds: ['q1'], status, minutesPlanned: 14 })
+
+  it('合法链路：planned→in_progress→completed', async () => {
+    await putTask('planned')
+    await updateTaskStatus('t1', 'in_progress')
+    expect((await db.tasks.get('t1'))?.status).toBe('in_progress')
+    await updateTaskStatus('t1', 'completed')
+    expect((await db.tasks.get('t1'))?.status).toBe('completed')
+  })
+
+  it('planned→skipped 与 in_progress→deferred 合法', async () => {
+    await putTask('planned')
+    await updateTaskStatus('t1', 'skipped')
+    expect((await db.tasks.get('t1'))?.status).toBe('skipped')
+    await putTask('in_progress')
+    await updateTaskStatus('t1', 'deferred')
+    expect((await db.tasks.get('t1'))?.status).toBe('deferred')
+  })
+
+  it('非法转移抛错且不落库：planned→completed（须先 in_progress）', async () => {
+    await putTask('planned')
+    await expect(updateTaskStatus('t1', 'completed')).rejects.toThrow('非法任务状态转移')
+    expect((await db.tasks.get('t1'))?.status).toBe('planned')
+  })
+
+  it('终态不可再转移：completed→in_progress 抛错', async () => {
+    await putTask('completed')
+    await expect(updateTaskStatus('t1', 'in_progress')).rejects.toThrow('非法任务状态转移')
+  })
+
+  it('任务不存在抛错', async () => {
+    await expect(updateTaskStatus('nope', 'in_progress')).rejects.toThrow('任务不存在')
   })
 })

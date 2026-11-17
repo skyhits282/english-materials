@@ -614,28 +614,28 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/pages/exercise.ts`（AI 提示/讲解按钮）、`app-src/src/pages/report.ts`（周报 AI 建议）、`app-src/src/db/repos.ts`（weeklyReports 存取）
 - Test: 浏览器验证 + 现有套件回归
 
-- [ ] **Step 1: 练习页 AI 按钮**
+- [x] **Step 1: 练习页 AI 按钮**
 
 - **AI 提示**（提交前）：填空/选择题作答区旁按钮；每题限一次（会话内记录）；点击调 `coach_turn`（传 stem 不传答案）；返回 hint 以提示框显示（escapeHtml）；加载中按钮转圈禁用；失败显示错误类别 + 「重试」一次
 - **AI 讲解**（答错后）：判分反馈区按钮（仅 isCorrect=false 时渲染）；调 `explain_mistake`；返回 hint/explanation/followUpQuestion 三段展示（标题"提示/讲解/变式练习"）；同样重试一次与错误类别提示
 - 未配置 Key：按钮渲染但 disabled，title="未配置 AI（设置页）"；配额超限当日同上并注明"今日次数已用完"
 - 所有 AI 调用不阻塞判分与记录主链路（await 在 UI 层，异常独立捕获）
 
-- [ ] **Step 2: 报告页周报 AI 建议**
+- [x] **Step 2: 报告页周报 AI 建议**
 
 - 「生成 AI 建议」按钮启用（Task 7 占位处）：调 `weekly_insight` 传 weeklyFacts(attempts, tasks, mastery, now)
 - 成功：结果四段（本周进步/重点短板/任务调整建议/下周目标）展示；连同 facts 快照存 `weeklyReports` 表（`weekStart` 为本周一，重复生成**覆盖同周记录**的 aiSuggestions 与 generatedAt）
 - 历史周报：显示最近 4 周（有记录的），每条可展开看 facts 摘要与 AI 建议
 - 失败/未配置：错误类别提示与重试；facts 部分始终独立可见
 
-- [ ] **Step 3: 浏览器验证清单（Playwright，用 mock fetch 注入即可）**
+- [x] **Step 3: 浏览器验证清单（Playwright，用 mock fetch 注入即可）**
 
 - 未配置：按钮灰态 + title 正确
 - mock 成功路径：讲解/提示/周报三按钮产出内容且 escapeHtml 生效（构造含 `<img>` 的 mock 响应验证不执行）
 - mock 超时：错误提示 + 重试可用；判分与记录不受影响
 - 配额：注入 aiRequests 当日满额数据 → 按钮灰态"次数用完"
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 练习页 AI 提示与错题讲解、周报 AI 建议与历史周报

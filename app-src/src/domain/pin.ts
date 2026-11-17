@@ -1,5 +1,11 @@
 /** 家长 PIN 门禁纯函数（规格 §4）：PIN 明文存 settings，定位仅防误操作，不参与任何加密 */
 
+/** PIN 长度（页面输入 maxlength/pattern 与此同源；纯函数 verifyPin 不做形态校验） */
+export const PIN_LENGTH = 4
+
+/** 页面层 PIN 形态校验：恰好 4 位数字 */
+export const PIN_PATTERN = /^\d{4}$/
+
 /** 受门禁管控的操作：写操作三项 + 只读的报告页（恒不受限） */
 export type PinProtectedAction = 'save-settings' | 'clear-data' | 'import-backup' | 'view-report'
 

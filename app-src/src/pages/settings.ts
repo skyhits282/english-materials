@@ -1,15 +1,254 @@
 import type { PageRenderer } from '../router'
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
 import { fetchContentBundle, vocabUnitsForBook } from '../content/loader'
-import type { ExamScoreRow, Settings } from '../types'
+import type { Settings } from '../types'
 import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
 import { escapeHtml } from '../ui/escape'
-import { isPinProtectedAction, verifyPin, type PinProtectedAction } from '../domain/pin'
+import { PIN_LENGTH, PIN_PATTERN, isPinProtectedAction, verifyPin, type PinProtectedAction } from '../domain/pin'
+import { EXAM_MAX_ROWS, parseExamRows } from '../domain/exam-scores'
 
-/** 试卷分项成绩行数上限（最近两次试卷合计，规格 §4） */
-const EXAM_MAX_ROWS = 8
-/** 合法 PIN 形态：恰好 4 位数字（页面层校验；verifyPin 纯函数只做全等比较） */
-const PIN_PATTERN = /^\d{4}$/
+/** 卡片模块共享依赖：页内 settings 快照与持久化入口（导入备份后快照整体替换） */
+interface CardDeps {
+  container: HTMLElement
+  /** 读取页内 settings（各卡保存成功后由 persist 同步更新） */
+  current: () => Settings
+  /** 持久化：写库成功后同步页内变量并返回 true；失败返回 false，提示由调用卡自行展示 */
+  persist: (next: Settings) => Promise<boolean>
+}
+
+/** PIN 输入行模板：maxlength/pattern 与 domain/pin 常量同源（含门禁与设/改/关表单） */
+const pinInputHtml = (id: string, label: string) => `
+  <div class="form-row">
+    <label for="${id}">${label}</label>
+    <input id="${id}" type="password" inputmode="numeric" maxlength="${PIN_LENGTH}" pattern="${PIN_PATTERN.source}" autocomplete="off" placeholder="${PIN_LENGTH} 位数字">
+  </div>`
+
+/** 行内 PIN 门禁（非模态）：受保护操作先在此验 PIN，验对继续原操作、验错提示不继续。
+ *  输入不 trim（pattern 已限 4 位数字，带空格的输入因不全等自然验错）。 */
+function runPinGate(deps: CardDeps, action: PinProtectedAction, run: () => void | Promise<void>): void {
+  if (!isPinProtectedAction(action, deps.current().parentPin !== undefined)) {
+    void run()
+    return
+  }
+  const gate = deps.container.querySelector('#pin-gate')
+  if (!gate) {
+    void run()
+    return
+  }
+  gate.innerHTML = `
+    <div class="card">
+      <p>该操作受家长保护，请输入 PIN 后继续。</p>
+      ${pinInputHtml('gate-pin', '家长 PIN')}
+      <div class="action-row">
+        <button class="btn" id="gate-confirm">确认</button>
+        <button class="btn btn-secondary" id="gate-cancel">取消</button>
+      </div>
+      <p id="gate-msg" class="muted"></p>
+    </div>`
+  gate.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const gateInput = gate.querySelector<HTMLInputElement>('#gate-pin')
+  const gateMsg = gate.querySelector('#gate-msg')
+  const confirm = () => {
+    if (!verifyPin(gateInput?.value ?? '', deps.current().parentPin)) {
+      if (gateMsg) gateMsg.textContent = 'PIN 不正确。'
+      gateInput?.focus()
+      return
+    }
+    gate.innerHTML = ''
+    void run()
+  }
+  gateInput?.focus()
+  gate.querySelector('#gate-cancel')?.addEventListener('click', () => {
+    gate.innerHTML = ''
+  })
+  gate.querySelector('#gate-confirm')?.addEventListener('click', confirm)
+  gateInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') confirm()
+  })
+}
+
+/** 家长保护卡：未设置→设 PIN（两次一致）；已设置→修改 PIN / 关闭保护（均先验旧 PIN）。
+ *  PIN 明文存 settings，仅防误操作（规格 §4），不参与任何加密。 */
+function setupParentPinCard(deps: CardDeps): { refresh: () => void } {
+  const { container, current, persist } = deps
+  const pinStatus = container.querySelector('#pin-status')
+  const pinManage = container.querySelector('#pin-manage')
+  const pinMsg = container.querySelector('#pin-msg')
+  const msg = (text: string) => {
+    if (pinMsg) pinMsg.textContent = text
+  }
+  const save = async (next: Settings, okText: string) => {
+    if (await persist(next)) {
+      msg(okText)
+      renderPinManage()
+    } else {
+      msg('保存失败，存储不可用。')
+    }
+  }
+
+  const renderPinManage = () => {
+    if (!pinManage || !pinStatus) return
+    if (current().parentPin === undefined) {
+      pinStatus.textContent = '当前状态：未设置 PIN。'
+      pinManage.innerHTML = `
+        ${pinInputHtml('pin-new', '新 PIN')}
+        ${pinInputHtml('pin-confirm', '确认新 PIN')}
+        <div class="action-row"><button class="btn" id="pin-set">设置 PIN</button></div>`
+      pinManage.querySelector('#pin-set')?.addEventListener('click', async () => {
+        msg('')
+        const newPin = pinManage.querySelector<HTMLInputElement>('#pin-new')?.value ?? ''
+        const confirmPin = pinManage.querySelector<HTMLInputElement>('#pin-confirm')?.value ?? ''
+        if (!PIN_PATTERN.test(newPin)) {
+          msg('PIN 须为 4 位数字。')
+          return
+        }
+        if (newPin !== confirmPin) {
+          msg('两次输入不一致。')
+          return
+        }
+        await save({ ...current(), parentPin: newPin }, '家长保护已开启。')
+      })
+      return
+    }
+    pinStatus.textContent = '当前状态：已开启。保存设置、导入备份需先输入 PIN。'
+    pinManage.innerHTML = `
+      <div class="action-row">
+        <button class="btn btn-secondary" id="pin-edit">修改 PIN</button>
+        <button class="btn btn-secondary" id="pin-off">关闭保护</button>
+      </div>`
+    pinManage.querySelector('#pin-edit')?.addEventListener('click', () => {
+      msg('')
+      pinManage.innerHTML = `
+        ${pinInputHtml('pin-old', '当前 PIN')}
+        ${pinInputHtml('pin-new', '新 PIN')}
+        ${pinInputHtml('pin-confirm', '确认新 PIN')}
+        <div class="action-row">
+          <button class="btn" id="pin-edit-save">保存新 PIN</button>
+          <button class="btn btn-secondary" id="pin-edit-cancel">取消</button>
+        </div>`
+      pinManage.querySelector('#pin-edit-cancel')?.addEventListener('click', renderPinManage)
+      pinManage.querySelector('#pin-edit-save')?.addEventListener('click', async () => {
+        msg('')
+        const oldPin = pinManage.querySelector<HTMLInputElement>('#pin-old')?.value ?? ''
+        const newPin = pinManage.querySelector<HTMLInputElement>('#pin-new')?.value ?? ''
+        const confirmPin = pinManage.querySelector<HTMLInputElement>('#pin-confirm')?.value ?? ''
+        if (!verifyPin(oldPin, current().parentPin)) {
+          msg('PIN 不正确。')
+          return
+        }
+        if (!PIN_PATTERN.test(newPin)) {
+          msg('新 PIN 须为 4 位数字。')
+          return
+        }
+        if (newPin !== confirmPin) {
+          msg('两次输入不一致。')
+          return
+        }
+        await save({ ...current(), parentPin: newPin }, 'PIN 已修改。')
+      })
+    })
+    pinManage.querySelector('#pin-off')?.addEventListener('click', () => {
+      msg('')
+      pinManage.innerHTML = `
+        ${pinInputHtml('pin-old', '当前 PIN')}
+        <div class="action-row">
+          <button class="btn" id="pin-off-confirm">确认关闭</button>
+          <button class="btn btn-secondary" id="pin-off-cancel">取消</button>
+        </div>
+        <p class="muted">关闭后受保护操作不再需要 PIN。</p>`
+      pinManage.querySelector('#pin-off-cancel')?.addEventListener('click', renderPinManage)
+      pinManage.querySelector('#pin-off-confirm')?.addEventListener('click', async () => {
+        const oldPin = pinManage.querySelector<HTMLInputElement>('#pin-old')?.value ?? ''
+        if (!verifyPin(oldPin, current().parentPin)) {
+          msg('PIN 不正确。')
+          return
+        }
+        await save({ ...current(), parentPin: undefined }, '家长保护已关闭。')
+      })
+    })
+  }
+  renderPinManage()
+  return { refresh: renderPinManage }
+}
+
+/** 试卷成绩卡：label/got/total 多行录入，存 settings.examScores。
+ *  有意不挂 PIN 门禁——规格 §4 受保护项不含试卷成绩录入（非破坏性诊断数据）。 */
+function setupExamScoresCard(deps: CardDeps): { refresh: () => void } {
+  const { container, current, persist } = deps
+  const examRows = container.querySelector('#exam-rows')
+  const examAdd = container.querySelector<HTMLButtonElement>('#exam-add')
+  const examMsg = container.querySelector('#exam-msg')
+  const setMsg = (text: string) => {
+    if (examMsg) examMsg.textContent = text
+  }
+  /** 行 DOM 常驻为唯一事实来源（加行不整卡重渲，避免丢失未保存输入） */
+  const examRowHtml = (r: { label: string; got: string; total: string }) => `
+    <div class="exam-row">
+      <input class="exam-label" type="text" maxlength="20" placeholder="题型（如 语法）" value="${escapeHtml(r.label)}">
+      <input class="exam-got" type="number" min="0" placeholder="得分" value="${escapeHtml(r.got)}">
+      <input class="exam-total" type="number" min="1" placeholder="满分" value="${escapeHtml(r.total)}">
+    </div>`
+  const rowCount = () => (examRows ? examRows.querySelectorAll('.exam-row').length : 0)
+  const updateAdd = () => {
+    if (examAdd) examAdd.disabled = rowCount() >= EXAM_MAX_ROWS
+  }
+  const appendRow = (r: { label: string; got: string; total: string }) => {
+    examRows?.insertAdjacentHTML('beforeend', examRowHtml(r))
+    updateAdd()
+  }
+  /** 从页内 settings 重建行（初次渲染与导入备份后刷新共用） */
+  const renderRows = () => {
+    if (!examRows) return
+    examRows.innerHTML = ''
+    for (const r of current().examScores ?? []) {
+      appendRow({ label: r.label, got: String(r.got), total: String(r.total) })
+    }
+    if (rowCount() === 0) appendRow({ label: '', got: '', total: '' })
+  }
+
+  examAdd?.addEventListener('click', () => {
+    if (rowCount() >= EXAM_MAX_ROWS) {
+      setMsg(`最多 ${EXAM_MAX_ROWS} 行（最近两次试卷）。`)
+      return
+    }
+    setMsg('')
+    appendRow({ label: '', got: '', total: '' })
+  })
+
+  container.querySelector('#exam-save')?.addEventListener('click', async () => {
+    if (!examRows) return
+    setMsg('')
+    const raw = [...examRows.querySelectorAll('.exam-row')].map((row) => ({
+      label: row.querySelector<HTMLInputElement>('.exam-label')?.value ?? '',
+      got: row.querySelector<HTMLInputElement>('.exam-got')?.value ?? '',
+      total: row.querySelector<HTMLInputElement>('.exam-total')?.value ?? '',
+    }))
+    // 校验/截断全部下沉纯函数 parseExamRows（含 8 行上限兜底）
+    const parsed = parseExamRows(raw)
+    if (!parsed.ok) {
+      setMsg(parsed.message)
+      return
+    }
+    if (await persist({ ...current(), examScores: parsed.rows })) {
+      setMsg('已保存试卷成绩。')
+    } else {
+      setMsg('保存失败，存储不可用。')
+    }
+  })
+
+  container.querySelector('#exam-clear')?.addEventListener('click', async () => {
+    setMsg('')
+    if (await persist({ ...current(), examScores: undefined })) {
+      renderRows()
+      setMsg('已清除试卷成绩。')
+    } else {
+      setMsg('清除失败，存储不可用。')
+    }
+  })
+
+  renderRows()
+  return { refresh: renderRows }
+}
 
 export const renderSettings: PageRenderer = async ({ container }) => {
   let stale = false
@@ -27,6 +266,20 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   }
   const bundle = await bundlePromise
   if (stale) return
+  // 页内 settings 快照：各卡保存/导入备份后整体替换（persist 与导入刷新两处）
+  const current = () => settings
+  const persist = async (next: Settings): Promise<boolean> => {
+    try {
+      await saveSettings(next)
+    } catch {
+      return false
+    }
+    settings = next
+    return true
+  }
+  const deps: CardDeps = { container, current, persist }
+  const runProtected = (action: PinProtectedAction, run: () => void | Promise<void>) => runPinGate(deps, action, run)
+
   // 当前册别下的词汇单元；册别切换时由下方监听器重填选项
   const unitSelect = () => container.querySelector<HTMLSelectElement>('#set-unit')
   const fillUnitOptions = (book: string, selected: string) => {
@@ -71,7 +324,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     </div>
     <div class="card">
       <h3>家长保护</h3>
-      <p>设置 4 位数字 PIN 后，保存设置、导入备份需先输入 PIN。PIN 明文存储于本机，仅防误操作，不参与任何加密。</p>
+      <p>设置 ${PIN_LENGTH} 位数字 PIN 后，保存设置、导入备份需先输入 PIN。PIN 明文存储于本机，仅防误操作，不参与任何加密。</p>
       <p id="pin-status" class="muted"></p>
       <div id="pin-manage"></div>
       <p id="pin-msg"></p>
@@ -101,262 +354,8 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   `
   container.appendChild(message)
 
-  // ============ 家长 PIN：门禁与卡片管理 ============
-
-  /** 行内 PIN 门禁（非模态）：受保护操作先在此验 PIN，验对继续原操作、验错提示不继续 */
-  const pinGate = container.querySelector('#pin-gate')
-  const closePinGate = () => {
-    if (pinGate) pinGate.innerHTML = ''
-  }
-  const runProtected = (action: PinProtectedAction, run: () => void | Promise<void>) => {
-    if (!isPinProtectedAction(action, settings.parentPin !== undefined)) {
-      void run()
-      return
-    }
-    if (!pinGate) {
-      void run()
-      return
-    }
-    pinGate.innerHTML = `
-      <div class="card">
-        <p>该操作受家长保护，请输入 PIN 后继续。</p>
-        <div class="form-row">
-          <label for="gate-pin">家长 PIN</label>
-          <input id="gate-pin" type="password" inputmode="numeric" maxlength="4" pattern="\\d{4}" autocomplete="off" placeholder="4 位数字">
-        </div>
-        <div class="action-row">
-          <button class="btn" id="gate-confirm">确认</button>
-          <button class="btn btn-secondary" id="gate-cancel">取消</button>
-        </div>
-        <p id="gate-msg" class="muted"></p>
-      </div>`
-    pinGate.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    const gateInput = pinGate.querySelector<HTMLInputElement>('#gate-pin')
-    const gateMsg = pinGate.querySelector('#gate-msg')
-    const confirm = () => {
-      if (!verifyPin(gateInput?.value ?? '', settings.parentPin)) {
-        if (gateMsg) gateMsg.textContent = 'PIN 不正确。'
-        gateInput?.focus()
-        return
-      }
-      closePinGate()
-      void run()
-    }
-    gateInput?.focus()
-    pinGate.querySelector('#gate-cancel')?.addEventListener('click', closePinGate)
-    pinGate.querySelector('#gate-confirm')?.addEventListener('click', confirm)
-    gateInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') confirm()
-    })
-  }
-
-  const pinStatus = container.querySelector('#pin-status')
-  const pinManage = container.querySelector('#pin-manage')
-  const pinMsg = container.querySelector('#pin-msg')
-  const pinInputHtml = (id: string, label: string) => `
-    <div class="form-row">
-      <label for="${id}">${label}</label>
-      <input id="${id}" type="password" inputmode="numeric" maxlength="4" pattern="\\d{4}" autocomplete="off" placeholder="4 位数字">
-    </div>`
-
-  /** 持久化 settings（写库成功后同步页内变量，避免后续保存以旧值展开覆盖他卡字段；
-   *  错误提示由各调用卡自行展示） */
-  const persistSettings = async (next: Settings): Promise<boolean> => {
-    try {
-      await saveSettings(next)
-    } catch {
-      return false
-    }
-    settings = next
-    return true
-  }
-
-  /** 家长保护卡内容：未设置→设 PIN 表单；已设置→修改/关闭入口，点击后展开对应行内表单 */
-  const renderPinManage = () => {
-    if (!pinManage || !pinStatus) return
-    if (settings.parentPin === undefined) {
-      pinStatus.textContent = '当前状态：未设置 PIN。'
-      pinManage.innerHTML = `
-        ${pinInputHtml('pin-new', '新 PIN')}
-        ${pinInputHtml('pin-confirm', '确认新 PIN')}
-        <div class="action-row"><button class="btn" id="pin-set">设置 PIN</button></div>`
-      pinManage.querySelector('#pin-set')?.addEventListener('click', async () => {
-        if (pinMsg) pinMsg.textContent = ''
-        const newPin = (pinManage.querySelector<HTMLInputElement>('#pin-new')?.value ?? '').trim()
-        const confirmPin = (pinManage.querySelector<HTMLInputElement>('#pin-confirm')?.value ?? '').trim()
-        if (!PIN_PATTERN.test(newPin)) {
-          if (pinMsg) pinMsg.textContent = 'PIN 须为 4 位数字。'
-          return
-        }
-        if (newPin !== confirmPin) {
-          if (pinMsg) pinMsg.textContent = '两次输入不一致。'
-          return
-        }
-        if (await persistSettings({ ...settings, parentPin: newPin })) {
-          if (pinMsg) pinMsg.textContent = '家长保护已开启。'
-          renderPinManage()
-        } else if (pinMsg) {
-          pinMsg.textContent = '保存失败，存储不可用。'
-        }
-      })
-      return
-    }
-    pinStatus.textContent = '当前状态：已开启。保存设置、导入备份需先输入 PIN。'
-    pinManage.innerHTML = `
-      <div class="action-row">
-        <button class="btn btn-secondary" id="pin-edit">修改 PIN</button>
-        <button class="btn btn-secondary" id="pin-off">关闭保护</button>
-      </div>`
-    pinManage.querySelector('#pin-edit')?.addEventListener('click', () => {
-      if (pinMsg) pinMsg.textContent = ''
-      pinManage.innerHTML = `
-        ${pinInputHtml('pin-old', '当前 PIN')}
-        ${pinInputHtml('pin-new', '新 PIN')}
-        ${pinInputHtml('pin-confirm', '确认新 PIN')}
-        <div class="action-row">
-          <button class="btn" id="pin-edit-save">保存新 PIN</button>
-          <button class="btn btn-secondary" id="pin-edit-cancel">取消</button>
-        </div>`
-      pinManage.querySelector('#pin-edit-cancel')?.addEventListener('click', renderPinManage)
-      pinManage.querySelector('#pin-edit-save')?.addEventListener('click', async () => {
-        if (pinMsg) pinMsg.textContent = ''
-        const oldPin = (pinManage.querySelector<HTMLInputElement>('#pin-old')?.value ?? '').trim()
-        const newPin = (pinManage.querySelector<HTMLInputElement>('#pin-new')?.value ?? '').trim()
-        const confirmPin = (pinManage.querySelector<HTMLInputElement>('#pin-confirm')?.value ?? '').trim()
-        if (!verifyPin(oldPin, settings.parentPin)) {
-          if (pinMsg) pinMsg.textContent = 'PIN 不正确。'
-          return
-        }
-        if (!PIN_PATTERN.test(newPin)) {
-          if (pinMsg) pinMsg.textContent = '新 PIN 须为 4 位数字。'
-          return
-        }
-        if (newPin !== confirmPin) {
-          if (pinMsg) pinMsg.textContent = '两次输入不一致。'
-          return
-        }
-        if (await persistSettings({ ...settings, parentPin: newPin })) {
-          if (pinMsg) pinMsg.textContent = 'PIN 已修改。'
-          renderPinManage()
-        } else if (pinMsg) {
-          pinMsg.textContent = '保存失败，存储不可用。'
-        }
-      })
-    })
-    pinManage.querySelector('#pin-off')?.addEventListener('click', () => {
-      if (pinMsg) pinMsg.textContent = ''
-      pinManage.innerHTML = `
-        ${pinInputHtml('pin-old', '当前 PIN')}
-        <div class="action-row">
-          <button class="btn" id="pin-off-confirm">确认关闭</button>
-          <button class="btn btn-secondary" id="pin-off-cancel">取消</button>
-        </div>
-        <p class="muted">关闭后受保护操作不再需要 PIN。</p>`
-      pinManage.querySelector('#pin-off-cancel')?.addEventListener('click', renderPinManage)
-      pinManage.querySelector('#pin-off-confirm')?.addEventListener('click', async () => {
-        const oldPin = (pinManage.querySelector<HTMLInputElement>('#pin-old')?.value ?? '').trim()
-        if (!verifyPin(oldPin, settings.parentPin)) {
-          if (pinMsg) pinMsg.textContent = 'PIN 不正确。'
-          return
-        }
-        if (await persistSettings({ ...settings, parentPin: undefined })) {
-          if (pinMsg) pinMsg.textContent = '家长保护已关闭。'
-          renderPinManage()
-        } else if (pinMsg) {
-          pinMsg.textContent = '保存失败，存储不可用。'
-        }
-      })
-    })
-  }
-  renderPinManage()
-
-  // ============ 试卷成绩录入（最近两次试卷、上限 8 行） ============
-
-  const examRows = container.querySelector('#exam-rows')
-  const examAdd = container.querySelector<HTMLButtonElement>('#exam-add')
-  const examMsg = container.querySelector('#exam-msg')
-  const setExamMsg = (text: string) => {
-    if (examMsg) examMsg.textContent = text
-  }
-  /** 行 DOM 常驻为唯一事实来源（加行不整卡重渲，避免丢失未保存输入） */
-  const examRowHtml = (r: { label: string; got: string; total: string }) => `
-    <div class="exam-row">
-      <input class="exam-label" type="text" maxlength="20" placeholder="题型（如 语法）" value="${escapeHtml(r.label)}">
-      <input class="exam-got" type="number" min="0" placeholder="得分" value="${escapeHtml(r.got)}">
-      <input class="exam-total" type="number" min="1" placeholder="满分" value="${escapeHtml(r.total)}">
-    </div>`
-  const examRowCount = () => (examRows ? examRows.querySelectorAll('.exam-row').length : 0)
-  const updateExamAdd = () => {
-    if (examAdd) examAdd.disabled = examRowCount() >= EXAM_MAX_ROWS
-  }
-  const appendExamRow = (r: { label: string; got: string; total: string }) => {
-    examRows?.insertAdjacentHTML('beforeend', examRowHtml(r))
-    updateExamAdd()
-  }
-  // 初值：已存成绩逐行回填；无则给一行空白
-  for (const r of settings.examScores ?? []) {
-    appendExamRow({ label: r.label, got: String(r.got), total: String(r.total) })
-  }
-  if (examRowCount() === 0) appendExamRow({ label: '', got: '', total: '' })
-
-  examAdd?.addEventListener('click', () => {
-    if (examRowCount() >= EXAM_MAX_ROWS) {
-      setExamMsg(`最多 ${EXAM_MAX_ROWS} 行（最近两次试卷）。`)
-      return
-    }
-    setExamMsg('')
-    appendExamRow({ label: '', got: '', total: '' })
-  })
-
-  container.querySelector('#exam-save')?.addEventListener('click', async () => {
-    if (!examRows) return
-    setExamMsg('')
-    const rows = [...examRows.querySelectorAll('.exam-row')].map((row) => ({
-      label: (row.querySelector<HTMLInputElement>('.exam-label')?.value ?? '').trim(),
-      got: (row.querySelector<HTMLInputElement>('.exam-got')?.value ?? '').trim(),
-      total: (row.querySelector<HTMLInputElement>('.exam-total')?.value ?? '').trim(),
-    }))
-    // 全空行视为留白跳过；其余行须完整且 0 ≤ 得分 ≤ 满分
-    const filled = rows.filter((r) => r.label !== '' || r.got !== '' || r.total !== '')
-    const scores: ExamScoreRow[] = []
-    for (const r of filled) {
-      if (r.label === '') {
-        setExamMsg('已填行请补全题型名称。')
-        return
-      }
-      const got = Number(r.got)
-      const total = Number(r.total)
-      if (!Number.isFinite(got) || !Number.isFinite(total) || total <= 0 || got < 0 || got > total) {
-        setExamMsg('每行须满足 0 ≤ 得分 ≤ 满分 且 满分 > 0。')
-        return
-      }
-      scores.push({ label: r.label, got, total })
-    }
-    if (scores.length === 0) {
-      setExamMsg('没有可保存的成绩行。')
-      return
-    }
-    // UI 已限行数，此处截断作双保险（旧库超限数据回填后再保存时收敛到上限）
-    scores.length = Math.min(scores.length, EXAM_MAX_ROWS)
-    if (await persistSettings({ ...settings, examScores: scores })) {
-      setExamMsg('已保存试卷成绩。')
-    } else if (examMsg) {
-      examMsg.textContent = '保存失败，存储不可用。'
-    }
-  })
-
-  container.querySelector('#exam-clear')?.addEventListener('click', async () => {
-    setExamMsg('')
-    if (await persistSettings({ ...settings, examScores: undefined })) {
-      if (examRows) examRows.innerHTML = ''
-      appendExamRow({ label: '', got: '', total: '' })
-      setExamMsg('已清除试卷成绩。')
-    } else if (examMsg) {
-      examMsg.textContent = '清除失败，存储不可用。'
-    }
-  })
-
-  // ============ 既有操作（挂门禁） ============
+  const pinCard = setupParentPinCard(deps)
+  const examCard = setupExamScoresCard(deps)
 
   // 初次填充当前册的单元；currentUnit 属于另一册时不预选（浏览器默认选第一项），保存时生效
   fillUnitOptions(settings.book, settings.currentUnit)
@@ -364,6 +363,19 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     const book = (e.target as HTMLSelectElement).value || settings.book
     fillUnitOptions(book, '') // 切册后不预选，落到该册第一个单元
   })
+
+  /** 主表单按页内 settings 重填（导入备份替换设置后刷新用） */
+  const refillMainForm = () => {
+    const bookSelect = container.querySelector<HTMLSelectElement>('#set-book')
+    if (bookSelect) bookSelect.value = settings.book
+    fillUnitOptions(settings.book, settings.currentUnit)
+    const minutes = container.querySelector<HTMLInputElement>('#set-minutes')
+    if (minutes) minutes.value = String(settings.dailyMinutes)
+    const days = container.querySelector<HTMLInputElement>('#set-days')
+    if (days) days.value = String(settings.studyDaysPerWeek)
+    const ai = container.querySelector<HTMLInputElement>('#set-ai')
+    if (ai) ai.checked = settings.aiEnabled
+  }
 
   const saveSettingsFromForm = async () => {
     const book = (container.querySelector<HTMLSelectElement>('#set-book')?.value as Settings['book'] | undefined) || settings.book
@@ -381,12 +393,10 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
     }
-    try {
-      await saveSettings(next)
+    if (await persist(next)) {
       if (stale) return
-      settings = next
       message.textContent = '已保存。'
-    } catch {
+    } else {
       if (stale) return
       message.textContent = '保存失败，存储不可用。'
     }
@@ -432,6 +442,18 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     const run = async (mode: 'merge' | 'overwrite') => {
       try {
         const result = await importBackup(parsed, mode)
+        // 覆盖导入会整体替换 settings 行：页内 settings 快照已过期，必须重读并刷新表单，
+        // 否则后续任一卡保存都会以旧快照为基底整对象写库、静默回滚刚导入的设置
+        try {
+          settings = await getSettings()
+        } catch {
+          // 存储读取失败：保留旧快照兜底展示（此状态下后续保存也大概率失败）
+        }
+        if (!stale) {
+          refillMainForm()
+          pinCard.refresh()
+          examCard.refresh()
+        }
         preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
       } catch {
         preview.innerHTML = '<div class="error-panel">导入失败，存储不可用。</div>'

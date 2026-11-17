@@ -1538,6 +1538,38 @@ describe('PracticeSession', () => {
   it('attempt id 为合法 UUID', () => {
     expect(newAttemptId()).toMatch(/^[0-9a-f-]{36}$/)
   })
+
+  it('并发重入被守卫拦截：只落一条 attempt、index 只 +1', async () => {
+    const attempts: Attempt[] = []
+    const s = new PracticeSession([choice('q1'), choice('q2')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => { attempts.push(a) },
+    })
+    const first = s.submit('1')
+    await expect(s.submit('1')).rejects.toThrow('正在处理上一次提交')
+    await first
+    expect(attempts).toHaveLength(1)
+    expect(s.done).toBe(1)
+  })
+
+  it('recordAttempt 失败不推进，重试成功只落一条', async () => {
+    const attempts: Attempt[] = []
+    let fail = true
+    const s = new PracticeSession([choice('q1')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => {
+        if (fail) throw new Error('写失败')
+        attempts.push(a)
+      },
+    })
+    await expect(s.submit('1')).rejects.toThrow('写失败')
+    expect(s.done).toBe(0)
+    fail = false
+    const sub = await s.submit('1')
+    expect(sub.isCorrect).toBe(true)
+    expect(sub.isLast).toBe(true)
+    expect(attempts).toHaveLength(1)
+  })
 })
 ```
 
@@ -1566,6 +1598,7 @@ export interface Submission {
   isLast: boolean
 }
 
+/** crypto.randomUUID 需 secure context（https/localhost）与 Node ≥19；非安全上下文部署需 fallback */
 export function newAttemptId(): string {
   return globalThis.crypto.randomUUID()
 }
@@ -1573,6 +1606,7 @@ export function newAttemptId(): string {
 /** 一次练习会话：顺序出题、提交即判分并落一条 attempt */
 export class PracticeSession {
   private index = 0
+  private submitting = false
   readonly total: number
 
   constructor(private questions: Question[], private deps: SessionDeps) {
@@ -1581,6 +1615,7 @@ export class PracticeSession {
   }
 
   get current(): Question {
+    if (this.isFinished) throw new Error('练习已结束')
     return this.questions[this.index]!
   }
 
@@ -1594,28 +1629,34 @@ export class PracticeSession {
 
   async submit(answer: string, opts: { gaveUp?: boolean } = {}): Promise<Submission> {
     if (this.isFinished) throw new Error('练习已结束')
-    const question = this.current
-    const graded = gradeAnswer(question, answer)
-    const isCorrect = opts.gaveUp ? false : graded.isCorrect
-    const phase: AttemptPhase = (await this.deps.hasPriorAttempt(question.id)) ? 'retry' : 'first'
-    const attempt: Attempt = {
-      id: newAttemptId(),
-      questionId: question.id,
-      answer,
-      isCorrect,
-      phase,
-      ...(opts.gaveUp ? { selfReportedReason: 'gave_up' as const } : {}),
-      submittedAt: new Date().toISOString(),
-    }
-    await this.deps.recordAttempt(attempt)
-    this.index += 1
-    return {
-      question,
-      answer,
-      isCorrect,
-      phase,
-      correctAnswer: graded.correctAnswer,
-      isLast: this.index >= this.total,
+    if (this.submitting) throw new Error('正在处理上一次提交')
+    this.submitting = true
+    try {
+      const question = this.current
+      const graded = gradeAnswer(question, answer)
+      const isCorrect = opts.gaveUp ? false : graded.isCorrect
+      const phase: AttemptPhase = (await this.deps.hasPriorAttempt(question.id)) ? 'retry' : 'first'
+      const attempt: Attempt = {
+        id: newAttemptId(),
+        questionId: question.id,
+        answer,
+        isCorrect,
+        phase,
+        ...(opts.gaveUp ? { selfReportedReason: 'gave_up' as const } : {}),
+        submittedAt: new Date().toISOString(),
+      }
+      await this.deps.recordAttempt(attempt)
+      this.index += 1
+      return {
+        question,
+        answer,
+        isCorrect,
+        phase,
+        correctAnswer: graded.correctAnswer,
+        isLast: this.index >= this.total,
+      }
+    } finally {
+      this.submitting = false
     }
   }
 }
@@ -1624,7 +1665,7 @@ export class PracticeSession {
 - [ ] **Step 4: 运行测试确认通过**
 
 Run: `npm --prefix app-src run test -- session`
-Expected: 6 个测试 PASS
+Expected: 8 个测试 PASS（全量 34）
 
 - [ ] **Step 5: 提交**
 

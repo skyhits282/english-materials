@@ -75,4 +75,36 @@ describe('PracticeSession', () => {
   it('attempt id 为合法 UUID', () => {
     expect(newAttemptId()).toMatch(/^[0-9a-f-]{36}$/)
   })
+
+  it('并发重入被守卫拦截：只落一条 attempt、index 只 +1', async () => {
+    const attempts: Attempt[] = []
+    const s = new PracticeSession([choice('q1'), choice('q2')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => { attempts.push(a) },
+    })
+    const first = s.submit('1')
+    await expect(s.submit('1')).rejects.toThrow('正在处理上一次提交')
+    await first
+    expect(attempts).toHaveLength(1)
+    expect(s.done).toBe(1)
+  })
+
+  it('recordAttempt 失败不推进，重试成功只落一条', async () => {
+    const attempts: Attempt[] = []
+    let fail = true
+    const s = new PracticeSession([choice('q1')], {
+      hasPriorAttempt: async () => false,
+      recordAttempt: async (a) => {
+        if (fail) throw new Error('写失败')
+        attempts.push(a)
+      },
+    })
+    await expect(s.submit('1')).rejects.toThrow('写失败')
+    expect(s.done).toBe(0)
+    fail = false
+    const sub = await s.submit('1')
+    expect(sub.isCorrect).toBe(true)
+    expect(sub.isLast).toBe(true)
+    expect(attempts).toHaveLength(1)
+  })
 })

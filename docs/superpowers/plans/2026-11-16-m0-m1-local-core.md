@@ -1384,6 +1384,19 @@ describe('seedContent', () => {
     expect((await db.contentMeta.get('g7a'))?.version).toBe('v2')
     expect(await db.questions.count()).toBe(2)
   })
+  it('版本升级时删除 bundle 外的陈旧题', async () => {
+    const v1 = bundle()
+    v1.questions = [q('q1'), q('q2'), q('q3')]
+    await seedContent(v1)
+    expect(await db.questions.count()).toBe(3)
+    const v2 = bundle()
+    v2.meta = { ...v2.meta, version: 'v2' } // 只含 q1/q2
+    const result = await seedContent(v2)
+    expect(result).toEqual({ inserted: 2, skipped: false })
+    expect(await db.questions.count()).toBe(2)
+    expect(await db.questions.get('q3')).toBeUndefined()
+    expect((await db.contentMeta.get('g7a'))?.version).toBe('v2')
+  })
 })
 ```
 
@@ -1400,11 +1413,13 @@ import { db } from '../db/schema'
 import type { ContentBundle } from '../types'
 
 export interface SeedResult {
+  /** 写入/覆盖的题目数（幂等重播，非新增数） */
   inserted: number
   skipped: boolean
 }
 
-/** 版本未变则跳过；变化则整表重建题目索引（bulkPut 幂等） */
+/** 版本未变则跳过；变化则整表重建题目索引（bulkPut 幂等）。
+ * 当前 questions 表仅存单一 g7a bundle；若未来多 contentId 共存，需改为按 contentId/前缀过滤 stale，否则会互相清除。 */
 export async function seedContent(bundle: ContentBundle): Promise<SeedResult> {
   const meta = bundle.meta
   const existing = await getContentMeta(meta.contentId)
@@ -1424,7 +1439,7 @@ export async function seedContent(bundle: ContentBundle): Promise<SeedResult> {
 - [ ] **Step 4: 运行测试确认通过**
 
 Run: `npm --prefix app-src run test -- seed`
-Expected: 3 个测试 PASS
+Expected: 4 个测试 PASS（全量测试 26 tests passed）
 
 - [ ] **Step 5: 提交**
 

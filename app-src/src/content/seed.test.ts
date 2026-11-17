@@ -53,4 +53,17 @@ describe('seedContent', () => {
     expect((await db.contentMeta.get('g7a'))?.version).toBe('v2')
     expect(await db.questions.count()).toBe(2)
   })
+  it('版本升级时删除 bundle 外的陈旧题', async () => {
+    const v1 = bundle()
+    v1.questions = [q('q1'), q('q2'), q('q3')]
+    await seedContent(v1)
+    expect(await db.questions.count()).toBe(3)
+    const v2 = bundle()
+    v2.meta = { ...v2.meta, version: 'v2' } // 只含 q1/q2
+    const result = await seedContent(v2)
+    expect(result).toEqual({ inserted: 2, skipped: false })
+    expect(await db.questions.count()).toBe(2)
+    expect(await db.questions.get('q3')).toBeUndefined()
+    expect((await db.contentMeta.get('g7a'))?.version).toBe('v2')
+  })
 })

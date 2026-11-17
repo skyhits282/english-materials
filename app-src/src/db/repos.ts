@@ -1,5 +1,7 @@
 import { db, type ContentMetaRow } from './schema'
-import type { Attempt, Question, Settings } from '../types'
+import type { Attempt, Mastery, Question, Settings } from '../types'
+import { nextMasteryState, type ReviewEvent } from '../domain/review'
+import { localDayKey } from '../domain/metrics'
 
 export const DEFAULT_SETTINGS: Settings = {
   grade: 7,
@@ -25,6 +27,38 @@ export async function saveSettings(settings: Settings): Promise<void> {
 /** 只追加：ID 冲突直接抛错，保证历史不可改写（T02） */
 export async function saveAttempt(attempt: Attempt): Promise<void> {
   await db.attempts.add(attempt)
+}
+
+/** 提交挂钩：追加 attempt 并同事务更新各知识点 mastery（规格 §1.1 状态机）。
+ *  词题不在 questions 表，但其 Question 对象（deriveVocabQuestions 派生）已带
+ *  `vocab.<book>.<短单元名>` 格式的 knowledgePointIds，与选择题统一取该字段。
+ *  事务外先查同题上次 attempt（此时新 attempt 尚未入库），以其本地日判定"同日重试不推进"；
+ *  now 默认取 attempt.submittedAt（事件本地日与 nextReviewAt 均以它推算）。 */
+export async function applyMasteryUpdate(
+  attempt: Attempt,
+  question: Question,
+  now: Date = new Date(attempt.submittedAt),
+): Promise<void> {
+  // 上次 attempt 取提交时间最新的一条（主键为 UUID，索引序不保证时间序）
+  const history = await db.attempts.where('questionId').equals(attempt.questionId).toArray()
+  const previous = history.reduce<Attempt | undefined>(
+    (latest, a) => (latest === undefined || a.submittedAt > latest.submittedAt ? a : latest),
+    undefined,
+  )
+  const event: ReviewEvent = {
+    phase: attempt.phase,
+    isCorrect: attempt.isCorrect,
+    localDay: localDayKey(now),
+    ...(previous ? { previousLocalDay: localDayKey(new Date(previous.submittedAt)) } : {}),
+  }
+  const nextStates: Mastery[] = []
+  for (const kp of question.knowledgePointIds) {
+    nextStates.push(nextMasteryState(await db.mastery.get(kp), kp, event, now))
+  }
+  await db.transaction('rw', [db.attempts, db.mastery], async () => {
+    await db.attempts.add(attempt)
+    await db.mastery.bulkPut(nextStates)
+  })
 }
 
 export async function listAttempts(): Promise<Attempt[]> {

@@ -91,7 +91,9 @@ export interface Mastery {
   stage: MasteryStage
   nextReviewAt?: string
   lastAttemptAt?: string
-  metrics: { testedCount: number; firstTryCorrect: number }
+  /** 当前间隔档（天）：0=未排期 1/3/7/14（规格 §1.1，消除"3 天档 vs 7 天档"判定歧义） */
+  intervalDays: number
+  metrics: { testedCount: number; firstTryCorrect: number; delayedReviewCorrect: number }
 }
 
 export interface Settings {

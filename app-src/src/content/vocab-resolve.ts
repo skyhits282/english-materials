@@ -9,6 +9,10 @@ export interface VocabResolved {
   answer: string
   /** 同义变体拼写（如 centre/center），无则空串 */
   variant: string
+  /** 所属册别（g7a/g7b），供知识点 ID（vocab.<book>.<短单元名>）等下游派生 */
+  book: string
+  /** 所在词汇单元 id（如 v1-u1 / v2-u3） */
+  unitId: string
 }
 
 /** 构建词汇默写题解析器：questionId（`<book>-vocab-<短单元名>-<4 位词序号>`）→ 题干与答案。
@@ -23,6 +27,8 @@ export function buildVocabResolver(vocab: VocabBook[]) {
           stem: `默写：${w.meaning}（${w.pos}）`,
           answer: w.word,
           variant: w.variant,
+          book: book.book,
+          unitId: unit.id,
         })
       }
     }
@@ -30,6 +36,10 @@ export function buildVocabResolver(vocab: VocabBook[]) {
   return {
     resolve(questionId: string): VocabResolved | undefined {
       return byId.get(questionId)
+    },
+    /** 解析条目总数（真实数据应为全部词数；供全量 round-trip 校验） */
+    get size(): number {
+      return byId.size
     },
   }
 }

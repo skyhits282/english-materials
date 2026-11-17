@@ -13,6 +13,7 @@ import {
   questionsByUnitPrefix,
   putContentMeta,
   getContentMeta,
+  applyMasteryUpdate,
 } from './repos'
 import type { Attempt, Question, Settings } from '../types'
 
@@ -49,6 +50,7 @@ beforeEach(async () => {
     db.attempts.clear(),
     db.contentMeta.clear(),
     db.aiRequests.clear(),
+    db.mastery.clear(),
   ])
 })
 
@@ -118,5 +120,66 @@ describe('aiRequests', () => {
     await db.aiRequests.add(row('r1'))
     await db.aiRequests.add(row('r2'))
     expect(await db.aiRequests.count()).toBe(2)
+  })
+})
+
+describe('applyMasteryUpdate（mastery 提交挂钩）', () => {
+  /** 本地固定时刻，保证本地日断言与运行时区无关 */
+  const at = (y: number, m: number, d: number, h = 10): Date => new Date(y, m - 1, d, h)
+
+  const sub = (id: string, questionId: string, isCorrect: boolean, phase: 'first' | 'retry', when: Date): Attempt => ({
+    id,
+    questionId,
+    answer: 'x',
+    isCorrect,
+    phase,
+    submittedAt: when.toISOString(),
+  })
+
+  it('首错：保存 attempt 并创建 weak/1 天 mastery 行（同事务）', async () => {
+    const now = at(2026, 11, 17)
+    const q1 = { ...q('g7a-vocab-u1-0001', 'v1-u1'), knowledgePointIds: ['vocab.g7a.u1'] }
+    await applyMasteryUpdate(sub('a1', q1.id, false, 'first', now), q1, now)
+    expect(await db.attempts.count()).toBe(1)
+    const row = await db.mastery.get('vocab.g7a.u1')
+    expect(row?.stage).toBe('weak')
+    expect(row?.intervalDays).toBe(1)
+    expect(row?.nextReviewAt).toBe(new Date(2026, 10, 18).toISOString())
+    expect(row?.metrics).toEqual({ testedCount: 1, firstTryCorrect: 0, delayedReviewCorrect: 0 })
+  })
+
+  it('同日再错不推进（stage/interval/nextReviewAt 不变，仅 testedCount 累加）', async () => {
+    const day1 = at(2026, 11, 17, 9)
+    const q1 = { ...q('q1', 'v1-u1'), knowledgePointIds: ['k'] }
+    await applyMasteryUpdate(sub('a1', q1.id, false, 'first', day1), q1, day1)
+    const day1Later = at(2026, 11, 17, 15)
+    await applyMasteryUpdate(sub('a2', q1.id, false, 'retry', day1Later), q1, day1Later)
+    const row = await db.mastery.get('k')
+    expect(row?.stage).toBe('weak')
+    expect(row?.intervalDays).toBe(1)
+    expect(row?.nextReviewAt).toBe(new Date(2026, 10, 18).toISOString())
+    expect(row?.metrics.testedCount).toBe(2)
+  })
+
+  it('隔日复测正确：推进 consolidating/3 天，并按历史 attempt 判定隔日', async () => {
+    const q1 = { ...q('q1', 'v1-u1'), knowledgePointIds: ['k'] }
+    const day1 = at(2026, 11, 16)
+    await applyMasteryUpdate(sub('a1', q1.id, false, 'first', day1), q1, day1)
+    const day2 = at(2026, 11, 17)
+    await applyMasteryUpdate(sub('a2', q1.id, true, 'retry', day2), q1, day2)
+    const row = await db.mastery.get('k')
+    expect(row?.stage).toBe('consolidating')
+    expect(row?.intervalDays).toBe(3)
+    expect(row?.nextReviewAt).toBe(new Date(2026, 10, 20).toISOString())
+    expect(row?.metrics).toEqual({ testedCount: 2, firstTryCorrect: 0, delayedReviewCorrect: 1 })
+  })
+
+  it('多知识点逐个更新（词题与选择题共用 question.knowledgePointIds）', async () => {
+    const q1 = { ...q('q1', 'g7a-present-l1'), knowledgePointIds: ['grammar.present.basic', 'grammar.present.usage'] }
+    const now = at(2026, 11, 17)
+    await applyMasteryUpdate(sub('a1', q1.id, false, 'first', now), q1, now)
+    expect(await db.mastery.count()).toBe(2)
+    expect((await db.mastery.get('grammar.present.basic'))?.stage).toBe('weak')
+    expect((await db.mastery.get('grammar.present.usage'))?.stage).toBe('weak')
   })
 })

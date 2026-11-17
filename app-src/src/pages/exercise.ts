@@ -3,7 +3,7 @@ import { navigate } from '../router'
 import type { Question } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { questionsByUnitPrefix } from '../db/repos'
-import { saveAttempt, hasPriorAttempt } from '../db/repos'
+import { saveAttempt, hasPriorAttempt, applyMasteryUpdate } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
 import { escapeHtml } from '../ui/escape'
@@ -66,10 +66,26 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       return
     }
 
+    // 提交挂钩：attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；
+    // 挂钩失败仅 console.warn 并回退为单独保存 attempt，不影响判分主链路（沿用 M1 降级哲学）
+    const questionsById = new Map(data.questions.map((item) => [item.id, item] as const))
     const session = new PracticeSession(data.questions, {
       hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
       recordAttempt: storageOk
-        ? saveAttempt
+        ? async (a) => {
+            const question = questionsById.get(a.questionId)
+            if (!question) {
+              console.warn('mastery 挂钩跳过：会话内未找到题目', a.questionId)
+              await saveAttempt(a)
+              return
+            }
+            try {
+              await applyMasteryUpdate(a, question)
+            } catch (err) {
+              console.warn('mastery 更新失败，回退为仅保存 attempt：', err)
+              await saveAttempt(a)
+            }
+          }
         : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
     })
     const stats = { correct: 0, total: session.total }

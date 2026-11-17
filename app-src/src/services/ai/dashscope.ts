@@ -1,5 +1,7 @@
 /** 阿里云百炼（OpenAI 兼容模式）直连 transport：浏览器本地 fetch，不经任何后端中转。
- *  红线：apiKey 只进请求头（authorization: Bearer），不得写入日志/aiRequests/备份。 */
+ *  红线：apiKey 只进请求头（authorization: Bearer），不得写入日志/aiRequests/备份。
+ *  超时与用户取消的保护覆盖调用全程：发起请求 → 响应头到达 → 响应体读完
+ *  （头 200 后 body 挂起同样会超时；读 body 期间用户取消同样上抛 AbortError）。 */
 import { AiError, type AiTransport, type TransportRequest, type TransportResponse } from './transport'
 
 /** 默认超时 20s：讲解/洞察类请求在云端模型上的合理上限 */
@@ -15,6 +17,59 @@ export interface DashscopeConfig {
   fetchImpl?: typeof fetch
 }
 
+/** 一次请求的守卫：超时计时器与"用户 signal ∪ 超时 signal"的组合 signal 覆盖本次尝试的全程 */
+interface TimeoutGuard {
+  /** 包装一次异步操作（发请求 / 读 body）：与超时、用户取消竞速；
+   *  超时→AiError('timeout')；用户取消→原样上抛（combined.reason）；操作自身结果照常透传 */
+  race<T>(p: Promise<T>): Promise<T>
+  /** 释放计时器（本次尝试结束：成功返回、抛错或去参重试） */
+  dispose(): void
+}
+
+function createTimeoutGuard(timeoutMs: number, signal: AbortSignal | undefined): TimeoutGuard {
+  const timeoutController = new AbortController()
+  let timedOut = false
+  const onTimeoutAbort = () => {
+    timedOut = true
+  }
+  timeoutController.signal.addEventListener('abort', onTimeoutAbort)
+  const timer = setTimeout(() => timeoutController.abort(), timeoutMs)
+  // AbortSignal.any 需较新浏览器（Chrome 116+ / Safari 17.4+）；本项目无旧浏览器目标，TS DOM lib 已含该类型
+  const combined =
+    signal !== undefined ? AbortSignal.any([signal, timeoutController.signal]) : timeoutController.signal
+  return {
+    race<T>(p: Promise<T>): Promise<T> {
+      return new Promise<T>((resolve, reject) => {
+        const cleanup = () => combined.removeEventListener('abort', onAbort)
+        const onAbort = () => {
+          cleanup()
+          if (timedOut) reject(new AiError('timeout', `AI 请求超时（${timeoutMs}ms），请稍后重试`))
+          else reject(combined.reason) // 用户主动取消（reason 可能是任意值，原样上抛）
+        }
+        if (combined.aborted) {
+          onAbort()
+          return
+        }
+        combined.addEventListener('abort', onAbort)
+        p.then(
+          (value) => {
+            cleanup()
+            resolve(value)
+          },
+          (err) => {
+            cleanup()
+            reject(err)
+          },
+        )
+      })
+    },
+    dispose(): void {
+      clearTimeout(timer)
+      timeoutController.signal.removeEventListener('abort', onTimeoutAbort)
+    },
+  }
+}
+
 /** 创建百炼直连 transport：POST {baseUrl}/chat/completions */
 export function createDashscopeTransport(cfg: DashscopeConfig): AiTransport {
   const doFetch = cfg.fetchImpl ?? ((input: RequestInfo | URL, init?: RequestInit) => globalThis.fetch(input, init))
@@ -26,15 +81,30 @@ export function createDashscopeTransport(cfg: DashscopeConfig): AiTransport {
       let jsonMode = req.jsonMode === true
       // 至多两次：jsonMode 下服务端不支持 response_format（部分兼容端点）→ 去参原样重试一次
       for (let attempt = 0; attempt < 2; attempt++) {
-        const res = await fetchWithTimeout(doFetch, url, buildInit(cfg, req, jsonMode), timeoutMs, signal)
-        if (res.ok) return await parseSuccessResponse(res)
-        const status = res.status
-        const bodyText = await readText(res)
-        if (jsonMode && status === 400 && /response_format/i.test(bodyText)) {
-          jsonMode = false
-          continue
+        const guard = createTimeoutGuard(timeoutMs, signal)
+        try {
+          let res: Response
+          try {
+            res = await guard.race(doFetch(url, buildInit(cfg, req, jsonMode)))
+          } catch (err) {
+            if (err instanceof AiError || signal?.aborted === true) throw err // 超时 / 用户取消
+            throw new AiError('network', `网络请求失败：${err instanceof Error ? err.message : String(err)}`)
+          }
+          if (res.ok) {
+            const bodyText = await readBody(guard, res, signal)
+            return parseSuccessBody(bodyText)
+          }
+          const status = res.status
+          // 错误路径的 body 尽力读（读取失败按空串，不影响状态分类）；取消/超时仍须上抛
+          const bodyText = await readBody(guard, res, signal, '')
+          if (jsonMode && status === 400 && /response_format/i.test(bodyText)) {
+            jsonMode = false
+            continue
+          }
+          throw mapHttpError(status, bodyText)
+        } finally {
+          guard.dispose()
         }
-        throw mapHttpError(status, bodyText)
       }
       // 防御：循环正常只在重试一次后返回或抛出，不会走到这里
       throw new AiError('http', 'AI 请求失败（重试后仍未成功）')
@@ -56,42 +126,31 @@ function buildInit(cfg: DashscopeConfig, req: TransportRequest, jsonMode: boolea
   }
 }
 
-/** 带超时与用户取消的 fetch：
- *  超时→AiError('timeout')；用户取消→原样抛出（调用方以 signal.aborted 识别）；其他异常→AiError('network')。 */
-async function fetchWithTimeout(
-  doFetch: typeof globalThis.fetch,
-  url: string,
-  init: RequestInit,
-  timeoutMs: number,
+/** 受守卫保护的响应体读取。
+ *  ok 路径（无 fallback）：非取消/非超时的读取失败 → AiError('network')；
+ *  错误状态路径（fallback=''）：读取失败按空串继续分类。取消/超时两条路径均原样上抛。 */
+async function readBody(
+  guard: TimeoutGuard,
+  res: Response,
   signal: AbortSignal | undefined,
-): Promise<Response> {
-  const timeoutController = new AbortController()
-  let timedOut = false
-  const onTimeoutAbort = () => {
-    timedOut = true
-  }
-  timeoutController.signal.addEventListener('abort', onTimeoutAbort)
-  const timer = setTimeout(() => timeoutController.abort(), timeoutMs)
-  // AbortSignal.any 需较新浏览器（Chrome 116+ / Safari 17.4+）；本项目无旧浏览器目标，TS DOM lib 已含该类型
-  const combined =
-    signal !== undefined ? AbortSignal.any([signal, timeoutController.signal]) : timeoutController.signal
+  fallback?: string,
+): Promise<string> {
   try {
-    return await doFetch(url, { ...init, signal: combined })
+    return await guard.race(res.text())
   } catch (err) {
-    if (timedOut) throw new AiError('timeout', `AI 请求超时（${timeoutMs}ms），请稍后重试`)
-    if (signal?.aborted) throw err // 用户主动取消（reason 可能是任意值，原样上抛）
-    throw new AiError('network', `网络请求失败：${err instanceof Error ? err.message : String(err)}`)
-  } finally {
-    clearTimeout(timer)
-    timeoutController.signal.removeEventListener('abort', onTimeoutAbort)
+    if (err instanceof AiError || signal?.aborted === true) throw err // 超时 / 用户取消
+    if (fallback === undefined) {
+      throw new AiError('network', `读取响应体失败：${err instanceof Error ? err.message : String(err)}`)
+    }
+    return fallback
   }
 }
 
-/** 2xx 响应解析：choices[0].message.content 缺失 → invalid-response */
-async function parseSuccessResponse(res: Response): Promise<TransportResponse> {
+/** 2xx 响应体解析：choices[0].message.content 缺失 → invalid-response */
+function parseSuccessBody(bodyText: string): TransportResponse {
   let json: unknown
   try {
-    json = await res.json()
+    json = JSON.parse(bodyText)
   } catch {
     throw new AiError('invalid-response', 'AI 响应不是有效 JSON')
   }
@@ -112,12 +171,4 @@ function mapHttpError(status: number, bodyText: string): AiError {
   if (status === 401 || status === 403) return new AiError('auth', `API Key 无效或无权限（HTTP ${status}）`)
   if (status === 429) return new AiError('rate-limit', '请求过于频繁（429），请稍后再试')
   return new AiError('http', `服务端错误（HTTP ${status}）：${bodyText.slice(0, 200)}`)
-}
-
-async function readText(res: Response): Promise<string> {
-  try {
-    return await res.text()
-  } catch {
-    return ''
-  }
 }

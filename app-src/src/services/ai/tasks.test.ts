@@ -268,6 +268,27 @@ describe('超时与用户取消', () => {
     expect(rows).toHaveLength(1)
     expect(rows[0]?.status).toBe('aborted')
   })
+
+  it('响应体挂起：头 200 后 body 无限期不返回 → 超时仍生效', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    // 头 200 已达但 body 永不返回（场景：服务端发完头后连接停滞）
+    stubFetch(async () => ({ ok: true, status: 200, text: () => new Promise<string>(() => {}) } as unknown as Response))
+    const p = runAiTask('coach_turn', coachPayload, { settings: settings(), timeoutMs: 20_000 })
+    await flushTasks()
+    await vi.advanceTimersByTimeAsync(20_000)
+    await expect(p).rejects.toMatchObject({ name: 'AiError', kind: 'timeout' })
+    expect((await db.aiRequests.toArray())[0]?.status).toBe('timeout')
+  })
+
+  it('响应体读取期间用户取消 → 上抛 AbortError 而非 invalid-response', async () => {
+    stubFetch(async () => ({ ok: true, status: 200, text: () => new Promise<string>(() => {}) } as unknown as Response))
+    const controller = new AbortController()
+    const p = runAiTask('coach_turn', coachPayload, { settings: settings() }, controller.signal)
+    await flushTasks(2)
+    controller.abort()
+    await expect(p).rejects.toSatisfy((err: unknown) => err instanceof Error && err.name === 'AbortError')
+    expect((await db.aiRequests.toArray())[0]?.status).toBe('aborted')
+  })
 })
 
 describe('jsonMode 兼容重试', () => {

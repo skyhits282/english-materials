@@ -689,7 +689,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 **Files:**
 - Modify: `docs/superpowers/specs/2026-11-17-m2-m3-learning-loop-ai-design.md`（验收记录）
 
-- [ ] **Step 1: 浏览器端到端验证（Playwright，真实浏览器 + IndexedDB）**
+- [x] **Step 1: 浏览器端到端验证（Playwright，真实浏览器 + IndexedDB）**
 
 模拟多日场景（通过注入 now/直接构造 DB 数据实现"隔日"）：
 1. 首错 → mastery weak + 次日到期 →（注入次日）今日页出现到期复习卡 → 复测正确 → 3 天档；再模拟推进验证 7/14 天递进与回退（规格验收 2）
@@ -701,11 +701,11 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 7. 备份导出断言不含 aiApiKey/parentPin；v1 旧备份导入成功（验收 7）
 8. 未配置 Key 的全新浏览器上下文：全部 AI 按钮灰态、做题/记录/备份全链路正常
 
-- [ ] **Step 2: 验收记录**
+- [x] **Step 2: 验收记录**
 
 规格末尾追加"验收记录（2026-11-XX）"小节：逐条对照 §10 十项，写实际结果与证据（数字/截图描述/提交号）。
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add -A && git commit -m "docs: M2+M3 验收记录

@@ -2312,8 +2312,8 @@ startRouter(
   container,
 )
 // 路由先行渲染，播种在后台完成；失败不阻塞做题以外页面
-void fetchContentBundle()
-  .then((bundle) => seedContent(bundle))
+void isStorageAvailable()
+  .then((ok) => (ok ? fetchContentBundle().then(seedContent) : undefined))
   .catch((err) => console.error('题库播种失败：', err))
 ```
 
@@ -2388,7 +2388,7 @@ void isStorageAvailable().then((ok) => {
   if (!ok) {
     const banner = document.createElement('div')
     banner.className = 'error-panel'
-    banner.setAttribute('role', 'alert')
+    banner.setAttribute('role', 'status')
     banner.textContent = '无法保存学习记录（浏览器存储不可用）。可以继续练习，但刷新后记录不会保留。'
     container.prepend(banner)
     // 页面渲染会整体替换 container.innerHTML，横幅需在每次渲染后重新置顶
@@ -2681,8 +2681,8 @@ Expected: FAIL，`Cannot find module './index'`（目录不存在）
 - [ ] **Step 3: 实现 `app-src/src/services/backup/index.ts`**
 
 ```ts
-import { db, type SettingsRow, type WeeklyReportRow } from '../../db/schema'
-import type { Attempt, ContentMetaRow, Mastery, Question } from '../../types'
+import { db, type ContentMetaRow, type SettingsRow, type WeeklyReportRow } from '../../db/schema'
+import type { Attempt, Mastery, Question } from '../../types'
 
 export const BACKUP_SCHEMA_VERSION = 1
 
@@ -2844,19 +2844,26 @@ Expected: 5 个测试 PASS
 
 ```ts
   container.querySelector('#backup-export')?.addEventListener('click', async () => {
-    const file = await exportBackup()
-    const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = backupFileName()
-    a.click()
-    URL.revokeObjectURL(url)
+    const preview = container.querySelector('#backup-preview')
+    if (!preview) return
+    try {
+      const file = await exportBackup()
+      const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = backupFileName()
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      preview.innerHTML = '<div class="error-panel">导出失败，存储不可用。</div>'
+    }
   })
 
   container.querySelector<HTMLInputElement>('#backup-import')?.addEventListener('change', async (e) => {
     const input = e.target as HTMLInputElement
-    const preview = container.querySelector('#backup-preview')!
+    const preview = container.querySelector('#backup-preview')
+    if (!preview) return
     const file = input.files?.[0]
     if (!file) return
     let parsed
@@ -2874,8 +2881,12 @@ Expected: 5 个测试 PASS
         <button class="btn btn-secondary" id="backup-overwrite">覆盖导入（清空后恢复）</button>
       </div>`
     const run = async (mode: 'merge' | 'overwrite') => {
-      const result = await importBackup(parsed, mode)
-      preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
+      try {
+        const result = await importBackup(parsed, mode)
+        preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
+      } catch {
+        preview.innerHTML = '<div class="error-panel">导入失败：存储不可用。</div>'
+      }
     }
     preview.querySelector('#backup-merge')?.addEventListener('click', () => void run('merge'))
     preview.querySelector('#backup-overwrite')?.addEventListener('click', () => void run('overwrite'))

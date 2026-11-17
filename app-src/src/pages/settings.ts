@@ -2,6 +2,7 @@ import type { PageRenderer } from '../router'
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
 import { fetchContentBundle } from '../content/loader'
 import type { Settings } from '../types'
+import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
 
 export const renderSettings: PageRenderer = async ({ container }) => {
   let stale = false
@@ -46,7 +47,17 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       </div>
       <div class="action-row"><button class="btn" id="save">保存设置</button></div>
     </div>
-    <div id="backup-slot"></div>
+    <div class="card">
+      <h3>备份与恢复</h3>
+      <p>导出全部学习记录为 JSON 文件；恢复时先校验再写入，合并模式不会改写已有历史。</p>
+      <div class="action-row">
+        <button class="btn" id="backup-export">导出备份</button>
+        <label class="btn btn-secondary" style="display:inline-flex;align-items:center">导入备份
+          <input type="file" id="backup-import" accept="application/json,.json" style="display:none">
+        </label>
+      </div>
+      <div id="backup-preview"></div>
+    </div>
   `
   container.appendChild(message)
 
@@ -66,6 +77,55 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       if (stale) return
       message.textContent = '保存失败，存储不可用。'
     }
+  })
+
+  container.querySelector('#backup-export')?.addEventListener('click', async () => {
+    const preview = container.querySelector('#backup-preview')
+    if (!preview) return
+    try {
+      const file = await exportBackup()
+      const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = backupFileName()
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      preview.innerHTML = '<div class="error-panel">导出失败，存储不可用。</div>'
+    }
+  })
+
+  container.querySelector<HTMLInputElement>('#backup-import')?.addEventListener('change', async (e) => {
+    const input = e.target as HTMLInputElement
+    const preview = container.querySelector('#backup-preview')
+    if (!preview) return
+    const file = input.files?.[0]
+    if (!file) return
+    let parsed
+    try {
+      parsed = parseAndValidateBackup(await file.text())
+    } catch (err) {
+      preview.innerHTML = `<div class="error-panel">导入失败：${err instanceof BackupError ? err.message : '文件无法解析'}</div>`
+      return
+    }
+    input.value = ''
+    preview.innerHTML = `
+      <p>该备份包含 ${parsed.counts.attempts} 条作答、${parsed.counts.questions} 道题、${parsed.counts.settings} 条设置（导出于 ${new Date(parsed.exportedAt).toLocaleString('zh-CN')}）。</p>
+      <div class="action-row">
+        <button class="btn" id="backup-merge">合并导入（保留本地已有记录）</button>
+        <button class="btn btn-secondary" id="backup-overwrite">覆盖导入（清空后恢复）</button>
+      </div>`
+    const run = async (mode: 'merge' | 'overwrite') => {
+      try {
+        const result = await importBackup(parsed, mode)
+        preview.innerHTML = `<p>导入完成：新增作答 ${result.attemptsAdded} 条${result.attemptsSkipped > 0 ? `，跳过已存在 ${result.attemptsSkipped} 条` : ''}。</p>`
+      } catch {
+        preview.innerHTML = '<div class="error-panel">导入失败：存储不可用。</div>'
+      }
+    }
+    preview.querySelector('#backup-merge')?.addEventListener('click', () => void run('merge'))
+    preview.querySelector('#backup-overwrite')?.addEventListener('click', () => void run('overwrite'))
   })
 }
 

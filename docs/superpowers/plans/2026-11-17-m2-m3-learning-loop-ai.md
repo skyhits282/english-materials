@@ -27,11 +27,11 @@
 - Modify: 根 `package.json`（`extract:g7a` 保留，新增 `extract:questions` 同实现）
 - Test: 脚本测试与 `app-src/src/content/*.test.ts`
 
-- [ ] **Step 1: 核对七下素材**
+- [x] **Step 1: 核对七下素材**
 
 先实查：`g7b-adjadv/data.js`、`g7b-nouns/data.js`、`g7b-pronouns-modals/data.js`、`g7b-tenses/data.js` 的题数与结构（同 `{id, level, stem, options, answer, explain}` 格式）；`typing/data/v2.js` 的单元标签确认是七下（如"Unit 1"标签与词表规模合理）。把实际题数/词数写入计划自查，不匹配预期（各约 48 题）时按实际处理并在提交信息里注明。知识点 ID 规范沿用：`专项.级别` → 如 `grammar.adj_adv.basic`、`grammar.pronoun_modals.*`（以 data.js 内实际知识点字段为准，保持稳定可复现）。
 
-- [ ] **Step 2: 泛化脚本**
+- [x] **Step 2: 泛化脚本**
 
 `scripts/extract-questions.mjs`（`git mv scripts/extract-g7a.mjs scripts/extract-questions.mjs` 后改）：
 
@@ -49,7 +49,7 @@ const BOOKS = [
 - `content.json`：`contentVersion` 递增为 `2026-11-17.2`；questionCount/vocabWordCount 汇总两册
 - 幂等与稳定键序保持；防漂移测试改为对比新产物
 
-- [ ] **Step 3: 类型与加载适配**
+- [x] **Step 3: 类型与加载适配**
 
 `types.ts`：
 
@@ -68,13 +68,13 @@ export interface ContentBundle {
 - exercise 页：`set=` 专项集合 8 个均可用；`vocab=` 参数接受 `v1-u*`/`v2-u*`
 - seed 播种：questions 表清旧写新（按 contentVersion 重建机制不变）；存储不可用降级的 `bundle.questions` 兜底路径验证 8 专项可用
 
-- [ ] **Step 4: 测试与验证**
+- [x] **Step 4: 测试与验证**
 
 - 脚本测试：题数断言 g7a 192 + g7b 实际数、词汇两册单元/词数、幂等、产物逐字节一致
 - `npm run extract:questions` 与 `npm run extract:g7a` 均可运行（别名同一脚本）
 - `npx vitest run`、`npx tsc --noEmit`、构建零漂移入库
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 题库扩展七下四专项与两册词汇，转换脚本泛化

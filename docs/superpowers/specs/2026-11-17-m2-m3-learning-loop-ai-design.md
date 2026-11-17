@@ -12,6 +12,8 @@
 | M2 范围 | 全量：计划调度、错题间隔复测、报告增强、家长 PIN、试卷成绩录入、题库扩七下 |
 | M3 密钥方式 | **前端本地直连阿里百炼**（OpenAI-compatible），Base URL + API Key + 模型名存 IndexedDB；不做服务端代理（用户知情选择；`AiTransport` 接口预留代理升级位） |
 | CORS | 已实测 `dashscope.aliyuncs.com/compatible-mode/v1` 预检通过（`access-control-allow-origin: *`，允许 POST + authorization 头） |
+| Key 实测 | 百炼 API Key 与 `qwen-flash` 已实测连通（2026-11-17，用户提供的家用 Key；密钥本身不进入任何代码/文档/备份，仅在验收实测时经设置页录入浏览器） |
+| 已排除方案 | 用户另有一个 Anthropic 协议网关（`token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic`）：鉴权有效但整域 CORS 关闭（预检即 401 且无 CORS 头）、模型名未公开，浏览器不可直连——已放弃 |
 | AI 任务类型 | `explain_mistake`（错题讲解）、`coach_turn`（启发提示）、`weekly_insight`（周报建议）；`review_essay` 作文批改留后续迭代 |
 | 复测间隔默认值 | 按总纲 §7.4：1 天 → 3 天 → 7 天 → 14 天，失败回退 |
 | 不做 | SW 离线（M4）、作文批改、语音、系统推送 |

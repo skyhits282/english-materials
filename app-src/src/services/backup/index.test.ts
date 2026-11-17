@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { db, type AiRequestRow, type TaskRow, type WeeklyReportRow } from '../../db/schema'
-import { exportBackup, parseAndValidateBackup, importBackup, BackupError, type BackupFile } from './index'
+import { exportBackup, parseAndValidateBackup, importBackup, downloadBackupFile, BackupError, type BackupFile } from './index'
 import { saveAttempt, saveSettings, upsertQuestions, DEFAULT_SETTINGS } from '../../db/repos'
 import { computeCoreMetrics } from '../../domain/metrics'
 import type { Attempt, Question, Settings } from '../../types'
@@ -720,5 +720,56 @@ describe('行校验健壮性（M1 遗留）', () => {
     expect(parsed.counts.attempts).toBe(1)
     expect(parsed.counts.tasks).toBe(1)
     expect(parsed.counts.settings).toBe(0)
+  })
+})
+
+describe('downloadBackupFile 延迟撤销 blob URL（WebKit/iPad Safari）', () => {
+  /** 最小备份文件（downloadBackupFile 只序列化不校验内容） */
+  const file: BackupFile = {
+    schemaVersion: 2,
+    app: 'english-coach',
+    exportedAt: '2026-11-17T00:00:00.000Z',
+    counts: { settings: 0, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+    data: { settings: [], contentMeta: [], questions: [], attempts: [], mastery: [], weeklyReports: [], tasks: [], aiRequests: [] },
+  }
+
+  it('a.click() 后立即不撤销，60s 后才撤销（立即 revoke 会中断 Safari blob 下载）', () => {
+    // 只假 setTimeout/clearTimeout：撤销计时器可精确推进
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    const created: string[] = []
+    const revoked: string[] = []
+    const anchors: Array<{ href: string; download: string; clicked: boolean }> = []
+    // node 环境无 URL.createObjectURL/document：以桩对象模拟浏览器下载面
+    vi.stubGlobal('URL', {
+      createObjectURL: () => {
+        const url = 'blob:mock-url'
+        created.push(url)
+        return url
+      },
+      revokeObjectURL: (url: string) => revoked.push(url),
+    })
+    vi.stubGlobal('document', {
+      createElement: () => {
+        const a = { href: '', download: '', clicked: false, click() { this.clicked = true } }
+        anchors.push(a)
+        return a
+      },
+    })
+    try {
+      downloadBackupFile(file, 'english-learning-backup-20261117.json')
+      // 触发了下载：href 指向 blob URL、文件名正确、click 被调用
+      expect(created).toHaveLength(1)
+      expect(anchors).toHaveLength(1)
+      expect(anchors[0]?.href).toBe('blob:mock-url')
+      expect(anchors[0]?.download).toBe('english-learning-backup-20261117.json')
+      expect(anchors[0]?.clicked).toBe(true)
+      // click 后立即不撤销（Safari 中立即 revoke 会中断尚未开始的 blob 下载）
+      expect(revoked).toHaveLength(0)
+      vi.advanceTimersByTime(60_000)
+      expect(revoked).toEqual(created)
+    } finally {
+      vi.unstubAllGlobals()
+      vi.useRealTimers()
+    }
   })
 })

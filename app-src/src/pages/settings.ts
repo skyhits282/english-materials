@@ -14,6 +14,8 @@ import { escapeHtml } from '../ui/escape'
 import { PIN_LENGTH, PIN_PATTERN, isPinProtectedAction, verifyPin, type PinProtectedAction } from '../domain/pin'
 import { EXAM_MAX_ROWS, parseExamRows } from '../domain/exam-scores'
 import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, maskApiKey, parseAiConfigForm } from '../domain/ai-config'
+import { testConnection } from '../services/ai/connection'
+import { aiErrorText } from '../services/ai/ui'
 
 /** 卡片模块共享依赖：页内 settings 快照与持久化入口（导入备份后快照整体替换） */
 interface CardDeps {
@@ -261,7 +263,7 @@ function setupExamScoresCard(deps: CardDeps): { refresh: () => void } {
 /** AI 配置卡（规格 §7.1）：四字段 + 密钥掩码管理。已存密钥只回显掩码（sk-****+后4位），
  *  「更换」切换为密码输入、「清除」移除密钥，任何路径不回填明文。
  *  保存前经纯函数 parseAiConfigForm 校验（URL 须 https、每日上限 1–500 整数）；
- *  「测试连接」的调用层在 Task 10 接入，本任务先做本地校验与占位提示。
+ *  「测试连接」经 testConnection 发最小探活请求（含未保存的表单值），不落 aiRequests 不计配额。
  *  红线：密钥仅存本机浏览器（IndexedDB settings），备份导出剔除（services/backup）。 */
 function setupAiConfigCard(
   deps: CardDeps,
@@ -352,6 +354,7 @@ function setupAiConfigCard(
     })
   })
 
+  // 测试连接（规格 §7.1）：本地校验 → 探活（10s 超时，按钮 loading 防连点）→ 成功显示连通与模型、失败显示分类文案
   container.querySelector('#ai-test')?.addEventListener('click', () => {
     msg('')
     const parsed = parseAiConfigForm(readForm(), current().aiApiKey)
@@ -363,8 +366,25 @@ function setupAiConfigCard(
       msg('未配置密钥，无法测试连接。')
       return
     }
-    // 调用层（Task 10 transport）尚未接入：先本地校验后占位提示
-    msg('AI 调用层尚未接入，测试连接将在后续版本启用。')
+    // 家长总开关关闭时口径同调用层（testConnection 亦会拒绝）：提示先开启
+    if (current().aiEnabled === false) {
+      msg('AI 已关闭，请先在上方勾选「AI 讲解」后再测试。')
+      return
+    }
+    const btn = container.querySelector<HTMLButtonElement>('#ai-test')
+    if (!btn || btn.disabled) return
+    btn.disabled = true
+    const originalText = btn.textContent
+    btn.textContent = '测试中…'
+    msg('正在测试连接…')
+    // 表单值可能尚未保存：以「当前 settings + 本次表单解析值」发起探活
+    void testConnection({ ...current(), ...parsed.value })
+      .then((r) => msg(`连通 ✓ 模型 ${r.model}`))
+      .catch((err: unknown) => msg(`测试连接失败：${aiErrorText(err)}`))
+      .finally(() => {
+        btn.disabled = false
+        btn.textContent = originalText ?? '测试连接'
+      })
   })
 
   renderKeyArea()

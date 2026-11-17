@@ -418,7 +418,9 @@ export function downloadBackupFile(file: BackupFile, fileName: string): void {
   a.href = url
   a.download = fileName
   a.click()
-  URL.revokeObjectURL(url)
+  // 延迟 60s 撤销：WebKit/iPad Safari 中 a.click() 后立即 revoke 会中断尚未开始的 blob 下载，
+  // 60s 覆盖正常下载时长；页面卸载时 blob URL 由浏览器回收，不担心泄漏
+  setTimeout(() => URL.revokeObjectURL(url), 60_000)
 }
 
 /** 备份文件名：english-learning-backup-YYYYMMDD[suffix].json（suffix 如 "-pre-import"） */

@@ -167,6 +167,16 @@ export async function listAllQuestions(): Promise<Question[]> {
   return db.questions.toArray()
 }
 
+/** 全量任务行（报告页周报聚合：本周过滤在 trends 层做，量级每日 ≤4 条） */
+export async function listAllTasks(): Promise<TaskRow[]> {
+  return db.tasks.toArray()
+}
+
+/** 全量 mastery 行（报告页复测按时率/周报事实用） */
+export async function listAllMastery(): Promise<Mastery[]> {
+  return db.mastery.toArray()
+}
+
 export async function putContentMeta(meta: ContentMetaRow): Promise<void> {
   await db.contentMeta.put(meta)
 }

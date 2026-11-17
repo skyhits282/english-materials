@@ -46,6 +46,8 @@ h2 { font-size: 1.2rem; }
 }
 .btn-secondary { background: #e5eaf2; color: var(--ink); }
 .btn-block { display: block; width: 100%; }
+/* 占位禁用（如周报"生成 AI 建议"灰态）与既有禁用按钮共用 */
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .progress-bar {
   height: 10px; border-radius: 6px; background: #e5eaf2; overflow: hidden; margin: 8px 0;
 }

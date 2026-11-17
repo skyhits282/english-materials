@@ -1491,7 +1491,7 @@ describe('PracticeSession', () => {
     const attempts: Attempt[] = []
     const s = new PracticeSession([choice('q1'), choice('q2')], {
       hasPriorAttempt: async () => false,
-      recordAttempt: async (a) => attempts.push(a),
+      recordAttempt: async (a) => { attempts.push(a) },
     })
     const sub = await s.submit('1')
     expect(sub.isCorrect).toBe(true)
@@ -1516,7 +1516,7 @@ describe('PracticeSession', () => {
     const attempts: Attempt[] = []
     const s = new PracticeSession([choice('q1')], {
       hasPriorAttempt: async () => false,
-      recordAttempt: async (a) => attempts.push(a),
+      recordAttempt: async (a) => { attempts.push(a) },
     })
     const sub = await s.submit('', { gaveUp: true })
     expect(sub.isCorrect).toBe(false)

@@ -1,4 +1,4 @@
-import { db, type ContentMetaRow, type TaskRow, type TaskType } from './schema'
+import { db, type ContentMetaRow, type TaskRow, type TaskType, type WeeklyReportRow } from './schema'
 import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
 import { localDayKey, isSameLocalDay } from '../domain/metrics'
@@ -202,6 +202,20 @@ export async function putContentMeta(meta: ContentMetaRow): Promise<void> {
 
 export async function getContentMeta(contentId: string): Promise<ContentMetaRow | undefined> {
   return db.contentMeta.get(contentId)
+}
+
+/** 保存周报 AI 建议（报告页 Task 11）：以 weekStart（本周一本地日 key）为主键 put——
+ *  重复生成同周记录时整体覆盖（facts 快照 + aiSuggestions + generatedAt 一并更新），
+ *  "覆盖同周的 aiSuggestions 与 generatedAt"由整行替换达成。 */
+export async function saveWeeklyReport(report: WeeklyReportRow): Promise<void> {
+  await db.weeklyReports.put(report)
+}
+
+/** 最近 limit 周的周报记录（weekStart 降序，只含有记录的周；报告页历史周报区用） */
+export async function listRecentWeeklyReports(limit = 4): Promise<WeeklyReportRow[]> {
+  const rows = await db.weeklyReports.toArray()
+  rows.sort((a, b) => (a.weekStart < b.weekStart ? 1 : -1))
+  return rows.slice(0, limit)
 }
 
 /** 每日计划生成的调用方输入：题库内容（生成器是纯函数无 IO，页面经 fetchContentBundle 取得后传入） */

@@ -11,3 +11,6 @@ Thumbs.db
 # 临时文件
 *.tmp
 *.log
+
+# 浏览器验证临时产物（Playwright MCP 快照）
+.playwright-mcp/

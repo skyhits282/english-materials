@@ -1,16 +1,32 @@
 import type { PageRenderer } from '../router'
 import { navigate } from '../router'
-import type { Question } from '../types'
+import type { Question, Settings } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
-import { questionsByUnitPrefix } from '../db/repos'
+import { DEFAULT_SETTINGS, getSettings, questionsByUnitPrefix } from '../db/repos'
 import { saveAttempt, hasPriorAttempt, applyMasteryUpdate, getReviewSet, listAllQuestions, getTask, updateTaskStatus, completeTask } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
 import { localDayKey } from '../domain/metrics'
 import { escapeHtml } from '../ui/escape'
+import { getAiUsageToday } from '../services/ai/quota'
+import { runAiTask, type AiRawResult, type ExplainMistakePayload, type ExplainMistakeResult } from '../services/ai/tasks'
+import { aiButtonState, aiErrorText } from '../services/ai/ui'
 import type { TaskRow } from '../db/schema'
 
 const LETTERS = ['A', 'B', 'C', 'D']
+
+/** AI 讲解结果渲染（模块级纯渲染函数）：三段"提示/讲解/变式练习"；{raw} 降级时整段纯文本展示。
+ *  AI 返回内容一律 escapeHtml（红线：不信任外部模型输出）。 */
+function explainResultHtml(result: ExplainMistakeResult | AiRawResult): string {
+  if ('raw' in result) {
+    return `<div class="ai-panel"><h4>AI 讲解</h4><p>${escapeHtml(result.raw)}</p></div>`
+  }
+  return `<div class="ai-panel">
+    <h4>提示</h4><p>${escapeHtml(result.hint)}</p>
+    <h4>讲解</h4><p>${escapeHtml(result.explanation)}</p>
+    <h4>变式练习</h4><p>${escapeHtml(result.followUpQuestion)}</p>
+  </div>`
+}
 
 /** 任务回写辅助：回写失败仅告警，不阻塞练习主链路（沿用 M1 降级哲学） */
 
@@ -153,6 +169,38 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     if (taskId) await markTaskStarted(taskId)
     if (stale) return
 
+    // AI 按钮状态底座：配置快照 + 今日用量。读取失败按"未配置"降级（按钮灰态），不阻塞练习主链路
+    let settings: Settings = DEFAULT_SETTINGS
+    let aiUsage = 0
+    try {
+      ;[settings, aiUsage] = await Promise.all([getSettings(), getAiUsageToday()])
+    } catch (err) {
+      console.warn('AI 配置/用量读取失败，AI 按钮按未配置处理：', err)
+    }
+    if (stale) return
+    // 会话内 AI 请求统一取消源：hashchange 离开页面时中止在途请求（省配额；UI 已随页面卸载）
+    const aiAbort = new AbortController()
+    window.addEventListener('hashchange', () => aiAbort.abort(), { once: true })
+    // "AI 提示"每题限一次的会话内记录（页面内存，不落库）
+    const coachUsed = new Set<string>()
+
+    /** 一次 AI 调用结束后刷新今日用量并同步页面现存 AI 按钮灰态（一次调用可能把当日额度用完） */
+    const syncAiButtons = async (): Promise<void> => {
+      try {
+        aiUsage = await getAiUsageToday()
+      } catch {
+        return // 用量读取失败：保持现状（灰态略滞后可接受，调用层仍会兜底拒绝）
+      }
+      const state = aiButtonState(settings, aiUsage)
+      for (const id of ['ai-coach', 'ai-explain']) {
+        const btn = container.querySelector<HTMLButtonElement>(`#${id}`)
+        if (btn && !btn.classList.contains('is-loading')) {
+          btn.disabled = state.disabled
+          btn.title = state.title
+        }
+      }
+    }
+
     // 提交挂钩：attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；
     // 挂钩失败仅 console.warn 并回退为单独保存 attempt，不影响判分主链路（沿用 M1 降级哲学）
     const questionsById = new Map(data.questions.map((item) => [item.id, item] as const))
@@ -180,6 +228,11 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     const renderQuestion = () => {
       const q = session.current
       const progress = Math.round((session.done / session.total) * 100)
+      const aiState = aiButtonState(settings, aiUsage)
+      // 每题限一次（会话内记录）：已用过 AI 提示的题不再渲染按钮（提示内容随该题 DOM 卸载）
+      const coachBtn = coachUsed.has(q.id)
+        ? ''
+        : `<button class="btn btn-secondary" id="ai-coach"${aiState.disabled ? ' disabled' : ''} title="${escapeHtml(aiState.title)}">AI 提示</button>`
       container.innerHTML = `
         <h1>${escapeHtml(data.title)}</h1>
         <div class="progress-bar"><div style="width:${progress}%"></div></div>
@@ -190,8 +243,10 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
           ${q.type === 'single_choice' ? renderOptions(q) : renderFill()}
           <div class="action-row">
             ${q.type === 'fill_in' ? '<button class="btn" id="submit">提交答案</button>' : ''}
+            ${coachBtn}
             <button class="btn btn-secondary" id="giveup">我不会</button>
           </div>
+          <div id="ai-coach-out"></div>
         </div>`
       if (q.type === 'single_choice') {
         for (const btn of container.querySelectorAll<HTMLButtonElement>('.option-btn')) {
@@ -213,6 +268,39 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
         })
       }
       container.querySelector('#giveup')?.addEventListener('click', () => void submit('', { gaveUp: true }))
+
+      /** AI 提示（提交前，教练式不代答）：只传题干不传答案；成功后本题不再提供；
+       *  失败显示错误类别并允许「重试」一次（第二次失败仅保留错误提示，按钮移除）。
+       *  coachAttempts 为本题内计数（renderQuestion 每次重建，天然按题重置）。 */
+      let coachAttempts = 0
+      const runCoach = async (): Promise<void> => {
+        const btn = container.querySelector<HTMLButtonElement>('#ai-coach')
+        const out = container.querySelector('#ai-coach-out')
+        if (!btn || !out || btn.disabled) return
+        coachAttempts += 1
+        btn.disabled = true
+        btn.classList.add('is-loading')
+        try {
+          const result = await runAiTask('coach_turn', { stem: q.stem }, { settings }, aiAbort.signal)
+          if (stale || !btn.isConnected) return // 已翻页/离页：结果丢弃，不回写已卸载的 DOM
+          coachUsed.add(q.id)
+          btn.remove()
+          const hint = 'raw' in result ? result.raw : result.hint
+          out.innerHTML = `<div class="ai-panel"><h4>AI 提示</h4><p>${escapeHtml(hint)}</p></div>`
+          await syncAiButtons()
+        } catch (err) {
+          if (stale || !btn.isConnected) return
+          btn.classList.remove('is-loading')
+          out.innerHTML = `<div class="ai-panel ai-error"><p>AI 提示失败：${escapeHtml(aiErrorText(err))}</p></div>`
+          if (coachAttempts >= 2) {
+            btn.remove()
+          } else {
+            await syncAiButtons() // 失败也计一次额度：可能需要转为灰态
+            if (btn.isConnected && !btn.disabled) btn.textContent = '重试'
+          }
+        }
+      }
+      container.querySelector('#ai-coach')?.addEventListener('click', () => void runCoach())
     }
 
     const renderFill = () => '<input class="fill-input" id="fill-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入英文单词" inputmode="text">'
@@ -236,18 +324,69 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       if (sub.isCorrect) stats.correct += 1
       const panel = document.createElement('div')
       panel.className = `feedback ${sub.isCorrect ? 'ok' : 'bad'}`
+      const aiState = aiButtonState(settings, aiUsage)
       panel.innerHTML = `
         <p class="verdict">${sub.isCorrect ? '✓ 答对了' : '✗ 答错了'}</p>
         ${sub.isCorrect ? '' : `<p>正确答案：<strong>${escapeHtml(sub.correctAnswer)}</strong></p>`}
         <p>${escapeHtml(sub.question.explanation)}</p>
+        ${sub.isCorrect
+          ? ''
+          : `<div class="action-row"><button class="btn btn-secondary" id="ai-explain"${aiState.disabled ? ' disabled' : ''} title="${escapeHtml(aiState.title)}">AI 讲解</button></div>
+        <div id="ai-explain-out"></div>`}
         <div class="action-row"><button class="btn" id="next">${sub.isLast ? '查看总结' : '下一题'}</button></div>`
       container.querySelector('.card')?.appendChild(panel)
       container.querySelector('#giveup')?.setAttribute('disabled', 'true')
       container.querySelector('#submit')?.setAttribute('disabled', 'true')
+      // 已判分反馈出现后"AI 提示"（提交前功能）一并停用，避免答完再索取提示式引导
+      container.querySelector('#ai-coach')?.setAttribute('disabled', 'true')
       panel.querySelector('#next')?.addEventListener('click', () => {
         if (session.isFinished) renderSummary()
         else renderQuestion()
       })
+
+      /** AI 讲解（仅答错时渲染）：explain_mistake 三段展示；失败显示错误类别并「重试」一次。
+       *  独立于判分/记录主链路：仅按钮点击触发，异常全部在本闭包内消化。 */
+      if (!sub.isCorrect) {
+        let explainAttempts = 0
+        const runExplain = async (): Promise<void> => {
+          const btn = panel.querySelector<HTMLButtonElement>('#ai-explain')
+          const out = panel.querySelector('#ai-explain-out')
+          if (!btn || !out || btn.disabled) return
+          explainAttempts += 1
+          btn.disabled = true
+          btn.classList.add('is-loading')
+          // 学生作答空串（"我不会"弃答）时注明未作答，避免模型把空串当异常输入
+          const payload: ExplainMistakePayload = {
+            question: {
+              stem: sub.question.stem,
+              ...(sub.question.options !== undefined && sub.question.options.length > 0
+                ? { options: sub.question.options }
+                : {}),
+              correctAnswer: sub.correctAnswer,
+            },
+            studentAnswer: sub.answer === '' ? '（未作答）' : sub.answer,
+            knowledgePoints: sub.question.knowledgePointIds,
+          }
+          try {
+            const result = await runAiTask('explain_mistake', payload, { settings }, aiAbort.signal)
+            if (stale || !btn.isConnected) return
+            btn.remove()
+            out.innerHTML = explainResultHtml(result)
+            await syncAiButtons()
+          } catch (err) {
+            if (stale || !btn.isConnected) return
+            btn.classList.remove('is-loading')
+            out.innerHTML = `<div class="ai-panel ai-error"><p>AI 讲解失败：${escapeHtml(aiErrorText(err))}</p></div>`
+            if (explainAttempts >= 2) {
+              btn.remove()
+            } else {
+              await syncAiButtons()
+              if (btn.isConnected && !btn.disabled) btn.textContent = '重试'
+            }
+          }
+        }
+        panel.querySelector('#ai-explain')?.addEventListener('click', () => void runExplain())
+      }
     }
 
     const renderSummary = () => {

@@ -5,8 +5,9 @@ export type AiErrorKind =
   | 'network'
   | 'timeout'
   | 'auth'
-  /** 配额相关（本地每日上限或服务端配额）统一归类，UI 给同一类提示 */
-  | 'quota-server'
+  /** 本地每日调用上限（checkQuota）：UI 文案须明确"本地上限"语义，避免学生误以为是服务端问题。
+   *  服务端限流/配额类错误（HTTP 429）归 'rate-limit'，两者不共用 kind。 */
+  | 'quota-local'
   | 'rate-limit'
   | 'invalid-response'
   | 'http'

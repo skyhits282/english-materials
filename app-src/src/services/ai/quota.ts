@@ -16,8 +16,16 @@ export async function getAiUsageToday(now: Date = new Date()): Promise<number> {
   return usage
 }
 
-/** 配额检查（纯函数）：usage ≥ 上限抛 AiError；kind 沿用 'quota-server' 以统一 UI 错误分类 */
+/** 生效的每日上限（缺省 50）：配额检查与 UI 按钮状态推导共用同一口径，避免两处阈值不一致 */
+export function effectiveDailyLimit(settings: Settings): number {
+  return settings.aiDailyLimit ?? AI_DEFAULT_DAILY_LIMIT
+}
+
+/** 配额检查（纯函数）：usage ≥ 上限抛 AiError。
+ *  kind 为 'quota-local'（本地每日上限，非服务端问题）——UI 文案据此与学生沟通，勿与 429 的 rate-limit 混淆。 */
 export function checkQuota(settings: Settings, usage: number): void {
-  const limit = settings.aiDailyLimit ?? AI_DEFAULT_DAILY_LIMIT
-  if (usage >= limit) throw new AiError('quota-server', `今日 AI 次数已用完（上限 ${limit} 次），请明天再试`)
+  const limit = effectiveDailyLimit(settings)
+  if (usage >= limit) {
+    throw new AiError('quota-local', `今日 AI 次数已用完（本地上限 ${limit} 次），请明天再试`)
+  }
 }

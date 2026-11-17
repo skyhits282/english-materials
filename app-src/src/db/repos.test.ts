@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { db, type TaskRow } from './schema'
+import { db, type TaskRow, type WeeklyReportRow } from './schema'
 import {
   DEFAULT_SETTINGS,
   getSettings,
@@ -21,6 +21,8 @@ import {
   clearDayTasks,
   completeTask,
   isPlanIncomplete,
+  saveWeeklyReport,
+  listRecentWeeklyReports,
 } from './repos'
 import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 
@@ -59,6 +61,7 @@ beforeEach(async () => {
     db.aiRequests.clear(),
     db.mastery.clear(),
     db.tasks.clear(),
+    db.weeklyReports.clear(),
   ])
 })
 
@@ -494,5 +497,42 @@ describe('isPlanIncomplete（播种重试是否重建当日计划的判定）', 
     expect(isPlanIncomplete(await db.tasks.toArray())).toBe(false)
     // 未清任务 → 完成状态保留
     expect((await db.tasks.get('t-unit'))?.status).toBe('completed')
+  })
+})
+
+describe('weeklyReports（周报 AI 建议存取）', () => {
+  const report = (weekStart: string, aiSuggestions: string): WeeklyReportRow => ({
+    weekStart,
+    facts: { weekStart, studyDays: 3, answeredCount: 20 },
+    aiSuggestions,
+    generatedAt: '2026-11-17T08:00:00.000Z',
+  })
+
+  it('saveWeeklyReport 覆盖同周记录：同 weekStart 再存整体替换（facts/aiSuggestions/generatedAt 一并更新）', async () => {
+    await saveWeeklyReport(report('2026-11-16', '{"progress":"p1"}'))
+    await saveWeeklyReport(report('2026-11-09', '{"progress":"p0"}'))
+    expect(await db.weeklyReports.count()).toBe(2)
+    // 同周重复生成：只更新该周行，另一周不动
+    await saveWeeklyReport({ ...report('2026-11-16', '{"progress":"p1-v2"}'), generatedAt: '2026-11-17T12:00:00.000Z' })
+    expect(await db.weeklyReports.count()).toBe(2)
+    const current = await db.weeklyReports.get('2026-11-16')
+    expect(current?.aiSuggestions).toBe('{"progress":"p1-v2"}')
+    expect(current?.generatedAt).toBe('2026-11-17T12:00:00.000Z')
+    expect((await db.weeklyReports.get('2026-11-09'))?.aiSuggestions).toBe('{"progress":"p0"}')
+  })
+
+  it('listRecentWeeklyReports：weekStart 降序返回最近 limit 周', async () => {
+    for (const ws of ['2026-11-16', '2026-11-09', '2026-11-02', '2026-10-26', '2026-10-19']) {
+      await saveWeeklyReport(report(ws, '{}'))
+    }
+    const rows = await listRecentWeeklyReports(4)
+    expect(rows.map((r) => r.weekStart)).toEqual(['2026-11-16', '2026-11-09', '2026-11-02', '2026-10-26'])
+    // limit 截断只取最近几周；limit 大于记录数时全部返回
+    expect((await listRecentWeeklyReports(2)).map((r) => r.weekStart)).toEqual(['2026-11-16', '2026-11-09'])
+    expect((await listRecentWeeklyReports(10)).length).toBe(5)
+  })
+
+  it('无记录时返回空数组（报告页显示空态）', async () => {
+    expect(await listRecentWeeklyReports()).toEqual([])
   })
 })

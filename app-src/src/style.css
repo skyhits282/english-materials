@@ -95,3 +95,21 @@ h2 { font-size: 1.2rem; }
 /* 试卷成绩录入行（Task 8）：题型 + 得分/满分 三列，窄屏不换行 */
 .exam-row { display: grid; grid-template-columns: 1fr 88px 88px; gap: 8px; margin: 8px 0; }
 .exam-row input { min-height: 44px; font-size: 1rem; padding: 6px 10px; border: 2px solid var(--line); border-radius: 10px; }
+
+/* AI 输出面板与按钮加载态（Task 11）：讲解三段/提示框/周报建议共用 */
+.ai-panel { background: #f0f4fb; border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 16px; margin: 12px 0; }
+.ai-panel h4 { margin: 10px 0 2px; font-size: 1rem; }
+.ai-panel h4:first-child { margin-top: 0; }
+.ai-panel p { margin: 2px 0; color: var(--ink); font-size: 0.95rem; }
+.ai-panel.ai-error p { color: var(--bad); }
+/* 加载中按钮：左侧转圈、整钮禁用（主色/次色按钮通用，灰色系转圈在两种底色上均可见） */
+.btn.is-loading { opacity: 0.6; cursor: wait; }
+.btn.is-loading::before {
+  content: ""; display: inline-block; width: 14px; height: 14px; margin-right: 8px;
+  vertical-align: -2px; border: 2px solid rgba(127, 127, 127, 0.4); border-top-color: #6b7280;
+  border-radius: 50%; animation: ai-spin 0.8s linear infinite;
+}
+@keyframes ai-spin { to { transform: rotate(360deg); } }
+/* 历史周报（Task 11）：可展开条目 */
+#weekly-history details { border-bottom: 1px solid var(--line); padding: 8px 0; }
+#weekly-history summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }

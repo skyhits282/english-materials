@@ -2046,23 +2046,30 @@ import { getSettings, listAttempts } from '../db/repos'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
 
 export const renderToday: PageRenderer = async ({ container }) => {
+  let stale = false
+  const onHashChange = () => { stale = true }
+  window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>今日学习</h1><p class="muted">加载中…</p>'
   const [settings, attempts, bundle] = await Promise.all([
     getSettings(),
     listAttempts(),
     fetchContentBundle().catch(() => undefined),
   ])
+  if (stale) return
   const today = localDayKey()
   const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
   const m = computeCoreMetrics(todayAttempts)
 
   const vocabUnit = findVocabUnit(bundle?.vocab ?? { units: [], book: '', contentVersion: '' }, settings.currentUnit)
   const cards = [
-    ...SPECIALS.map((s) => ({
-      title: s.title,
-      desc: '48 题 · 6 个级别',
-      action: () => navigate('exercise', { special: s.id }),
-    })),
+    ...SPECIALS.map((s) => {
+      const count = bundle?.questions.filter((q) => q.unit.startsWith(s.id)).length ?? 0
+      return {
+        title: s.title,
+        desc: `${count} 题`,
+        action: () => navigate('exercise', { special: s.id }),
+      }
+    }),
     {
       title: `单词默写 · ${vocabUnit?.label ?? settings.currentUnit}`,
       desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
@@ -2090,8 +2097,11 @@ export const renderToday: PageRenderer = async ({ container }) => {
   for (const btn of container.querySelectorAll<HTMLButtonElement>('button[data-card]')) {
     btn.addEventListener('click', () => cards[Number(btn.dataset.card)]?.action())
   }
+  window.removeEventListener('hashchange', onHashChange)
 }
 ```
+
+> 注：专项题数按 `Question.unit` 前缀实算（`g7a-present` 命中 `g7a-present-l1`…，与 `questionsByUnitPrefix` 同语义）；题库加载失败时降级为 0 题。卡片描述只报题数，不再硬编码级别数。四页均在 await 后以 `stale` 守卫失效渲染（切路由期间旧渲染不覆盖新页面）。
 
 - [ ] **Step 2: 实现 `app-src/src/pages/mistakes.ts`**
 
@@ -2108,11 +2118,16 @@ function formatTime(iso: string): string {
 }
 
 export const renderMistakes: PageRenderer = async ({ container }) => {
+  let stale = false
+  const onHashChange = () => { stale = true }
+  window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>错题本</h1><p class="muted">加载中…</p>'
   const [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  if (stale) return
   const qMap = new Map(questions.map((q) => [q.id, q]))
   const wrong = attempts.filter((a) => !a.isCorrect)
   if (wrong.length === 0) {
+    window.removeEventListener('hashchange', onHashChange)
     container.innerHTML = '<h1>错题本</h1><div class="card"><p>还没有错题记录。先去今日学习做几道题吧。</p></div>'
     return
   }
@@ -2135,12 +2150,13 @@ export const renderMistakes: PageRenderer = async ({ container }) => {
     <div class="card">
       <p><span class="badge">${escapeHtml(it.kp)}</span><span class="muted">${formatTime(it.time)}${it.attempt.phase === 'retry' ? ' · 复测' : ' · 首测'}</span></p>
       <h3>${escapeHtml(it.question?.stem ?? it.attempt.questionId)}</h3>
-      ${it.question?.type === 'single_choice' ? `<p class="muted">你的答案：${escapeHtml(it.question.options?.[Number(it.attempt.answer)] ?? it.attempt.answer)}</p>` : `<p class="muted">你的答案：${escapeHtml(it.attempt.answer || '（未作答）')}</p>`}
-      <p>正确答案：<strong>${escapeHtml(it.question?.options?.[it.question.answerSpec.correctOptionIndex ?? 0] ?? it.question?.answerSpec.acceptedAnswers?.[0] ?? '—')}</strong></p>
+      ${it.question?.type === 'single_choice' && it.attempt.answer !== '' ? `<p class="muted">你的答案：${escapeHtml(it.question.options?.[Number(it.attempt.answer)] ?? it.attempt.answer)}</p>` : `<p class="muted">你的答案：${escapeHtml(it.attempt.answer || '（未作答）')}</p>`}
+      <p>正确答案：<strong>${escapeHtml(it.question?.options?.[it.question?.answerSpec.correctOptionIndex ?? 0] ?? it.question?.answerSpec.acceptedAnswers?.[0] ?? '—')}</strong></p>
       <p>${escapeHtml(it.question?.explanation ?? '')}</p>
     </div>`,
       )
       .join('')}`
+  window.removeEventListener('hashchange', onHashChange)
 }
 ```
 
@@ -2156,16 +2172,17 @@ function pct(rate: number | null): string {
 }
 
 export const renderReport: PageRenderer = async ({ container }) => {
+  let stale = false
+  const onHashChange = () => { stale = true }
+  window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>学习报告</h1><p class="muted">加载中…</p>'
   const [attempts, questions] = await Promise.all([listAttempts(), listAllQuestions()])
+  if (stale) return
   const m = computeCoreMetrics(attempts)
   const qMap = new Map(questions.map((q) => [q.id, q]))
-  const vocabIds = new Set<string>()
-  for (const q of questions) {
-    if (q.id.startsWith('g7a-vocab-')) vocabIds.add(q.id)
-  }
-  const vocabAttempts = attempts.filter((a) => vocabIds.has(a.questionId))
-  const grammarAttempts = attempts.filter((a) => !vocabIds.has(a.questionId))
+  // 词汇题为运行时由 vocab.json 派生，不在 questions 表中，按作答的题目 ID 前缀分类
+  const vocabAttempts = attempts.filter((a) => a.questionId.startsWith('g7a-vocab-'))
+  const grammarAttempts = attempts.filter((a) => !a.questionId.startsWith('g7a-vocab-'))
   const todayCount = attempts.filter((a) => isSameLocalDay(a.submittedAt, localDayKey())).length
   const vocabWrong = [...new Set(vocabAttempts.filter((a) => !a.isCorrect).map((a) => a.questionId))]
 
@@ -2196,6 +2213,7 @@ export const renderReport: PageRenderer = async ({ container }) => {
       ${vocabWrong.length > 0 ? `<p class="muted">易错词：${vocabWrong.map((id) => qMap.get(id)?.answerSpec.acceptedAnswers?.[0] ?? id).slice(0, 12).join('、')}${vocabWrong.length > 12 ? '…' : ''}</p>` : ''}
     </div>
     <p class="muted">七天趋势与薄弱点排行将在后续版本提供。</p>`
+  window.removeEventListener('hashchange', onHashChange)
 }
 ```
 
@@ -2208,11 +2226,15 @@ import { fetchContentBundle } from '../content/loader'
 import type { Settings } from '../types'
 
 export const renderSettings: PageRenderer = async ({ container }) => {
+  let stale = false
+  const onHashChange = () => { stale = true }
+  window.addEventListener('hashchange', onHashChange, { once: true })
   container.innerHTML = '<h1>家长设置</h1><p class="muted">加载中…</p>'
   const [settings, bundle] = await Promise.all([
     getSettings(),
     fetchContentBundle().catch(() => undefined),
   ])
+  if (stale) return
   const units = bundle?.vocab.units ?? []
   const message = document.createElement('p')
 
@@ -2252,6 +2274,7 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
     }
     await saveSettings(next)
+    if (stale) return
     message.textContent = '已保存。'
   })
 }
@@ -2277,22 +2300,21 @@ import { renderReport } from './pages/report'
 import { renderSettings } from './pages/settings'
 
 const container = document.querySelector<HTMLElement>('#app')
-if (container) {
-  startRouter(
-    {
-      today: renderToday,
-      exercise: renderExercise,
-      mistakes: renderMistakes,
-      report: renderReport,
-      settings: renderSettings,
-    },
-    container,
-  )
-  // 路由先行渲染，播种在后台完成；失败不阻塞做题以外页面
-  void fetchContentBundle()
-    .then((bundle) => seedContent(bundle))
-    .catch((err) => console.error('题库播种失败：', err))
-}
+if (!container) throw new Error('缺少 #app 容器')
+startRouter(
+  {
+    today: renderToday,
+    exercise: renderExercise,
+    mistakes: renderMistakes,
+    report: renderReport,
+    settings: renderSettings,
+  },
+  container,
+)
+// 路由先行渲染，播种在后台完成；失败不阻塞做题以外页面
+void fetchContentBundle()
+  .then((bundle) => seedContent(bundle))
+  .catch((err) => console.error('题库播种失败：', err))
 ```
 
 - [ ] **Step 6: 类型检查、测试、构建**

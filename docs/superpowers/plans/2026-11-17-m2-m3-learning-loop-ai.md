@@ -390,7 +390,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/pages/report.ts`
 - Test: `app-src/src/domain/trends.test.ts`
 
-- [ ] **Step 1: 写失败测试（trends.test.ts）**
+- [x] **Step 1: 写失败测试（trends.test.ts）**
 
 ```ts
 // last7Days(now): 连续 7 个本地日 key 数组（升序，含今日）
@@ -407,7 +407,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 边界：空 attempts（返回空数组/null 而非抛错）、跨时区本地日（注入 now 固定时区跑）、attempt 恰在周界。
 
-- [ ] **Step 2: 实现 trends.ts 与 chart.ts**
+- [x] **Step 2: 实现 trends.ts 与 chart.ts**
 
 `trends.ts` 纯函数；`chart.ts`：
 
@@ -420,7 +420,7 @@ export function renderTrendChart(days: DailyStat[]): string
 
 无数据日柱高 0 但保留日期标签；柱上悬停 title 显示"日期 · N 题 · 正确率 X%"。
 
-- [ ] **Step 3: report.ts 接入**
+- [x] **Step 3: report.ts 接入**
 
 - 顶部新增"七日趋势"卡（SVG 图 + 文字摘要"近 7 天共 N 题 · 首测正确率 X%"）
 - "优先薄弱点"卡：top3 知识点（显示可读名：选择题知识点 ID 截取末段、词题显示"词汇 · Unit N"——用 Task 2 解析器/单元表换算），每项显示"首测 X/Y"
@@ -428,7 +428,7 @@ export function renderTrendChart(days: DailyStat[]): string
 - 底部"本周周报"卡：显示 WeeklyFacts 摘要（本地事实，始终可见）；"生成 AI 建议"按钮**本任务先占位禁用**（灰态，title"AI 功能即将开放"），Task 11 接入
 - 沿用现有 DB 失败错误面板与 stale 守卫；新增数字均本地计算
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 报告七日趋势、薄弱点、复测按时率与周报事实

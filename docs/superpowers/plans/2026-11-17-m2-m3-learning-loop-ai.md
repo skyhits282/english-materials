@@ -349,7 +349,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/pages/today.ts`、`app-src/src/pages/exercise.ts`
 - Test: 浏览器验证（本任务以 UI 为主，domain 已有测试）
 
-- [ ] **Step 1: 今日页结构改版**
+- [x] **Step 1: 今日页结构改版**
 
 today.ts 渲染逻辑调整（保留 stale 守卫与 DB 失败错误面板）：
 - 顶部：日期、预计时长（settings.dailyMinutes 分钟）、当日完成进度（已完成任务/计划任务 + 已答题数）
@@ -362,18 +362,18 @@ today.ts 渲染逻辑调整（保留 stale 守卫与 DB 失败错误面板）：
 - 非学习日：显示"今日休息"与明日预告（不生成任务）
 - 播种失败提示（技术债）：fetch bundle 失败或专项题数为 0 时，卡片区显示错误提示与「重试」按钮（重新加载 bundle 与计划）；不再静默 0 题
 
-- [ ] **Step 2: 练习完成回写**
+- [x] **Step 2: 练习完成回写**
 
 exercise.ts：从任务进入的练习（`task=<taskId>` 参数或在 set 解析时关联当日任务）结束时把对应任务 `updateTaskStatus(id, 'completed')`；中途退出（hashchange 离开）保持 in_progress。判定"完成"沿用现有"全部题目提交完或显式结束"节点（renderSummary 时回写）。
 - 任务参数传递：today 卡片链接带 `&task=<id>`；exercise 里保存并在 finish 时回写；无 task 参数的练习（自由练）不回写
 
-- [ ] **Step 3: 浏览器验证清单（Playwright）**
+- [x] **Step 3: 浏览器验证清单（Playwright）**
 
 - 首次进入今日页生成 4 类任务卡；F5 重复打开任务数不变（幂等）
 - 完成复习任务后卡片打勾；未完成退出后显示进行中
 - 播种被阻断的上下文（拦截 content JSON 请求 500）→ 显示重试按钮，点击恢复
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): 今日页任务清单——计划驱动入口与完成回写

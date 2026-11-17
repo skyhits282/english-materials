@@ -651,7 +651,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/domain/session.ts`（uuid 回退）、其他微调
 - Test: `app-src/src/domain/session.test.ts`（扩展）
 
-- [ ] **Step 1: randomUUID 降级**
+- [x] **Step 1: randomUUID 降级**
 
 session.ts 与所有 `crypto.randomUUID()` 调用点（grep 全仓）改用统一 `utils/uuid.ts`：
 
@@ -668,13 +668,13 @@ export function uuid(): string {
 
 测试：mock `crypto.randomUUID` 不可用 → uuid() 仍返回合法格式；可用时走原生。
 
-- [ ] **Step 2: 全量回归与零漂移**
+- [x] **Step 2: 全量回归与零漂移**
 
 - `npx vitest run` + `npx tsc --noEmit` + 根 `npm run htmlvalidate` + `python3 scripts/check_site.py` + `npm run test:extract`
 - `npm run build:app` 零漂移入库
 - vite preview 打开应用全页冒烟（5 页面无白屏、控制台无错误）
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add -A && git commit -m "fix(app): randomUUID 非安全上下文回退；M2 技术债清偿收尾

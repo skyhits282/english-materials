@@ -9,7 +9,7 @@ export function fetchContentBundle(): Promise<ContentBundle> {
   bundlePromise ??= (async () => {
     const [questions, vocab, meta] = await Promise.all([
       fetchJson<Question[]>(`${CONTENT_BASE}/questions.json`),
-      fetchJson<VocabBook>(`${CONTENT_BASE}/vocab.json`),
+      fetchJson<VocabBook[]>(`${CONTENT_BASE}/vocab.json`),
       fetchJson<ContentBundle['meta']>(`${CONTENT_BASE}/content.json`),
     ])
     return { questions, vocab, meta }
@@ -26,22 +26,23 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
-/** 词汇单元 id（v1-u4）→ 短名（u4），用于生成稳定题目 ID */
+/** 词汇单元 id（v1-u4 / v2-u3）→ 短名（u4 / u3），用于生成稳定题目 ID 与知识点 ID */
 function unitShortName(unitId: string): string {
-  return unitId.replace(/^v1-/, '')
+  return unitId.replace(/^v[12]-/, '')
 }
 
 /** contentVersion 统一用书级版本；词 ID 的可追溯性已体现在 Question.id 中 */
-function toVocabQuestion(contentVersion: string, unitId: string, w: VocabWord): Question {
+function toVocabQuestion(book: VocabBook, unitId: string, w: VocabWord): Question {
   const accepted = [w.word, ...(w.variant ? [w.variant] : [])]
   return {
-    id: `g7a-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
-    contentVersion,
+    // 七上沿用 M1 的 `g7a-vocab-u*-*` 格式，保证历史作答记录仍可关联
+    id: `${book.book}-vocab-${unitShortName(unitId)}-${String(w.no).padStart(4, '0')}`,
+    contentVersion: book.contentVersion,
     grade: 7,
-    term: 'A',
+    term: book.book === 'g7b' ? 'B' : 'A',
     unit: unitId,
     sourceUrl: 'typing/',
-    knowledgePointIds: [`vocab.g7a.${unitShortName(unitId)}`],
+    knowledgePointIds: [`vocab.${book.book}.${unitShortName(unitId)}`],
     type: 'fill_in',
     stem: `${w.meaning}（${w.pos}）`,
     answerSpec: { acceptedAnswers: accepted },
@@ -51,13 +52,25 @@ function toVocabQuestion(contentVersion: string, unitId: string, w: VocabWord): 
   }
 }
 
-/** 由词汇派生中→英默写题；词序取自源数据，保证 ID 跨会话稳定 */
-export function deriveVocabQuestions(vocab: VocabBook, unitId: string): Question[] {
-  const unit = vocab.units.find((u) => u.id === unitId)
+/** 由词汇派生中→英默写题；unit id 前缀（v1-/v2-）定位所属册与单元，词序取自源数据，保证 ID 跨会话稳定 */
+export function deriveVocabQuestions(vocab: VocabBook[], unitId: string): Question[] {
+  const unit = findVocabUnit(vocab, unitId)
   if (!unit) return []
-  return unit.words.map((w) => toVocabQuestion(vocab.contentVersion, unitId, w))
+  const book = vocab.find((b) => b.units.some((u) => u.id === unitId))
+  if (!book) return []
+  return unit.words.map((w) => toVocabQuestion(book, unitId, w))
 }
 
-export function findVocabUnit(vocab: VocabBook, unitId: string) {
-  return vocab.units.find((u) => u.id === unitId)
+/** 跨两册按 unit id 查找词汇单元 */
+export function findVocabUnit(vocab: VocabBook[], unitId: string) {
+  for (const b of vocab) {
+    const unit = b.units.find((u) => u.id === unitId)
+    if (unit) return unit
+  }
+  return undefined
+}
+
+/** 取指定册的词汇单元列表（供设置页下拉与今日页词汇卡使用） */
+export function vocabUnitsForBook(vocab: VocabBook[], book: string) {
+  return vocab.find((b) => b.book === book)?.units ?? []
 }

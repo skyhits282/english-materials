@@ -1,18 +1,32 @@
 {
   "contentId": "g7a",
-  "version": "2026-11-16",
-  "questionCount": 192,
-  "vocabWordCount": 184,
+  "version": "2026-11-17.2",
+  "questionCount": 384,
+  "vocabWordCount": 470,
+  "books": [
+    {
+      "book": "g7a",
+      "questionCount": 192,
+      "vocabUnits": 10,
+      "vocabWordCount": 184
+    },
+    {
+      "book": "g7b",
+      "questionCount": 192,
+      "vocabUnits": 8,
+      "vocabWordCount": 286
+    }
+  ],
   "files": [
     {
       "name": "questions.json",
-      "sha256": "b9ffd11c9a633b6113f71a7aa78dfc32d2f8434244b53458887df9cf0f307be8",
-      "count": 192
+      "sha256": "e1d613e7017fbc64728b7837f4c5281d52b5ca5a88b533e6f219a5433a3c6d08",
+      "count": 384
     },
     {
       "name": "vocab.json",
-      "sha256": "45b90aea17a67399081e06f349b2fae05ea4c0ee3fcbdf1eca855826fe42d4a2",
-      "count": 10
+      "sha256": "96d9fe74e1774573f457f42239978a9f5288335a2b424c9f21320a77595a5ada",
+      "count": 18
     }
   ]
 }

@@ -2,6 +2,7 @@ import type { PageRenderer } from '../router'
 import { navigate } from '../router'
 import { SPECIALS } from '../content/sets'
 import { fetchContentBundle, findVocabUnit } from '../content/loader'
+import type { VocabBook } from '../types'
 import { getSettings, listAttempts } from '../db/repos'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
 import { escapeHtml } from '../ui/escape'
@@ -31,21 +32,31 @@ export const renderToday: PageRenderer = async ({ container }) => {
   const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
   const m = computeCoreMetrics(todayAttempts)
 
-  const vocabUnit = findVocabUnit(bundle?.vocab ?? { units: [], book: '', contentVersion: '' }, settings.currentUnit)
+  const vocabUnit = findVocabUnit(bundle?.vocab ?? ([] as VocabBook[]), settings.currentUnit)
+  // 专项卡按册分组（七上/七下各 4），题数由题库实时计算
+  const specialGroups: { heading: string; book: 'g7a' | 'g7b' }[] = [
+    { heading: '七上专项', book: 'g7a' },
+    { heading: '七下专项', book: 'g7b' },
+  ]
+  const vocabCard = {
+    heading: '词汇默写',
+    title: escapeHtml(vocabUnit?.label ?? settings.currentUnit),
+    desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
+    action: () => navigate('exercise', { vocab: settings.currentUnit }),
+  }
   const cards = [
-    ...SPECIALS.map((s) => {
-      const count = bundle?.questions.filter((q) => q.unit.startsWith(s.id)).length ?? 0
-      return {
-        title: s.title,
-        desc: `${count} 题`,
-        action: () => navigate('exercise', { special: s.id }),
-      }
-    }),
-    {
-      title: `单词默写 · ${escapeHtml(vocabUnit?.label ?? settings.currentUnit)}`,
-      desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
-      action: () => navigate('exercise', { vocab: settings.currentUnit }),
-    },
+    ...specialGroups.flatMap(({ heading, book }) =>
+      SPECIALS.filter((s) => s.book === book).map((s) => {
+        const count = bundle?.questions.filter((q) => q.unit.startsWith(s.id)).length ?? 0
+        return {
+          heading,
+          title: s.title,
+          desc: `${count} 题`,
+          action: () => navigate('exercise', { special: s.id }),
+        }
+      }),
+    ),
+    vocabCard,
   ]
 
   container.innerHTML = `
@@ -57,6 +68,7 @@ export const renderToday: PageRenderer = async ({ container }) => {
     ${cards
       .map(
         (c, i) => `
+    ${c.heading !== cards[i - 1]?.heading ? `<h2>${c.heading}</h2>` : ''}
     <div class="card">
       <h3>${c.title}</h3>
       <p>${c.desc}</p>

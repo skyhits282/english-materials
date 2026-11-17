@@ -1,7 +1,7 @@
 import type { PageRenderer } from '../router'
 import { navigate } from '../router'
 import type { Question } from '../types'
-import { fetchContentBundle, deriveVocabQuestions } from '../content/loader'
+import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { questionsByUnitPrefix } from '../db/repos'
 import { saveAttempt, hasPriorAttempt } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
@@ -23,7 +23,7 @@ async function loadQuestions(params: URLSearchParams): Promise<{ title: string; 
   const vocabUnit = params.get('vocab')
   if (vocabUnit) {
     const bundle = await fetchContentBundle()
-    const unit = bundle.vocab.units.find((u) => u.id === vocabUnit)
+    const unit = findVocabUnit(bundle.vocab, vocabUnit)
     return { title: `单词默写 · ${unit?.label ?? vocabUnit}`, questions: shuffle(deriveVocabQuestions(bundle.vocab, vocabUnit)) }
   }
   const special = params.get('special')

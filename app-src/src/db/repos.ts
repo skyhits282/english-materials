@@ -3,6 +3,7 @@ import type { Attempt, Question, Settings } from '../types'
 
 export const DEFAULT_SETTINGS: Settings = {
   grade: 7,
+  book: 'g7a',
   currentUnit: 'v1-u4',
   dailyMinutes: 35,
   studyDaysPerWeek: 6,

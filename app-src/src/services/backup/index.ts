@@ -133,6 +133,9 @@ function validateSettingsRow(row: unknown, line: number): void {
   if (value.aiEnabled !== undefined && typeof value.aiEnabled !== 'boolean') {
     throw new BackupError(`备份 settings 表第 ${line} 行 value.aiEnabled 不是布尔值`)
   }
+  if (value.book !== undefined && value.book !== 'g7a' && value.book !== 'g7b') {
+    throw new BackupError(`备份 settings 表第 ${line} 行 value.book 只能是 g7a 或 g7b`)
+  }
 }
 
 /** questions 行：对齐 Question 接口，必填形状缺失或类型错误即拒绝 */

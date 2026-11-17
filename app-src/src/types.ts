@@ -52,11 +52,20 @@ export interface ContentFileInfo {
   count: number
 }
 
+/** 分册统计（content.json 的 books 字段） */
+export interface ContentBookSummary {
+  book: string
+  questionCount: number
+  vocabUnits: number
+  vocabWordCount: number
+}
+
 export interface ContentMeta {
   contentId: string
   version: string
   questionCount: number
   vocabWordCount: number
+  books: ContentBookSummary[]
   files: ContentFileInfo[]
 }
 
@@ -87,7 +96,9 @@ export interface Mastery {
 
 export interface Settings {
   grade: number
-  /** 词汇默写当前单元，取 vocab unit id（如 v1-u4） */
+  /** 教材册别（七上 g7a / 七下 g7b），影响词汇单元列表与专项分组默认展示 */
+  book: 'g7a' | 'g7b'
+  /** 词汇默写当前单元，取 vocab unit id（如 v1-u4 / v2-u3） */
   currentUnit: string
   dailyMinutes: number
   studyDaysPerWeek: number
@@ -97,6 +108,7 @@ export interface Settings {
 
 export interface ContentBundle {
   questions: Question[]
-  vocab: VocabBook
+  /** 两册词汇（g7a 在前、g7b 在后） */
+  vocab: VocabBook[]
   meta: ContentMeta
 }

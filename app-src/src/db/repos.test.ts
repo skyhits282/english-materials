@@ -105,6 +105,7 @@ describe('contentMeta', () => {
       version: '2026-11-16',
       questionCount: 192,
       vocabWordCount: 184,
+      books: [],
       files: [],
     })
     expect((await getContentMeta('g7a'))?.version).toBe('2026-11-16')

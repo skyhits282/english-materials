@@ -1,6 +1,6 @@
 import type { PageRenderer } from '../router'
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from '../db/repos'
-import { fetchContentBundle } from '../content/loader'
+import { fetchContentBundle, vocabUnitsForBook } from '../content/loader'
 import type { Settings } from '../types'
 import { exportBackup, parseAndValidateBackup, importBackup, backupFileName, BackupError } from '../services/backup/index'
 import { escapeHtml } from '../ui/escape'
@@ -21,7 +21,16 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   }
   const bundle = await bundlePromise
   if (stale) return
-  const units = bundle?.vocab.units ?? []
+  // 当前册别下的词汇单元；册别切换时由下方监听器重填选项
+  const unitSelect = () => container.querySelector<HTMLSelectElement>('#set-unit')
+  const fillUnitOptions = (book: string, selected: string) => {
+    const select = unitSelect()
+    if (!select) return
+    const units = vocabUnitsForBook(bundle?.vocab ?? [], book)
+    select.innerHTML = units
+      .map((u) => `<option value="${escapeHtml(u.id)}" ${u.id === selected ? 'selected' : ''}>${escapeHtml(u.label)}（${u.words.length} 词）</option>`)
+      .join('')
+  }
   const message = document.createElement('p')
 
   container.innerHTML = `
@@ -29,10 +38,15 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     ${storageError ? '<div class="error-panel" role="alert">无法读取设置（浏览器存储不可用）。</div>' : ''}
     <div class="card">
       <div class="form-row">
-        <label for="set-unit">单词默写当前单元</label>
-        <select id="set-unit">
-          ${units.map((u) => `<option value="${escapeHtml(u.id)}" ${u.id === settings.currentUnit ? 'selected' : ''}>${escapeHtml(u.label)}（${u.words.length} 词）</option>`).join('')}
+        <label for="set-book">教材册别</label>
+        <select id="set-book">
+          <option value="g7a" ${settings.book === 'g7a' ? 'selected' : ''}>七年级上册</option>
+          <option value="g7b" ${settings.book === 'g7b' ? 'selected' : ''}>七年级下册</option>
         </select>
+      </div>
+      <div class="form-row">
+        <label for="set-unit">单词默写当前单元</label>
+        <select id="set-unit"></select>
       </div>
       <div class="form-row">
         <label for="set-minutes">每日学习时长（分钟，20–45）</label>
@@ -62,9 +76,17 @@ export const renderSettings: PageRenderer = async ({ container }) => {
   `
   container.appendChild(message)
 
+  // 初次填充当前册的单元；currentUnit 属于另一册时不预选（浏览器默认选第一项），保存时生效
+  fillUnitOptions(settings.book, settings.currentUnit)
+  container.querySelector<HTMLSelectElement>('#set-book')?.addEventListener('change', (e) => {
+    const book = (e.target as HTMLSelectElement).value || settings.book
+    fillUnitOptions(book, '') // 切册后不预选，落到该册第一个单元
+  })
+
   container.querySelector('#save')?.addEventListener('click', async () => {
     const next: Settings = {
       ...settings,
+      book: (container.querySelector<HTMLSelectElement>('#set-book')?.value as Settings['book'] | undefined) || settings.book,
       currentUnit: (container.querySelector<HTMLSelectElement>('#set-unit')?.value || settings.currentUnit),
       dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
       studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),

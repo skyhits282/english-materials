@@ -5,7 +5,8 @@
   "scripts": {
     "htmlvalidate": "html-validate $(find . -name '*.html' -not -path './node_modules/*' -not -path './.git/*' -not -path './artifacts/*' -not -path './app-src/node_modules/*' -not -path './app/*' | sort)",
     "lighthouse": "lhci autorun",
-    "extract:g7a": "node scripts/extract-g7a.mjs",
+    "extract:g7a": "node scripts/extract-questions.mjs",
+    "extract:questions": "node scripts/extract-questions.mjs",
     "test:extract": "node --test \"scripts/*.test.mjs\"",
     "dev:app": "npm --prefix app-src run dev",
     "build:app": "npm --prefix app-src run build",

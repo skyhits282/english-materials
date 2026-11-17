@@ -1,7 +1,7 @@
 [
   {
     "id": "g7a-present-l1-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -26,7 +26,7 @@
   },
   {
     "id": "g7a-present-l1-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -51,7 +51,7 @@
   },
   {
     "id": "g7a-present-l1-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -76,7 +76,7 @@
   },
   {
     "id": "g7a-present-l1-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -101,7 +101,7 @@
   },
   {
     "id": "g7a-present-l1-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -126,7 +126,7 @@
   },
   {
     "id": "g7a-present-l1-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -151,7 +151,7 @@
   },
   {
     "id": "g7a-present-l1-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -176,7 +176,7 @@
   },
   {
     "id": "g7a-present-l1-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l1",
@@ -201,7 +201,7 @@
   },
   {
     "id": "g7a-present-l2-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -226,7 +226,7 @@
   },
   {
     "id": "g7a-present-l2-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -251,7 +251,7 @@
   },
   {
     "id": "g7a-present-l2-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -276,7 +276,7 @@
   },
   {
     "id": "g7a-present-l2-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -301,7 +301,7 @@
   },
   {
     "id": "g7a-present-l2-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -326,7 +326,7 @@
   },
   {
     "id": "g7a-present-l2-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -351,7 +351,7 @@
   },
   {
     "id": "g7a-present-l2-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -376,7 +376,7 @@
   },
   {
     "id": "g7a-present-l2-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l2",
@@ -401,7 +401,7 @@
   },
   {
     "id": "g7a-present-l3-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -426,7 +426,7 @@
   },
   {
     "id": "g7a-present-l3-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -451,7 +451,7 @@
   },
   {
     "id": "g7a-present-l3-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -476,7 +476,7 @@
   },
   {
     "id": "g7a-present-l3-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -501,7 +501,7 @@
   },
   {
     "id": "g7a-present-l3-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -526,7 +526,7 @@
   },
   {
     "id": "g7a-present-l3-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -551,7 +551,7 @@
   },
   {
     "id": "g7a-present-l3-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -576,7 +576,7 @@
   },
   {
     "id": "g7a-present-l3-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l3",
@@ -601,7 +601,7 @@
   },
   {
     "id": "g7a-present-l4-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -626,7 +626,7 @@
   },
   {
     "id": "g7a-present-l4-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -651,7 +651,7 @@
   },
   {
     "id": "g7a-present-l4-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -676,7 +676,7 @@
   },
   {
     "id": "g7a-present-l4-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -701,7 +701,7 @@
   },
   {
     "id": "g7a-present-l4-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -726,7 +726,7 @@
   },
   {
     "id": "g7a-present-l4-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -751,7 +751,7 @@
   },
   {
     "id": "g7a-present-l4-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -776,7 +776,7 @@
   },
   {
     "id": "g7a-present-l4-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l4",
@@ -801,7 +801,7 @@
   },
   {
     "id": "g7a-present-l5-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -826,7 +826,7 @@
   },
   {
     "id": "g7a-present-l5-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -851,7 +851,7 @@
   },
   {
     "id": "g7a-present-l5-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -876,7 +876,7 @@
   },
   {
     "id": "g7a-present-l5-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -901,7 +901,7 @@
   },
   {
     "id": "g7a-present-l5-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -926,7 +926,7 @@
   },
   {
     "id": "g7a-present-l5-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -951,7 +951,7 @@
   },
   {
     "id": "g7a-present-l5-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -976,7 +976,7 @@
   },
   {
     "id": "g7a-present-l5-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l5",
@@ -1001,7 +1001,7 @@
   },
   {
     "id": "g7a-present-l6-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1026,7 +1026,7 @@
   },
   {
     "id": "g7a-present-l6-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1051,7 +1051,7 @@
   },
   {
     "id": "g7a-present-l6-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1076,7 +1076,7 @@
   },
   {
     "id": "g7a-present-l6-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1101,7 +1101,7 @@
   },
   {
     "id": "g7a-present-l6-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1126,7 +1126,7 @@
   },
   {
     "id": "g7a-present-l6-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1151,7 +1151,7 @@
   },
   {
     "id": "g7a-present-l6-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1176,7 +1176,7 @@
   },
   {
     "id": "g7a-present-l6-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-present-l6",
@@ -1201,7 +1201,7 @@
   },
   {
     "id": "g7a-nouns-l1-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1226,7 +1226,7 @@
   },
   {
     "id": "g7a-nouns-l1-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1251,7 +1251,7 @@
   },
   {
     "id": "g7a-nouns-l1-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1276,7 +1276,7 @@
   },
   {
     "id": "g7a-nouns-l1-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1301,7 +1301,7 @@
   },
   {
     "id": "g7a-nouns-l1-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1326,7 +1326,7 @@
   },
   {
     "id": "g7a-nouns-l1-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1351,7 +1351,7 @@
   },
   {
     "id": "g7a-nouns-l1-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1376,7 +1376,7 @@
   },
   {
     "id": "g7a-nouns-l1-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l1",
@@ -1401,7 +1401,7 @@
   },
   {
     "id": "g7a-nouns-l2-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1426,7 +1426,7 @@
   },
   {
     "id": "g7a-nouns-l2-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1451,7 +1451,7 @@
   },
   {
     "id": "g7a-nouns-l2-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1476,7 +1476,7 @@
   },
   {
     "id": "g7a-nouns-l2-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1501,7 +1501,7 @@
   },
   {
     "id": "g7a-nouns-l2-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1526,7 +1526,7 @@
   },
   {
     "id": "g7a-nouns-l2-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1551,7 +1551,7 @@
   },
   {
     "id": "g7a-nouns-l2-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1576,7 +1576,7 @@
   },
   {
     "id": "g7a-nouns-l2-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l2",
@@ -1601,7 +1601,7 @@
   },
   {
     "id": "g7a-nouns-l3-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1626,7 +1626,7 @@
   },
   {
     "id": "g7a-nouns-l3-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1651,7 +1651,7 @@
   },
   {
     "id": "g7a-nouns-l3-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1676,7 +1676,7 @@
   },
   {
     "id": "g7a-nouns-l3-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1701,7 +1701,7 @@
   },
   {
     "id": "g7a-nouns-l3-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1726,7 +1726,7 @@
   },
   {
     "id": "g7a-nouns-l3-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1751,7 +1751,7 @@
   },
   {
     "id": "g7a-nouns-l3-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1776,7 +1776,7 @@
   },
   {
     "id": "g7a-nouns-l3-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l3",
@@ -1801,7 +1801,7 @@
   },
   {
     "id": "g7a-nouns-l4-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1826,7 +1826,7 @@
   },
   {
     "id": "g7a-nouns-l4-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1851,7 +1851,7 @@
   },
   {
     "id": "g7a-nouns-l4-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1876,7 +1876,7 @@
   },
   {
     "id": "g7a-nouns-l4-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1901,7 +1901,7 @@
   },
   {
     "id": "g7a-nouns-l4-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1926,7 +1926,7 @@
   },
   {
     "id": "g7a-nouns-l4-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1951,7 +1951,7 @@
   },
   {
     "id": "g7a-nouns-l4-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -1976,7 +1976,7 @@
   },
   {
     "id": "g7a-nouns-l4-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l4",
@@ -2001,7 +2001,7 @@
   },
   {
     "id": "g7a-nouns-l5-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2026,7 +2026,7 @@
   },
   {
     "id": "g7a-nouns-l5-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2051,7 +2051,7 @@
   },
   {
     "id": "g7a-nouns-l5-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2076,7 +2076,7 @@
   },
   {
     "id": "g7a-nouns-l5-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2101,7 +2101,7 @@
   },
   {
     "id": "g7a-nouns-l5-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2126,7 +2126,7 @@
   },
   {
     "id": "g7a-nouns-l5-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2151,7 +2151,7 @@
   },
   {
     "id": "g7a-nouns-l5-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2176,7 +2176,7 @@
   },
   {
     "id": "g7a-nouns-l5-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l5",
@@ -2201,7 +2201,7 @@
   },
   {
     "id": "g7a-nouns-l6-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2226,7 +2226,7 @@
   },
   {
     "id": "g7a-nouns-l6-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2251,7 +2251,7 @@
   },
   {
     "id": "g7a-nouns-l6-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2276,7 +2276,7 @@
   },
   {
     "id": "g7a-nouns-l6-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2301,7 +2301,7 @@
   },
   {
     "id": "g7a-nouns-l6-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2326,7 +2326,7 @@
   },
   {
     "id": "g7a-nouns-l6-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2351,7 +2351,7 @@
   },
   {
     "id": "g7a-nouns-l6-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2376,7 +2376,7 @@
   },
   {
     "id": "g7a-nouns-l6-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-nouns-l6",
@@ -2401,7 +2401,7 @@
   },
   {
     "id": "g7a-numbers-l1-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2426,7 +2426,7 @@
   },
   {
     "id": "g7a-numbers-l1-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2451,7 +2451,7 @@
   },
   {
     "id": "g7a-numbers-l1-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2476,7 +2476,7 @@
   },
   {
     "id": "g7a-numbers-l1-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2501,7 +2501,7 @@
   },
   {
     "id": "g7a-numbers-l1-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2526,7 +2526,7 @@
   },
   {
     "id": "g7a-numbers-l1-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2551,7 +2551,7 @@
   },
   {
     "id": "g7a-numbers-l1-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2576,7 +2576,7 @@
   },
   {
     "id": "g7a-numbers-l1-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l1",
@@ -2601,7 +2601,7 @@
   },
   {
     "id": "g7a-numbers-l2-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2626,7 +2626,7 @@
   },
   {
     "id": "g7a-numbers-l2-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2651,7 +2651,7 @@
   },
   {
     "id": "g7a-numbers-l2-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2676,7 +2676,7 @@
   },
   {
     "id": "g7a-numbers-l2-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2701,7 +2701,7 @@
   },
   {
     "id": "g7a-numbers-l2-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2726,7 +2726,7 @@
   },
   {
     "id": "g7a-numbers-l2-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2751,7 +2751,7 @@
   },
   {
     "id": "g7a-numbers-l2-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2776,7 +2776,7 @@
   },
   {
     "id": "g7a-numbers-l2-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l2",
@@ -2801,7 +2801,7 @@
   },
   {
     "id": "g7a-numbers-l3-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2826,7 +2826,7 @@
   },
   {
     "id": "g7a-numbers-l3-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2851,7 +2851,7 @@
   },
   {
     "id": "g7a-numbers-l3-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2876,7 +2876,7 @@
   },
   {
     "id": "g7a-numbers-l3-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2901,7 +2901,7 @@
   },
   {
     "id": "g7a-numbers-l3-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2926,7 +2926,7 @@
   },
   {
     "id": "g7a-numbers-l3-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2951,7 +2951,7 @@
   },
   {
     "id": "g7a-numbers-l3-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -2976,7 +2976,7 @@
   },
   {
     "id": "g7a-numbers-l3-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l3",
@@ -3001,7 +3001,7 @@
   },
   {
     "id": "g7a-numbers-l4-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3026,7 +3026,7 @@
   },
   {
     "id": "g7a-numbers-l4-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3051,7 +3051,7 @@
   },
   {
     "id": "g7a-numbers-l4-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3076,7 +3076,7 @@
   },
   {
     "id": "g7a-numbers-l4-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3101,7 +3101,7 @@
   },
   {
     "id": "g7a-numbers-l4-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3126,7 +3126,7 @@
   },
   {
     "id": "g7a-numbers-l4-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3151,7 +3151,7 @@
   },
   {
     "id": "g7a-numbers-l4-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3176,7 +3176,7 @@
   },
   {
     "id": "g7a-numbers-l4-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l4",
@@ -3201,7 +3201,7 @@
   },
   {
     "id": "g7a-numbers-l5-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3226,7 +3226,7 @@
   },
   {
     "id": "g7a-numbers-l5-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3251,7 +3251,7 @@
   },
   {
     "id": "g7a-numbers-l5-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3276,7 +3276,7 @@
   },
   {
     "id": "g7a-numbers-l5-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3301,7 +3301,7 @@
   },
   {
     "id": "g7a-numbers-l5-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3326,7 +3326,7 @@
   },
   {
     "id": "g7a-numbers-l5-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3351,7 +3351,7 @@
   },
   {
     "id": "g7a-numbers-l5-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3376,7 +3376,7 @@
   },
   {
     "id": "g7a-numbers-l5-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l5",
@@ -3401,7 +3401,7 @@
   },
   {
     "id": "g7a-numbers-l6-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3426,7 +3426,7 @@
   },
   {
     "id": "g7a-numbers-l6-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3451,7 +3451,7 @@
   },
   {
     "id": "g7a-numbers-l6-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3476,7 +3476,7 @@
   },
   {
     "id": "g7a-numbers-l6-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3501,7 +3501,7 @@
   },
   {
     "id": "g7a-numbers-l6-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3526,7 +3526,7 @@
   },
   {
     "id": "g7a-numbers-l6-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3551,7 +3551,7 @@
   },
   {
     "id": "g7a-numbers-l6-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3576,7 +3576,7 @@
   },
   {
     "id": "g7a-numbers-l6-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-numbers-l6",
@@ -3601,7 +3601,7 @@
   },
   {
     "id": "g7a-articles-l1-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3626,7 +3626,7 @@
   },
   {
     "id": "g7a-articles-l1-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3651,7 +3651,7 @@
   },
   {
     "id": "g7a-articles-l1-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3676,7 +3676,7 @@
   },
   {
     "id": "g7a-articles-l1-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3701,7 +3701,7 @@
   },
   {
     "id": "g7a-articles-l1-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3726,7 +3726,7 @@
   },
   {
     "id": "g7a-articles-l1-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3751,7 +3751,7 @@
   },
   {
     "id": "g7a-articles-l1-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3776,7 +3776,7 @@
   },
   {
     "id": "g7a-articles-l1-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l1",
@@ -3801,7 +3801,7 @@
   },
   {
     "id": "g7a-articles-l2-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3826,7 +3826,7 @@
   },
   {
     "id": "g7a-articles-l2-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3851,7 +3851,7 @@
   },
   {
     "id": "g7a-articles-l2-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3876,7 +3876,7 @@
   },
   {
     "id": "g7a-articles-l2-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3901,7 +3901,7 @@
   },
   {
     "id": "g7a-articles-l2-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3926,7 +3926,7 @@
   },
   {
     "id": "g7a-articles-l2-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3951,7 +3951,7 @@
   },
   {
     "id": "g7a-articles-l2-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -3976,7 +3976,7 @@
   },
   {
     "id": "g7a-articles-l2-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l2",
@@ -4001,7 +4001,7 @@
   },
   {
     "id": "g7a-articles-l3-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4026,7 +4026,7 @@
   },
   {
     "id": "g7a-articles-l3-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4051,7 +4051,7 @@
   },
   {
     "id": "g7a-articles-l3-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4076,7 +4076,7 @@
   },
   {
     "id": "g7a-articles-l3-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4101,7 +4101,7 @@
   },
   {
     "id": "g7a-articles-l3-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4126,7 +4126,7 @@
   },
   {
     "id": "g7a-articles-l3-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4151,7 +4151,7 @@
   },
   {
     "id": "g7a-articles-l3-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4176,7 +4176,7 @@
   },
   {
     "id": "g7a-articles-l3-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l3",
@@ -4201,7 +4201,7 @@
   },
   {
     "id": "g7a-articles-l4-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4226,7 +4226,7 @@
   },
   {
     "id": "g7a-articles-l4-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4251,7 +4251,7 @@
   },
   {
     "id": "g7a-articles-l4-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4276,7 +4276,7 @@
   },
   {
     "id": "g7a-articles-l4-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4301,7 +4301,7 @@
   },
   {
     "id": "g7a-articles-l4-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4326,7 +4326,7 @@
   },
   {
     "id": "g7a-articles-l4-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4351,7 +4351,7 @@
   },
   {
     "id": "g7a-articles-l4-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4376,7 +4376,7 @@
   },
   {
     "id": "g7a-articles-l4-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l4",
@@ -4401,7 +4401,7 @@
   },
   {
     "id": "g7a-articles-l5-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4426,7 +4426,7 @@
   },
   {
     "id": "g7a-articles-l5-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4451,7 +4451,7 @@
   },
   {
     "id": "g7a-articles-l5-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4476,7 +4476,7 @@
   },
   {
     "id": "g7a-articles-l5-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4501,7 +4501,7 @@
   },
   {
     "id": "g7a-articles-l5-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4526,7 +4526,7 @@
   },
   {
     "id": "g7a-articles-l5-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4551,7 +4551,7 @@
   },
   {
     "id": "g7a-articles-l5-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4576,7 +4576,7 @@
   },
   {
     "id": "g7a-articles-l5-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l5",
@@ -4601,7 +4601,7 @@
   },
   {
     "id": "g7a-articles-l6-0001",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4626,7 +4626,7 @@
   },
   {
     "id": "g7a-articles-l6-0002",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4651,7 +4651,7 @@
   },
   {
     "id": "g7a-articles-l6-0003",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4676,7 +4676,7 @@
   },
   {
     "id": "g7a-articles-l6-0004",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4701,7 +4701,7 @@
   },
   {
     "id": "g7a-articles-l6-0005",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4726,7 +4726,7 @@
   },
   {
     "id": "g7a-articles-l6-0006",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4751,7 +4751,7 @@
   },
   {
     "id": "g7a-articles-l6-0007",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4776,7 +4776,7 @@
   },
   {
     "id": "g7a-articles-l6-0008",
-    "contentVersion": "2026-11-16",
+    "contentVersion": "2026-11-17.2",
     "grade": 7,
     "term": "A",
     "unit": "g7a-articles-l6",
@@ -4796,6 +4796,4806 @@
       "correctOptionIndex": 0
     },
     "explanation": "教材表5。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "only ___ people can see them（聪明）",
+    "options": [
+      "clever",
+      "cleverly",
+      "cleverness",
+      "clevers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词 people，用形容词 clever 作定语；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "a ___ place（神奇）",
+    "options": [
+      "magical",
+      "magically",
+      "magicness",
+      "magics"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词 place，用形容词 magical；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "Those ___ people like sport（年轻）",
+    "options": [
+      "young",
+      "youngly",
+      "youth",
+      "youngs"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词 people，用形容词 young；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "形容词作定语时通常放在名词 ___。",
+    "options": [
+      "前面",
+      "后面",
+      "中间",
+      "任意位置"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "形容词修饰名词，通常置于名词之前。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "a ___ film（无聊）",
+    "options": [
+      "boring",
+      "bored",
+      "boringly",
+      "boredom"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰物用 -ing 形容词 boring；教材例句 The film is boring。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "a ___ student（勤奋）",
+    "options": [
+      "diligent",
+      "diligently",
+      "diligence",
+      "diligents"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词用形容词 diligent；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "very ___ workers（努力）",
+    "options": [
+      "hard-working",
+      "hard-workingly",
+      "hard-work",
+      "hard-works"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "复合形容词 hard-working；教材例句 They are very hard-working。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l1-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l1",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.attributive"
+    ],
+    "type": "single_choice",
+    "stem": "哪个词是形容词？",
+    "options": [
+      "clever",
+      "cleverly",
+      "cleverness",
+      "cleverly's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "-ly 结尾多为副词，-ness 结尾多为名词。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "She is ___.（忙碌）",
+    "options": [
+      "busy",
+      "busily",
+      "business",
+      "busys"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "系动词 is 后用形容词作表语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "The film is ___.（无聊）",
+    "options": [
+      "boring",
+      "bored",
+      "boringly",
+      "bore"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "系动词后作表语；教材例句 The film is boring。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "A good student must be ___.（勤奋）",
+    "options": [
+      "diligent",
+      "diligently",
+      "diligence",
+      "diligents"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be 后作表语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "They are very ___.（努力）",
+    "options": [
+      "hard-working",
+      "hard-work",
+      "hard-workingly",
+      "hard-works"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "are 后作表语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "keep our school ___ and tidy（干净）",
+    "options": [
+      "clean",
+      "cleanly",
+      "cleanness",
+      "cleans"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "宾语 our school 后作补语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "She made me ___ last night.（生气）",
+    "options": [
+      "angry",
+      "angrily",
+      "anger",
+      "angers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "宾语 me 后作补语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "形容词作表语时放在 ___ 之后。",
+    "options": [
+      "系动词",
+      "宾语",
+      "主语",
+      "副词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：用作表语，置于系动词之后。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l2-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l2",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.predicative-complement"
+    ],
+    "type": "single_choice",
+    "stem": "形容词作补语时放在 ___ 之后。",
+    "options": [
+      "宾语",
+      "系动词",
+      "主语",
+      "冠词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材「用作补语」例句：keep our school clean and tidy / made me angry。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "It's raining ___.（大）",
+    "options": [
+      "heavily",
+      "heavy",
+      "heaviness",
+      "heavies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰动词 raining，用副词 heavily；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "The dog is ___ cute.（相当）",
+    "options": [
+      "quite",
+      "quiet",
+      "quiteness",
+      "quites"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰形容词 cute，用副词 quite；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "She drives ___.（非常小心）",
+    "options": [
+      "very carefully",
+      "very careful",
+      "very carefulness",
+      "very carefuls"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰其他副词，用副词 carefully；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "___ I have bread and milk for breakfast.（通常）",
+    "options": [
+      "Usually",
+      "Usual",
+      "Usualness",
+      "Usuals"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰全句，用副词 Usually；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "副词在句中主要用作 ___。",
+    "options": [
+      "状语",
+      "定语",
+      "表语",
+      "主语"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：副词在句中主要用作状语。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "下面哪个是副词？",
+    "options": [
+      "heavily",
+      "heavy",
+      "heaviness",
+      "heavier"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "-ly 结尾的 heavily 是副词。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "下面哪个是形容词？",
+    "options": [
+      "careful",
+      "carefully",
+      "carefulness",
+      "care"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "careful 是形容词，carefully 是副词。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l3-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l3",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.adverb-use"
+    ],
+    "type": "single_choice",
+    "stem": "副词不能修饰 ___。",
+    "options": [
+      "名词",
+      "动词",
+      "形容词",
+      "其他副词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "副词修饰动词、形容词、其他副词或全句，不修饰名词（修饰名词用形容词）。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "频度最高的副词是 ___。",
+    "options": [
+      "always",
+      "usually",
+      "often",
+      "never"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：always > usually > often > sometimes > seldom > never。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "频度最低的是 ___。",
+    "options": [
+      "never",
+      "seldom",
+      "sometimes",
+      "always"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "never 频度为 0。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "always 与 usually 相比，___ 频度更高。",
+    "options": [
+      "always",
+      "usually",
+      "一样",
+      "无法比较"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材排序：always > usually。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "seldom 的意思是 ___。",
+    "options": [
+      "很少；几乎不",
+      "经常",
+      "总是",
+      "从不"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "seldom = hardly ever，表示很少；几乎不。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "下列排序正确的是 ___。",
+    "options": [
+      "always > usually > often",
+      "often > always > usually",
+      "usually > always > often",
+      "often > usually > always"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材原排序。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "sometimes 的意思是 ___。",
+    "options": [
+      "有时",
+      "经常",
+      "总是",
+      "很少"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "sometimes 有时；位于 often 与 seldom 之间。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "hardly ever 与 ___ 意思最接近。",
+    "options": [
+      "seldom",
+      "always",
+      "often",
+      "usually"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材把 seldom (hardly ever) 并列。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l4-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l4",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-order"
+    ],
+    "type": "single_choice",
+    "stem": "表示「总是」的频度副词是 ___。",
+    "options": [
+      "always",
+      "usually",
+      "sometimes",
+      "never"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "always 总是。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ tennis near my house.",
+    "options": [
+      "always play",
+      "play always",
+      "always plays",
+      "plays always"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "频度副词放在实义动词前面；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ three times a week after school.",
+    "options": [
+      "usually practise",
+      "practise usually",
+      "usually practises",
+      "practises usually"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "频度副词在实义动词前；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ because it keeps me healthy.",
+    "options": [
+      "often go swimming",
+      "go often swimming",
+      "often goes swimming",
+      "goes often swimming"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "频度副词在实义动词前；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "A kind word is ___ lost.",
+    "options": [
+      "never",
+      "not never",
+      "always not",
+      "no"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "系动词 be 之后；教材例句 A kind word is never lost。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "频度副词通常放在 ___ 前面。",
+    "options": [
+      "实义动词",
+      "系动词",
+      "助动词",
+      "情态动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：频度副词通常放在实义动词前面。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "句中有 be 动词时，频度副词放在 be ___。",
+    "options": [
+      "之后",
+      "之前",
+      "之间",
+      "均可"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：如果句子里有系动词 be，频度副词通常放在其后。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ late for class.",
+    "options": [
+      "is always",
+      "always is",
+      "always are",
+      "are always"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be 动词之后放频度副词。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l5-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l5",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.frequency-position"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ her homework carefully.",
+    "options": [
+      "always does",
+      "does always",
+      "always do",
+      "do always"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词前，主语 she 用 does。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "It's raining ___.",
+    "options": [
+      "heavily",
+      "heavy",
+      "heavyly",
+      "heavies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰动词用副词 heavily。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "She is a ___ girl.",
+    "options": [
+      "careful",
+      "carefully",
+      "carefulness",
+      "care"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词用形容词 careful。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "She does her homework ___.",
+    "options": [
+      "carefully",
+      "careful",
+      "carefulness",
+      "cares"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰动词用副词 carefully。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ get up at six.",
+    "options": [
+      "usually",
+      "usual",
+      "usuals",
+      "usualness"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "频度副词 usually 修饰动词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "The soup smells ___.",
+    "options": [
+      "delicious",
+      "deliciously",
+      "deliciousness",
+      "deliciouses"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "smell 是系动词，后接形容词作表语。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He sings very ___.",
+    "options": [
+      "well",
+      "good",
+      "better",
+      "best"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰动词 sing 用副词 well。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ have lunch at school.",
+    "options": [
+      "usually",
+      "usual",
+      "usualy",
+      "usuals"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "频度副词在实义动词前。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-adjadv-l6-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-adjadv-l6",
+    "sourceUrl": "g7b-adjadv/",
+    "knowledgePointIds": [
+      "grammar.adj_adv.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "The classroom is ___ clean.",
+    "options": [
+      "very",
+      "much",
+      "too much",
+      "very much"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "very 修饰形容词 clean；very much 多修饰动词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "apple 属于 ___。",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "抽象名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "apple 有复数 apples；教材：可数名词有单数和复数两种形式。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "milk 属于 ___。",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "复数名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "milk 一般只有一种形式，不可数；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "bread 属于 ___。",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "数词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "bread 不可数；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "rice 属于 ___。",
+    "options": [
+      "可数名词",
+      "不可数名词",
+      "专有名词",
+      "复数名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "rice 不可数；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "a bag–some ___",
+    "options": [
+      "bag",
+      "bags",
+      "bag's",
+      "bagss"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "可数名词有复数形式；教材例句 a bag–some bags。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "不可数名词一般 ___ 复数形式。",
+    "options": [
+      "没有",
+      "有",
+      "有两种",
+      "只有 -s"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：不可数名词一般只有一种形式，没有复数形式。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "an apple–two ___",
+    "options": [
+      "apple",
+      "apples",
+      "apple's",
+      "applies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "可数名词变复数；教材例句 an apple–two apples。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l1-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l1",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.countability.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "可数名词有 ___ 两种形式。",
+    "options": [
+      "单数和复数",
+      "主格和宾格",
+      "原级和比较级",
+      "肯定和否定"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：可数名词有单数和复数两种形式。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "book 的复数是 ___。",
+    "options": [
+      "books",
+      "bookes",
+      "book's",
+      "bookies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "一般情况词尾加 -s；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "class 的复数是 ___。",
+    "options": [
+      "classes",
+      "classs",
+      "classies",
+      "class'es"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 s 结尾加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "box 的复数是 ___。",
+    "options": [
+      "boxes",
+      "boxs",
+      "boxies",
+      "box'es"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 x 结尾加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "watch 的复数是 ___。",
+    "options": [
+      "watches",
+      "watchs",
+      "watchies",
+      "watch'es"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 ch 结尾加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "dish 的复数是 ___。",
+    "options": [
+      "dishes",
+      "dishs",
+      "dishies",
+      "dish'es"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 sh 结尾加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "family 的复数是 ___。",
+    "options": [
+      "families",
+      "familys",
+      "familyes",
+      "familiees"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "辅音字母 + y 结尾，y 变 i 加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "strawberry 的复数是 ___。",
+    "options": [
+      "strawberries",
+      "strawberrys",
+      "strawberryes",
+      "strawberries'"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "y 变 i 加 -es；教材表1。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l2-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l2",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-rules"
+    ],
+    "type": "single_choice",
+    "stem": "key 的复数是 ___。",
+    "options": [
+      "keys",
+      "keies",
+      "keyes",
+      "key's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "元音字母 + y 结尾，直接加 -s；教材表1 keys。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "books 中 -s 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/t/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "清辅音 /k/ 后读 /s/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "bags 中 -s 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/d/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "浊辅音 /ɡ/ 后读 /z/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "classes 中 -es 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/es/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /s/ 音后读 /ɪz/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "boxes 中 -es 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/əz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /s/ 音后读 /ɪz/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "keys 中 -s 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/iːz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "元音后读 /z/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "watches 中 -es 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/tʃɪz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /tʃ/ 后读 /ɪz/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "boys 中 -s 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/ɔɪz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 1
+    },
+    "explanation": "元音后读 /z/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l3-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l3",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-sound"
+    ],
+    "type": "single_choice",
+    "stem": "dishes 中 -es 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/ʃz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 2
+    },
+    "explanation": "在 /ʃ/ 后读 /ɪz/；教材表1。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "man 的复数是 ___。",
+    "options": [
+      "men",
+      "mans",
+      "manes",
+      "mens"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不规则复数；教材注释。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "woman 的复数是 ___。",
+    "options": [
+      "women",
+      "womans",
+      "womens",
+      "womies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不规则复数；教材注释。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "child 的复数是 ___。",
+    "options": [
+      "children",
+      "childs",
+      "childes",
+      "childrens"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不规则复数；教材注释。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "sheep 的复数是 ___。",
+    "options": [
+      "sheep",
+      "sheeps",
+      "sheepes",
+      "sheep's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "单复数同形；教材注释。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "下列哪个是不规则复数？",
+    "options": [
+      "man–men",
+      "book–books",
+      "bag–bags",
+      "key–keys"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材注释列出 man–men、woman–women、child–children、sheep–sheep。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "child 的复数属于 ___ 变化。",
+    "options": [
+      "不规则",
+      "规则",
+      "加 -s",
+      "加 -es"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "child–children 属不规则变化。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "two ___（woman）",
+    "options": [
+      "women",
+      "womans",
+      "womens",
+      "woman"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "woman 的复数是不规则的 women。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l4-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l4",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.plural-irregular"
+    ],
+    "type": "single_choice",
+    "stem": "three ___（sheep）",
+    "options": [
+      "sheep",
+      "sheeps",
+      "sheepes",
+      "sheeps'"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "sheep 单复数同形。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "fruit 可以 ___。",
+    "options": [
+      "既作可数也作不可数",
+      "只能作可数",
+      "只能作不可数",
+      "不能作名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：fruit 既可充当可数名词也可充当不可数名词。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "fish 可以 ___。",
+    "options": [
+      "既作可数也作不可数",
+      "只能作可数",
+      "只能作不可数",
+      "只能作动词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：fish 两可；同时也可作动词。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "chicken 可以 ___。",
+    "options": [
+      "既作可数也作不可数",
+      "只能作可数",
+      "只能作不可数",
+      "不能作名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：chicken 两可（鸡／鸡肉）。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "下列哪个词既可数又不可数？",
+    "options": [
+      "fish",
+      "book",
+      "milk",
+      "rice"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材列出 fruit、fish、chicken 三个两可词。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "下列哪个是不可数名词？",
+    "options": [
+      "rice",
+      "apple",
+      "bag",
+      "pen"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "rice 不可数；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "下列哪个是可数名词？",
+    "options": [
+      "apple",
+      "milk",
+      "bread",
+      "rice"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "apple 可数；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "some ___（bag）",
+    "options": [
+      "bags",
+      "bag",
+      "bag's",
+      "bagies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "可数名词复数为 bags；教材例句 some bags。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l5-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l5",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.dual-purpose"
+    ],
+    "type": "single_choice",
+    "stem": "two ___（apple）",
+    "options": [
+      "apples",
+      "apple",
+      "apple's",
+      "applies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "可数名词变复数；教材例句 two apples。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "名词按其性质分为 ___ 和不可数名词。",
+    "options": [
+      "可数名词",
+      "专有名词",
+      "普通名词",
+      "抽象名词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：名词按其所表示的事物的性质可分为可数名词和不可数名词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "class 的复数 ___。",
+    "options": [
+      "classes",
+      "classs",
+      "classies",
+      "classees"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 s 结尾加 -es。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "party 的复数 ___。",
+    "options": [
+      "parties",
+      "partys",
+      "partyies",
+      "party's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "辅音字母 + y，y 变 i 加 -es。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "book–books 中 -s 读 ___。",
+    "options": [
+      "/s/",
+      "/z/",
+      "/ɪz/",
+      "/b/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "清辅音 /k/ 后读 /s/。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "box–boxes 中 -es 读 ___。",
+    "options": [
+      "/ɪz/",
+      "/s/",
+      "/z/",
+      "/es/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "在 /s/ 音后读 /ɪz/。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "two ___（child）",
+    "options": [
+      "children",
+      "childs",
+      "childes",
+      "childrens"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不规则复数 children。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "milk 有复数形式吗？",
+    "options": [
+      "没有",
+      "有",
+      "有两种",
+      "只有 milk's"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "不可数名词一般没有复数形式。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-nouns-l6-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-nouns-l6",
+    "sourceUrl": "g7b-nouns/",
+    "knowledgePointIds": [
+      "grammar.noun.mixed.g7b"
+    ],
+    "type": "single_choice",
+    "stem": "family–families 中 -ies 读 ___。",
+    "options": [
+      "/ɪz/",
+      "/s/",
+      "/z/",
+      "/aɪz/"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "在 /z/ 等音后读 /ɪz/；教材表1 /ˈfæməlɪz/。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "I 的名词性物主代词是 ___。",
+    "options": [
+      "mine",
+      "my",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表2：my（形容词性）→ mine（名词性）。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "you 的名词性物主代词是 ___。",
+    "options": [
+      "yours",
+      "your",
+      "you",
+      "yourself"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "your → yours；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "he 的名词性物主代词是 ___。",
+    "options": [
+      "his",
+      "him",
+      "he",
+      "hers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "his 形容词性与名词性同形；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "she 的名词性物主代词是 ___。",
+    "options": [
+      "hers",
+      "her",
+      "she",
+      "him"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "her → hers；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "we 的名词性物主代词是 ___。",
+    "options": [
+      "ours",
+      "our",
+      "us",
+      "we"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "our → ours；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "they 的名词性物主代词是 ___。",
+    "options": [
+      "theirs",
+      "their",
+      "them",
+      "they"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "their → theirs；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "it 的名词性物主代词是 ___。",
+    "options": [
+      "its",
+      "it",
+      "it's",
+      "itself"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "its 形容词性与名词性同形；教材表2。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l1-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l1",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-form"
+    ],
+    "type": "single_choice",
+    "stem": "名词性物主代词相当于 ___。",
+    "options": [
+      "名词",
+      "形容词",
+      "动词",
+      "副词"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：名词性物主代词相当于名词。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "A: Is this ___ pen?（你的）",
+    "options": [
+      "your",
+      "yours",
+      "you",
+      "yourself"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "修饰名词 pen 用形容词性 your；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "The blue pen is ___.（我的）",
+    "options": [
+      "mine",
+      "my",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "独立使用作表语用名词性 mine；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "Is it ___?（你的）",
+    "options": [
+      "yours",
+      "your",
+      "you",
+      "yourself"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "独立使用用名词性 yours；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "No, it isn't ___.（我的）",
+    "options": [
+      "mine",
+      "my",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "名词性 mine 独立使用；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "No, ___ is at home.（她的）",
+    "options": [
+      "hers",
+      "her",
+      "she",
+      "him"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "名词性 hers 独立作主语；教材例句。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "名词性物主代词 ___ 用于名词前。",
+    "options": [
+      "不能",
+      "可以",
+      "必须",
+      "有时可以"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：名词性物主代词不能用于名词前。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "This is ___ book.（我的）",
+    "options": [
+      "my",
+      "mine",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "名词前用形容词性 my。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l2-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l2",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.possessive-contrast"
+    ],
+    "type": "single_choice",
+    "stem": "This book is ___.（我的）",
+    "options": [
+      "mine",
+      "my",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "独立使用用名词性 mine。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ speak a little English.（能力）",
+    "options": [
+      "can",
+      "may",
+      "must",
+      "have to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "can 表示能力；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ swim when he was only six.",
+    "options": [
+      "could",
+      "can",
+      "may",
+      "must"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "过去的能力用 could；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ play basketball at the weekend.（许可）",
+    "options": [
+      "can",
+      "must",
+      "have to",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "can 表示许可；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "___ you help me with my Chinese?（请求）",
+    "options": [
+      "Can",
+      "May",
+      "Must",
+      "Have to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "can 表示请求；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "___ you tell him to call me back?（更委婉）",
+    "options": [
+      "Could",
+      "Can",
+      "May",
+      "Must"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "could 表示请求比 can 更委婉；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ run in the hallways.（不许）",
+    "options": [
+      "can't",
+      "mustn't",
+      "don't have to",
+      "needn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材例句 We can't run in the hallways 表许可的否定。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "Father said I ___ swim in the pool.",
+    "options": [
+      "could",
+      "can",
+      "may",
+      "must"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主句过去时，用 could；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l3-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l3",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.can-could"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ play badminton, but I can't play volleyball.",
+    "options": [
+      "can",
+      "may",
+      "must",
+      "have to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "can 表能力；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "___ I borrow your dictionary?（许可）",
+    "options": [
+      "May",
+      "Must",
+      "Have to",
+      "Need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表许可「可以」；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "Class is over. You ___ go now.（许可）",
+    "options": [
+      "may",
+      "must",
+      "have to",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表许可；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ be late, so don't wait for me.（也许）",
+    "options": [
+      "may",
+      "must",
+      "have to",
+      "can"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表可能性「也许」；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "That ___ be true.（可能）",
+    "options": [
+      "may",
+      "must",
+      "can",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表可能性；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "may 表示许可时比 can ___。",
+    "options": [
+      "更正式、更委婉",
+      "更随便",
+      "更强烈",
+      "意思完全不同"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：may 的用法比 can 更正式，语气更委婉。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "may 的两个主要意思：许可和 ___。",
+    "options": [
+      "可能性",
+      "能力",
+      "义务",
+      "请求"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：may 表示许可（可以）和可能性（也许；可能）。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ go now if you finish.",
+    "options": [
+      "may",
+      "must",
+      "have to",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表许可。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l4-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l4",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.may"
+    ],
+    "type": "single_choice",
+    "stem": "It ___ rain tomorrow.（也许）",
+    "options": [
+      "may",
+      "must",
+      "can",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "may 表可能性。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ be on time. Don't arrive late.（主观）",
+    "options": [
+      "must",
+      "have to",
+      "may",
+      "can"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "must 表主观看法、语气强；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ be quiet in the library.（客观需要）",
+    "options": [
+      "have to",
+      "must",
+      "may",
+      "can"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "have to 强调客观需要；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ talk to your mother like that.（不准）",
+    "options": [
+      "mustn't",
+      "don't have to",
+      "needn't",
+      "can't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "mustn't 表示不准；禁止；教材原句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ come if you don't want to.（不必）",
+    "options": [
+      "don't have to",
+      "mustn't",
+      "needn't",
+      "can't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "don't have to 表示不必；教材原句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ work late today.（第三人称）",
+    "options": [
+      "has to",
+      "have to",
+      "must",
+      "may"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "have to 有人称和数的变化，第三人称用 has to；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "must 有 ___ 变化。",
+    "options": [
+      "没有人称和数",
+      "有人称和数",
+      "有过去式",
+      "有复数"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：must 没有人称和数的变化。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "mustn't 的意思是 ___。",
+    "options": [
+      "不准；禁止",
+      "不必",
+      "不应该",
+      "不能"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：mustn't 表示「不准；禁止」。don't have to 才表示「不必」。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l5-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l5",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.must-have-to"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ get to the station before five o'clock.",
+    "options": [
+      "have to",
+      "has to",
+      "must has",
+      "have"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 用 have to；教材例句。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "This is ___ book.（我的）",
+    "options": [
+      "my",
+      "mine",
+      "me",
+      "I"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "名词前用形容词性 my。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "That book is ___.（他的）",
+    "options": [
+      "his",
+      "him",
+      "he",
+      "hers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "his 形容词性与名词性同形。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ finish your homework first.（必须）",
+    "options": [
+      "must",
+      "may",
+      "can",
+      "need"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "must 表示必须。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "___ I use your phone?（委婉许可）",
+    "options": [
+      "May",
+      "Must",
+      "Have to",
+      "Can't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "May I ...? 委婉请求许可。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ hurry. The train is leaving in five minutes.（客观）",
+    "options": [
+      "have to",
+      "must",
+      "may",
+      "can"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "强调客观需要，用 have to；教材例句。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "The pen isn't ___. It's ___ .（我的；她的）",
+    "options": [
+      "mine; hers",
+      "my; her",
+      "mine; her",
+      "my; hers"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "两空都独立使用，用名词性物主代词。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ speak three languages.",
+    "options": [
+      "can",
+      "may",
+      "must",
+      "has to"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "can 表示能力。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-pronouns-modals-l6-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-pronouns-modals-l6",
+    "sourceUrl": "g7b-pronouns-modals/",
+    "knowledgePointIds": [
+      "grammar.pronoun_modals.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "You ___ be late for class.",
+    "options": [
+      "mustn't",
+      "don't have to",
+      "needn't",
+      "may not"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "mustn't 表示不准；禁止。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "The students ___ to the teacher.（正在听）",
+    "options": [
+      "are listening",
+      "is listening",
+      "listen",
+      "listened"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语复数用 are + -ing；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ now.（正在睡觉）",
+    "options": [
+      "is sleeping",
+      "are sleeping",
+      "sleeps",
+      "slept"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 he 用 is + -ing；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ now.（正在工作）",
+    "options": [
+      "am working",
+      "is working",
+      "are working",
+      "work"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 I 用 am working；教材表3。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ on a farm these days.",
+    "options": [
+      "are working",
+      "is working",
+      "am working",
+      "worked"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 we 用 are；教材例句。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "现在进行时由助动词 be + ___ 构成。",
+    "options": [
+      "动词-ing",
+      "动词原形",
+      "动词过去式",
+      "动词不定式"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：现在进行时是由助动词 be 加动词 -ing 形式构成。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ football now.",
+    "options": [
+      "are playing",
+      "is playing",
+      "am playing",
+      "played"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 they 用 are playing。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ TV at the moment.",
+    "options": [
+      "is watching",
+      "are watching",
+      "watches",
+      "watched"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 用 is watching。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l1-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l1",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-form"
+    ],
+    "type": "single_choice",
+    "stem": "现在进行时的否定式是 ___。",
+    "options": [
+      "am/is/are + not + 动词-ing",
+      "don't + 动词原形",
+      "not + 动词-ing",
+      "didn't + 动词原形"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表3：I am not working 等。",
+    "difficulty": 1,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "go 的 -ing 形式是 ___。",
+    "options": [
+      "going",
+      "goeing",
+      "going",
+      "gone"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "一般情况直接加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "study 的 -ing 形式是 ___。",
+    "options": [
+      "studying",
+      "studing",
+      "studyying",
+      "studies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "直接加 -ing（study → studying）；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "write 的 -ing 形式是 ___。",
+    "options": [
+      "writing",
+      "writeing",
+      "writting",
+      "writes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以不发音 e 结尾，去掉 e 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "make 的 -ing 形式是 ___。",
+    "options": [
+      "making",
+      "makeing",
+      "makking",
+      "makes"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "去掉 e 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "get 的 -ing 形式是 ___。",
+    "options": [
+      "getting",
+      "geting",
+      "gettting",
+      "gets"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "重读闭音节，双写 t 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "sit 的 -ing 形式是 ___。",
+    "options": [
+      "sitting",
+      "siting",
+      "sitting",
+      "sits"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "双写 t 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "begin 的 -ing 形式是 ___。",
+    "options": [
+      "beginning",
+      "begining",
+      "beginning",
+      "begins"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "双写 n 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l2-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l2",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.ing-change"
+    ],
+    "type": "single_choice",
+    "stem": "lie 的 -ing 形式是 ___。",
+    "options": [
+      "lying",
+      "lieing",
+      "lying",
+      "lies"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "以 ie 结尾，变 ie 为 y 加 -ing；教材表5。",
+    "difficulty": 2,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "现在进行时表示现在（说话时）___ 的动作。",
+    "options": [
+      "正在进行",
+      "已经完成",
+      "将来发生",
+      "经常发生"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：表示现在（说话时）正在进行的动作或存在的状态。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "I'm reading a history book ___.",
+    "options": [
+      "this month",
+      "last month",
+      "next month",
+      "yesterday"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示现阶段正在进行；教材例句 this month。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "The students are listening to the teacher. 此句表示 ___。",
+    "options": [
+      "说话时正在进行",
+      "过去发生",
+      "将来发生",
+      "经常发生"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "现在进行时的基本用法；教材例句。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "We are working on a farm ___.",
+    "options": [
+      "these days",
+      "yesterday",
+      "last week",
+      "two days ago"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "现阶段正在进行；教材例句 these days。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "现在进行时的疑问式：___ you working?",
+    "options": [
+      "Are",
+      "Do",
+      "Did",
+      "Is"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 you 用 Are you working?；教材表4。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "— Is he working? — Yes, he ___.",
+    "options": [
+      "is",
+      "does",
+      "do",
+      "are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "简略答语用 is；教材表4。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "— Are they working? — No, they ___.",
+    "options": [
+      "aren't",
+      "don't",
+      "isn't",
+      "weren't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "否定简答用 are not (aren't)；教材表4。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l3-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l3",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.progressive-use"
+    ],
+    "type": "single_choice",
+    "stem": "Look! The children ___ in the garden.",
+    "options": [
+      "are playing",
+      "play",
+      "played",
+      "plays"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "Look! 提示说话时正在发生，用现在进行时。",
+    "difficulty": 3,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ at home yesterday.",
+    "options": [
+      "was",
+      "were",
+      "is",
+      "are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 he 用 was；教材表6。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ at home yesterday.",
+    "options": [
+      "were",
+      "was",
+      "are",
+      "is"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 we 用 were；教材表6。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ in a hospital last year.",
+    "options": [
+      "worked",
+      "works",
+      "work",
+      "working"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "一般过去时实义动词加 -ed；教材表6。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ my grandparents last week.",
+    "options": [
+      "visited",
+      "visit",
+      "visits",
+      "visiting"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "last week 表过去，用过去式；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ up early yesterday.",
+    "options": [
+      "got",
+      "gets",
+      "get",
+      "getting"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "yesterday 表过去，用过去式 got；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "一般过去时常与 ___ 连用。",
+    "options": [
+      "yesterday、last night 等",
+      "now",
+      "tomorrow",
+      "next week"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材：常和表示过去的时间状语连用。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "He always ___ to work by bus last year.",
+    "options": [
+      "went",
+      "goes",
+      "go",
+      "going"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "表示过去经常发生，用过去式；教材例句。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l4-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l4",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-form"
+    ],
+    "type": "single_choice",
+    "stem": "be 动词的过去式有 ___ 两种形式。",
+    "options": [
+      "was / were",
+      "am / is",
+      "are / were",
+      "was / been"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表6：was（单数）、were（复数）。",
+    "difficulty": 4,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ at home yesterday.（否定）",
+    "options": [
+      "wasn't",
+      "weren't",
+      "isn't",
+      "didn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "be 动词否定 was not (wasn't)；教材表6。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ at home yesterday.（否定）",
+    "options": [
+      "weren't",
+      "wasn't",
+      "aren't",
+      "didn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语复数用 were not (weren't)；教材表6。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ in a hospital last year.（否定）",
+    "options": [
+      "didn't work",
+      "didn't worked",
+      "don't work",
+      "wasn't work"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词否定用 didn't + 动词原形；教材表6。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "实义动词的过去时否定式为 ___。",
+    "options": [
+      "didn't + 动词原形",
+      "didn't + 过去式",
+      "don't + 动词原形",
+      "not + 过去式"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "教材表6：did not (didn't) work —— 用原形。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "___ you go to the park yesterday?",
+    "options": [
+      "Did",
+      "Do",
+      "Were",
+      "Was"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "实义动词过去时疑问用 Did。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "— Did he come? — Yes, he ___.",
+    "options": [
+      "did",
+      "does",
+      "was",
+      "were"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "过去时简略答语用 did。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ TV last night.（否定）",
+    "options": [
+      "didn't watch",
+      "didn't watched",
+      "doesn't watch",
+      "wasn't watch"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "didn't + 动词原形。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l5-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l5",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.past-negation"
+    ],
+    "type": "single_choice",
+    "stem": "— Did they play football? — No, they ___.",
+    "options": [
+      "didn't",
+      "don't",
+      "weren't",
+      "wasn't"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "过去时否定简答用 didn't。",
+    "difficulty": 5,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0001",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "Look! She ___ a book now.",
+    "options": [
+      "is reading",
+      "reads",
+      "read",
+      "was reading"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "now 提示现在进行时。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0002",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ to school by bike last year.",
+    "options": [
+      "went",
+      "goes",
+      "go",
+      "is going"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "last year 表过去，用过去式。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0003",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "They ___ football at the moment.",
+    "options": [
+      "are playing",
+      "played",
+      "play",
+      "plays"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "at the moment 提示现在进行时。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0004",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "We ___ a film yesterday.",
+    "options": [
+      "watched",
+      "watch",
+      "are watching",
+      "watches"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "yesterday 表过去。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0005",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "I ___ my homework now.",
+    "options": [
+      "am doing",
+      "do",
+      "did",
+      "does"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "now 提示现在进行时。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0006",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "He ___ his grandparents last week.",
+    "options": [
+      "visited",
+      "visits",
+      "is visiting",
+      "visit"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "last week 表过去。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0007",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "She ___ at home yesterday.",
+    "options": [
+      "was",
+      "were",
+      "is",
+      "are"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "主语 she 过去时用 was。",
+    "difficulty": 6,
+    "estimatedSeconds": 45
+  },
+  {
+    "id": "g7b-tenses-l6-0008",
+    "contentVersion": "2026-11-17.2",
+    "grade": 7,
+    "term": "B",
+    "unit": "g7b-tenses-l6",
+    "sourceUrl": "g7b-tenses/",
+    "knowledgePointIds": [
+      "grammar.tense.mixed"
+    ],
+    "type": "single_choice",
+    "stem": "Listen! Someone ___ in the next room.",
+    "options": [
+      "is singing",
+      "sings",
+      "sang",
+      "was singing"
+    ],
+    "answerSpec": {
+      "correctOptionIndex": 0
+    },
+    "explanation": "Listen! 提示说话时正在发生。",
     "difficulty": 6,
     "estimatedSeconds": 45
   }

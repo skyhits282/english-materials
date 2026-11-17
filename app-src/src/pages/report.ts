@@ -25,9 +25,10 @@ export const renderReport: PageRenderer = async ({ container }) => {
   if (stale) return
   const m = computeCoreMetrics(attempts)
   const qMap = new Map(questions.map((q) => [q.id, q]))
-  // 词汇题为运行时由 vocab.json 派生，不在 questions 表中，按作答的题目 ID 前缀分类
-  const vocabAttempts = attempts.filter((a) => a.questionId.startsWith('g7a-vocab-'))
-  const grammarAttempts = attempts.filter((a) => !a.questionId.startsWith('g7a-vocab-'))
+  // 词汇题为运行时由 vocab.json 派生，不在 questions 表中，按作答的题目 ID 前缀分类（两册各自 `g7?-vocab-`）
+  const isVocabId = (id: string) => /^g7[ab]-vocab-/.test(id)
+  const vocabAttempts = attempts.filter((a) => isVocabId(a.questionId))
+  const grammarAttempts = attempts.filter((a) => !isVocabId(a.questionId))
   const todayCount = attempts.filter((a) => isSameLocalDay(a.submittedAt, localDayKey())).length
   const vocabWrong = [...new Set(vocabAttempts.filter((a) => !a.isCorrect).map((a) => a.questionId))]
 

@@ -23,8 +23,15 @@ const q = (id: string): Question => ({
 
 const bundle = (): ContentBundle => ({
   questions: [q('q1'), q('q2')],
-  vocab: { book: 'g7a', contentVersion: 'v', units: [] },
-  meta: { contentId: 'g7a', version: 'v1', questionCount: 2, vocabWordCount: 0, files: [] },
+  vocab: [{ book: 'g7a', contentVersion: 'v', units: [] }],
+  meta: {
+    contentId: 'g7a',
+    version: 'v1',
+    questionCount: 2,
+    vocabWordCount: 0,
+    books: [{ book: 'g7a', questionCount: 2, vocabUnits: 0, vocabWordCount: 0 }],
+    files: [],
+  },
 })
 
 beforeEach(async () => {

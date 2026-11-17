@@ -8,12 +8,13 @@ import {
   saveAttempt,
   hasPriorAttempt,
   attemptsForQuestion,
+  listAttempts,
   upsertQuestions,
   questionsByUnitPrefix,
   putContentMeta,
   getContentMeta,
 } from './repos'
-import type { Attempt, Question } from '../types'
+import type { Attempt, Question, Settings } from '../types'
 
 const q = (id: string, unit: string): Question => ({
   id,
@@ -47,6 +48,7 @@ beforeEach(async () => {
     db.questions.clear(),
     db.attempts.clear(),
     db.contentMeta.clear(),
+    db.aiRequests.clear(),
   ])
 })
 
@@ -60,6 +62,11 @@ describe('settings', () => {
     expect(s.dailyMinutes).toBe(25)
     const row = await db.settings.get('app')
     expect(row?.updatedAt).toBeTruthy()
+  })
+  it('旧版本行缺失字段时合并默认值', async () => {
+    await db.settings.put({ key: 'app', value: { grade: 7 } as unknown as Settings, updatedAt: '2026-01-01T00:00:00.000Z' })
+    const s = await getSettings()
+    expect(s.dailyMinutes).toBe(DEFAULT_SETTINGS.dailyMinutes)
   })
 })
 
@@ -75,6 +82,12 @@ describe('attempts（只追加）', () => {
     expect(await hasPriorAttempt('q1')).toBe(false)
     await saveAttempt(attempt('a1', 'q1', false))
     expect(await hasPriorAttempt('q1')).toBe(true)
+  })
+  it('listAttempts 按 submittedAt 升序', async () => {
+    await saveAttempt({ ...attempt('a2', 'q9', true), submittedAt: '2026-11-16T12:00:00.000Z' })
+    await saveAttempt({ ...attempt('a1', 'q9', false), submittedAt: '2026-11-16T11:00:00.000Z' })
+    const rows = await listAttempts()
+    expect(rows.map((r) => r.id)).toEqual(['a1', 'a2'])
   })
 })
 
@@ -95,5 +108,14 @@ describe('contentMeta', () => {
       files: [],
     })
     expect((await getContentMeta('g7a'))?.version).toBe('2026-11-16')
+  })
+})
+
+describe('aiRequests', () => {
+  it('aiRequests 同 createdAt 不同 id 不冲突', async () => {
+    const row = (id: string) => ({ id, type: 'explain', status: 'done', createdAt: '2026-11-16T10:00:00.000Z' })
+    await db.aiRequests.add(row('r1'))
+    await db.aiRequests.add(row('r2'))
+    expect(await db.aiRequests.count()).toBe(2)
   })
 })

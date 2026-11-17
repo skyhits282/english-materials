@@ -55,7 +55,7 @@ export class EnglishCoachDB extends Dexie {
       attempts: 'id, questionId, submittedAt, phase',
       mastery: 'knowledgePointId, nextReviewAt',
       weeklyReports: 'weekStart',
-      aiRequests: 'createdAt',
+      aiRequests: 'id, createdAt',
     })
   }
 }

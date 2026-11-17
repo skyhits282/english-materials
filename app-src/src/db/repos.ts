@@ -42,6 +42,7 @@ export async function upsertQuestions(questions: Question[]): Promise<void> {
   await db.questions.bulkPut(questions)
 }
 
+/** 前缀匹配专项 unit（如 'g7a-present' 命中 'g7a-present-l1'…）；调用方应传完整 special id，词汇单元（v1-u*）不写入 questions 表、不适用本查询 */
 export async function questionsByUnitPrefix(prefix: string): Promise<Question[]> {
   return db.questions.where('unit').startsWith(prefix).toArray()
 }

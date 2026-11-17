@@ -3103,3 +3103,28 @@ Task 1 → 2 → 3 → 4 → 5（4、5 可并行）→ 6 → 7 → 8 → 9（可
 4. 设置持久、备份 round-trip —— Task 5/10/12（T08）
 5. 测试全绿、构建不破坏原站 CI —— Task 2/13
 6. 存储不可用降级 —— Task 11
+
+---
+
+## M2 待办汇总（M0+M1 各轮审查登记，最终整体审查 2026-11-17 复核后归拢）
+
+**页面与数据口径：**
+- 词汇默写题运行时派生、不入 questions 表：错题本对词汇题显示 questionId 作题干、正确答案"—"，报告"易错词"显示原始 ID（Task 10 已知局限）。修复方向：两页从 bundle 派生词汇题建补充 qMap，或播种时写入词汇题。
+- mastery 表除备份导出/导入外无任何写入，指标全部由 attempts 现算（最终审查 Minor 4；规格 §2.4 的 M1 读写表措辞与实现不符，M2 补写入或改规格措辞）。
+
+**错误处理与降级：**
+- 播种失败仅 console.error；或首次启动用户早于 bulkPut 完成点入练习——专项页空结果不抛错、无重试按钮，与规格 §3"明确错误与重试"不符（最终审查 Minor 3）。
+- today 页 bundle 拉取失败静默降级为"0 题"卡片，点入练习后才见错误（最终审查 Minor 6）。
+- `crypto.randomUUID` 在非安全上下文（http 非 localhost 部署）无 fallback，每次提交进"提交失败"循环（最终审查 Minor 7；GitHub Pages/localhost 不受影响）。
+
+**备份：**
+- 规格 §2.6"导入前自动先导出当前数据做安全备份"未实现（最终审查 Minor 5，plan 中无对应任务）。
+- counts 校验缺 key 时预览显示 undefined、行含 null 元素的 TypeError（Task 12 质量审查 Minor）。
+
+**代码结构：**
+- 五页面 stale-guard/渲染样板重复，可抽共享渲染辅助（Task 10/12 质量审查）。
+
+**CI 与工程：**
+- check_site.py SKIP_DIRS 为 basename 匹配，会剪枝任意深度的同名目录（Task 13 质量审查 Minor）。
+- htmlvalidate 排除列表在 package.json / ci.yml / check_site.py 三处重复维护（Task 13 质量审查 Minor）。
+- `.playwright-mcp/` 未加入 .gitignore（Task 13 规格审查观察；未入库，仅防误提交）。

@@ -155,3 +155,27 @@
 6. 配置百炼 Key 后：练习页 AI 讲解/提示、周报 AI 建议真实可用（此条由用户拿 Key 后实测，开发期以 mock 验证链路）；未配置/断网/超时全链路不崩
 7. 备份导出不含 Key/PIN；v1 旧备份可导入
 8. `test:app` 全绿；构建零漂移；原站 CI 不受影响
+
+## 验收记录（2026-11-17，M2+M3 实施完成）
+
+**验收基线：** 提交 `468f99b`（实施全部完成后的 HEAD）；验收过程中未改动任何源码（工作区始终 clean）。
+**验收方法：** Playwright 真实浏览器（Vite dev server）+ raw IndexedDB 直写注入"隔日/多日"数据（改 attempts/mastery/tasks 行的日期字段，不改系统时钟）；练习、报告、设置、备份均走真实 UI 操作路径。第 6 条以 `window.fetch` 覆盖 mock 百炼响应验证降级链（开发期约定方式），真实 Key 实测留待用户。
+
+### 逐条结果（对照 §10）
+
+1. **连续多日数据 → 通过。** 注入 6 个本地日（11-11～11-16）15 条 attempts、4 行 mastery、19 行往日 tasks；打开今日页（11-17，学习日）生成计划：review（4 题 = 昨日 deferred 结转 `g7a-articles-l1-0003/0004` + 到期复测 `0001/0002`）+ unit（当前单元词汇）+ special（薄弱聚合选中"名词与所有格"）+ summary；同日重复打开任务 id 逐行一致（按 `day` 查重幂等）。
+2. **间隔复测状态机 → 通过。** 首错 → `weak`/intervalDays 1/次日本地零点（UTC ISO 存储）；次日今日页出现"到期复习 1 题"卡；复测正确依次 1→3→7→14 天递进（3 档 `consolidating`，7→14 档 `mastered`，nextReviewAt `2026-11-30T16:00:00Z` 即 12-01 本地零点）；`mastered` 后到期复测错 → 回退 `weak`/1 天/次日；同日当场重试不推进（attempts phase `first`/`retry` 佐证）。
+3. **报告页增强 → 通过。** 七日趋势内联 SVG（7 柱 + 折线）；三个薄弱点（the / possessive-form / 词汇·Unit 1，各 67% 首测错误率，首测 ≥3 次门槛生效）；复测按时率 75%（有数据）与"不适用"（干净上下文、到期数 0）两态均验证；易错词与错题本显示解析后题干（如"默写：招呼；问候（v.）"）与单词 greet/unit，不再出现原始 questionId。
+4. **PIN 与试卷成绩 → 通过。** 设置 PIN 后修改每日时长（35→40）触发 PIN 门禁行内卡；错 PIN 提示"PIN 不正确。"拒绝；对 PIN 通过且 DB `dailyMinutes=40` 落库；录入试卷"语法 12/15、词汇 8/10"后报告页出现"试卷成绩（手工录入）"卡，标注手工录入、不参与自动指标。
+5. **七下四专项 + 两册词汇 → 通过（含保留项）。** 8 个专项（g7a-present/nouns/numbers/articles、g7b-adjadv/nouns/pronouns-modals/tenses）经 `#/exercise?set=<id>` 各进入并提交 1 题，判分反馈与 attempts 落库（题 id 与专项前缀一致，如 `g7b-tenses-l1-0008`）；`#/exercise?vocab=v1-u1`、`?vocab=v2-u1` 各完成 1 题默写（标题"单词默写 · Starter Unit 1"/"单词默写 · Unit 1"）；设置页册别切换 g7a→v1-u1…u10、g7b→v2-u1…u8 正确联动。脚本幂等零漂移由 Vitest 播种/防漂移测试与构建零漂移佐证。**保留项：** 今日页经 Task 6 改版为任务清单后不再有八专项自由练习入口卡（M1 版曾有），自由选择专项目前仅经 URL 参数 `?set=` 或计划生成的专项卡进入——功能可用但入口隐蔽，登记为后续 UX 待办，非功能缺陷。
+6. **AI 接入 → 自动化部分通过，真实 Key 待用户实测。** 开发期以 mock fetch + 假 Key `sk-test-fake-key-0000`（掩码 `sk-****0000`）验证全链路：网络失败 → "网络不可用，请检查网络后重试。"+ 重试按钮，重试成功后 AI 提示渲染且每题一次（按钮移除）；HTTP 500 → "AI 服务出错，请稍后再试。"；挂起 20.5s → "AI 响应超时，请重试。"（aiRequests latencyMs 20501）；周报 AI 建议失败重试成功后四段渲染、`weeklyReports` 存档（weekStart 2026-11-16）且历史周报可回看；`aiEnabled` 关闭/未配置 Key 时按钮灰态（title"已在设置页关闭 AI"/"未配置 AI（设置页）"）；一切 AI 失败不影响做题、判分、attempts/mastery 落库与备份（降级链 §7.4）；`aiRequests` 仅记 type/status/latencyMs。配额与提示词转义由 Vitest 单测覆盖。**真实百炼 Key + qwen-flash 实测：待用户本人经设置页录入后验证练习页 AI 讲解/提示与周报 AI 建议。**
+7. **备份红线 → 通过。** 导出 v2 JSON 全文（UI 与磁盘文件双检）无 `aiApiKey`/`parentPin`/Key 字符串/PIN 值；各表 counts 与 DB 实际行数一致；v1 备份（schemaVersion 1 夹具）经 UI 导入走 PIN 门禁 → 预览 → 合并导入（"新增作答 1 条"，本地已有记录保留不覆盖）；导入确认前自动触发安全备份下载。
+8. **测试与构建 → 通过。** `npx vitest run`：19 个测试文件 320 个用例全绿；`npm run build` 成功（40 模块）且构建后 `git status` 零漂移；全程未触碰原站 content/ 与 CI 相关文件。
+
+### 密钥红线核对
+
+真实 API Key 在整个实施与验收过程中未进入任何代码、文档、命令或备份文件；验收仅使用假 Key `sk-test-fake-key-0000`，真实 Key 实测由用户在浏览器设置页自行录入。
+
+### 结论
+
+§10 八项中 1–5、7、8 共 7 条通过（第 5 条含"今日页八专项自由入口"保留项）；第 6 条降级链与灰态经 mock 全链路验证通过，真实 Key 联通性待用户实测。

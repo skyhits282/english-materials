@@ -4,7 +4,9 @@
   "description": "english-materials 站点的 HTML 校验与 Lighthouse 性能检查（仅 CI 使用）",
   "scripts": {
     "htmlvalidate": "html-validate \"**/*.html\"",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun",
+    "extract:g7a": "node scripts/extract-g7a.mjs",
+    "test:extract": "node --test \"scripts/*.test.mjs\""
   },
   "devDependencies": {
     "@lhci/cli": ">=0.14.0",

@@ -1,0 +1,18 @@
+{
+  "contentId": "g7a",
+  "version": "2026-11-16",
+  "questionCount": 192,
+  "vocabWordCount": 184,
+  "files": [
+    {
+      "name": "questions.json",
+      "sha256": "b9ffd11c9a633b6113f71a7aa78dfc32d2f8434244b53458887df9cf0f307be8",
+      "count": 192
+    },
+    {
+      "name": "vocab.json",
+      "sha256": "45b90aea17a67399081e06f349b2fae05ea4c0ee3fcbdf1eca855826fe42d4a2",
+      "count": 10
+    }
+  ]
+}

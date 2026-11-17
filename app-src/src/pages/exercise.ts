@@ -3,7 +3,7 @@ import { navigate } from '../router'
 import type { Question } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { questionsByUnitPrefix } from '../db/repos'
-import { saveAttempt, hasPriorAttempt, applyMasteryUpdate } from '../db/repos'
+import { saveAttempt, hasPriorAttempt, applyMasteryUpdate, getReviewSet, listAllQuestions } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { PracticeSession, type Submission } from '../domain/session'
 import { escapeHtml } from '../ui/escape'
@@ -19,7 +19,45 @@ function shuffle<T>(items: T[]): T[] {
   return arr
 }
 
-async function loadQuestions(params: URLSearchParams): Promise<{ title: string; questions: Question[] }> {
+/** 复测模式（#/exercise?set=review）：getReviewSet 产出到期题 ID，这里解析为 Question 对象。
+ *  选择题以 questions 表为准，词题不在表中、由 bundle 词汇派生（与词汇模式同一派生路径，题干格式自然一致）；
+ *  保留 picker 的轮转均衡顺序，不再 shuffle（打散会破坏知识点均衡）。 */
+async function loadReviewQuestions(): Promise<{ title: string; questions: Question[]; emptyMessage?: string }> {
+  const storageOk = await isStorageAvailable()
+  if (!storageOk) {
+    // 复测数据全在 IndexedDB：存储不可用时按无到期数据展示空态（而非错误面板）
+    return { title: '到期复习', questions: [], emptyMessage: '浏览器存储不可用，无法读取到期复习数据。' }
+  }
+  const review = await getReviewSet()
+  if (review.questionIds.length === 0) {
+    return { title: '到期复习', questions: [], emptyMessage: '今日没有到期复习。' }
+  }
+  const [bundle, dbQuestions] = await Promise.all([fetchContentBundle(), listAllQuestions()])
+  const byId = new Map<string, Question>()
+  for (const q of dbQuestions) byId.set(q.id, q)
+  for (const book of bundle.vocab) {
+    for (const unit of book.units) {
+      for (const q of deriveVocabQuestions(bundle.vocab, unit.id)) byId.set(q.id, q)
+    }
+  }
+  const questions: Question[] = []
+  for (const id of review.questionIds) {
+    const q = byId.get(id)
+    if (q) questions.push(q)
+    else console.warn('复测题无法解析（内容缺失），已跳过：', id)
+  }
+  if (questions.length === 0) {
+    return { title: '到期复习', questions: [], emptyMessage: '今日没有到期复习。' }
+  }
+  return { title: `到期复习 · ${questions.length} 题`, questions }
+}
+
+async function loadQuestions(
+  params: URLSearchParams,
+): Promise<{ title: string; questions: Question[]; emptyMessage?: string }> {
+  if (params.get('set') === 'review') {
+    return loadReviewQuestions()
+  }
   const vocabUnit = params.get('vocab')
   if (vocabUnit) {
     const bundle = await fetchContentBundle()
@@ -46,7 +84,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     const onHashChange = () => { stale = true }
     window.addEventListener('hashchange', onHashChange, { once: true })
     container.innerHTML = '<h1>学习练习</h1><p class="muted">加载中…</p>'
-    let data: { title: string; questions: Question[] }
+    let data: { title: string; questions: Question[]; emptyMessage?: string }
     let storageOk = false
     try {
       storageOk = await isStorageAvailable()
@@ -61,7 +99,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     if (stale) return
     if (data.questions.length === 0) {
       window.removeEventListener('hashchange', onHashChange)
-      container.innerHTML = `<h1>学习练习</h1><div class="card"><h3>${escapeHtml(data.title)}</h3><p>该内容暂无题目。</p><div class="action-row"><button class="btn btn-secondary" id="back">返回今日学习</button></div></div>`
+      container.innerHTML = `<h1>学习练习</h1><div class="card"><h3>${escapeHtml(data.title)}</h3><p>${escapeHtml(data.emptyMessage ?? '该内容暂无题目。')}</p><div class="action-row"><button class="btn btn-secondary" id="back">返回今日学习</button></div></div>`
       container.querySelector('#back')?.addEventListener('click', () => navigate('today'))
       return
     }

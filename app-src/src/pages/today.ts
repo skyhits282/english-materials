@@ -3,7 +3,7 @@ import { navigate } from '../router'
 import { SPECIALS } from '../content/sets'
 import { fetchContentBundle, findVocabUnit } from '../content/loader'
 import type { VocabBook } from '../types'
-import { getSettings, listAttempts } from '../db/repos'
+import { getSettings, listAttempts, getReviewSet } from '../db/repos'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
 import { escapeHtml } from '../ui/escape'
 
@@ -15,11 +15,13 @@ export const renderToday: PageRenderer = async ({ container }) => {
   let settings: Awaited<ReturnType<typeof getSettings>>
   let attempts: Awaited<ReturnType<typeof listAttempts>>
   let bundle: Awaited<ReturnType<typeof fetchContentBundle>> | undefined
+  let review: Awaited<ReturnType<typeof getReviewSet>> | undefined
   try {
-    [settings, attempts, bundle] = await Promise.all([
+    ;[settings, attempts, bundle, review] = await Promise.all([
       getSettings(),
       listAttempts(),
       fetchContentBundle().catch(() => undefined),
+      getReviewSet().catch(() => undefined), // 复测概要读取失败不阻塞今日页（卡片不显示）
     ])
   } catch {
     if (stale) return
@@ -44,7 +46,24 @@ export const renderToday: PageRenderer = async ({ container }) => {
     desc: `${vocabUnit?.words.length ?? 0} 个单词 · 中→英`,
     action: () => navigate('exercise', { vocab: settings.currentUnit }),
   }
-  const cards = [
+  interface TodayCard {
+    heading?: string
+    title: string
+    desc: string
+    button?: string
+    action: () => void
+  }
+  const cards: TodayCard[] = []
+  // 顶部到期复习卡（规格 §1.2）：显示到期知识点数与本次复测题数；无可复测题时不显示
+  if (review && review.questionIds.length > 0) {
+    cards.push({
+      title: '到期复习',
+      desc: `${review.dueKpCount} 个知识点 · ${review.questionIds.length} 题`,
+      button: '开始复习',
+      action: () => navigate('exercise', { set: 'review' }),
+    })
+  }
+  cards.push(
     ...specialGroups.flatMap(({ heading, book }) =>
       SPECIALS.filter((s) => s.book === book).map((s) => {
         const count = bundle?.questions.filter((q) => q.unit.startsWith(s.id)).length ?? 0
@@ -57,7 +76,7 @@ export const renderToday: PageRenderer = async ({ container }) => {
       }),
     ),
     vocabCard,
-  ]
+  )
 
   container.innerHTML = `
     <h1>今日学习</h1>
@@ -72,11 +91,11 @@ export const renderToday: PageRenderer = async ({ container }) => {
     <div class="card">
       <h3>${c.title}</h3>
       <p>${c.desc}</p>
-      <div class="action-row"><button class="btn" data-card="${i}">开始练习</button></div>
+      <div class="action-row"><button class="btn" data-card="${i}">${escapeHtml(c.button ?? '开始练习')}</button></div>
     </div>`,
       )
       .join('')}
-    <p class="muted">学习计划自动生成与到期复习将在后续版本提供。</p>`
+    <p class="muted">学习计划自动生成将在后续版本提供。</p>`
   for (const btn of container.querySelectorAll<HTMLButtonElement>('button[data-card]')) {
     btn.addEventListener('click', () => cards[Number(btn.dataset.card)]?.action())
   }

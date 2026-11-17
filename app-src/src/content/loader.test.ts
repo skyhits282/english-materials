@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { deriveVocabQuestions, findVocabUnit, vocabUnitsForBook } from './loader'
+import { deriveVocabQuestions, findVocabUnit, vocabQuestionId, vocabKpFromQuestionId, vocabUnitsForBook } from './loader'
 import type { VocabBook } from '../types'
 
 const word = (over: Partial<VocabBook['units'][number]['words'][number]>) => ({
@@ -87,6 +87,23 @@ describe('deriveVocabQuestions', () => {
     expect(qs[0]!.knowledgePointIds).toEqual(['vocab.g7a.u1'])
     expect(qs[0]!.explanation).toContain('unit')
     expect(qs[0]!.explanation).toContain('单元')
+  })
+})
+
+describe('vocabKpFromQuestionId（词题 ID → 知识点，供 DB 反查派生）', () => {
+  it('词题 ID → vocab.<book>.<短单元名>', () => {
+    expect(vocabKpFromQuestionId('g7a-vocab-u4-0007')).toBe('vocab.g7a.u4')
+    expect(vocabKpFromQuestionId('g7b-vocab-u12-0130')).toBe('vocab.g7b.u12')
+  })
+
+  it('与 vocabQuestionId 严格互逆（派生 ID 一定解析回同一知识点）', () => {
+    expect(vocabKpFromQuestionId(vocabQuestionId('g7a', 'v1-u1', 2))).toBe('vocab.g7a.u1')
+    expect(vocabKpFromQuestionId(vocabQuestionId('g7b', 'v2-u3', 128))).toBe('vocab.g7b.u3')
+  })
+
+  it('非词题 ID（专项选择题等）返回 undefined', () => {
+    expect(vocabKpFromQuestionId('g7a-present-l1-0001')).toBeUndefined()
+    expect(vocabKpFromQuestionId('')).toBeUndefined()
   })
 })
 

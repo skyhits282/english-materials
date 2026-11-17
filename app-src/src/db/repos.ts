@@ -1,7 +1,9 @@
 import { db, type ContentMetaRow } from './schema'
 import type { Attempt, Mastery, Question, Settings } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
-import { localDayKey } from '../domain/metrics'
+import { localDayKey, isSameLocalDay } from '../domain/metrics'
+import { pickReviewQuestions } from '../domain/review-picker'
+import { vocabKpFromQuestionId } from '../content/loader'
 
 export const DEFAULT_SETTINGS: Settings = {
   grade: 7,
@@ -75,6 +77,60 @@ export async function hasPriorAttempt(questionId: string): Promise<boolean> {
 
 export async function upsertQuestions(questions: Question[]): Promise<void> {
   await db.questions.bulkPut(questions)
+}
+
+export interface ReviewSet {
+  /** 本次复测题目 ID（轮转均衡、上限 10；词题 ID 原样保留，由练习页解析器显示） */
+  questionIds: string[]
+  /** 到期知识点数 */
+  dueKpCount: number
+  /** 去重并剔除当日已答后的可复测题目总数（不含上限截断） */
+  availableCount: number
+}
+
+/** 复测选题（规格 §1.2）：到期 mastery 知识点 × 历史曾答错题，交纯函数 pickReviewQuestions 均衡抽取。
+ *  now 可注入（测试与跨日边界用），默认当前时刻。 */
+export async function getReviewSet(now: Date = new Date()): Promise<ReviewSet> {
+  const nowIso = now.toISOString()
+  const todayKey = localDayKey(now)
+  // 索引预筛（nextReviewAt 存本地零点转的 UTC ISO；Dexie 4 的 <= 查询为 belowOrEqual），
+  // 再按本地日口径兜底过滤：正时区下"明日本地零点"的 UTC 值可能早于 now，索引命中但本地日未到期，须剔除
+  const dueRows = (await db.mastery.where('nextReviewAt').belowOrEqual(nowIso).toArray()).filter(
+    (row) => row.nextReviewAt !== undefined && localDayKey(new Date(row.nextReviewAt)) <= todayKey,
+  )
+  if (dueRows.length === 0) return { questionIds: [], dueKpCount: 0, availableCount: 0 }
+  const dueKps = new Set(dueRows.map((row) => row.knowledgePointId))
+
+  // attempts 无 isCorrect 索引：量级 <2 万，单次全表扫描同时汇总"曾答错题"与"当日已答"，
+  // 比按 questionId 索引逐题反查（<1000 题 × N 次索引往返）更省
+  const wrongQuestionIds = new Set<string>()
+  const doneToday = new Set<string>()
+  await db.attempts.each((a) => {
+    if (!a.isCorrect) wrongQuestionIds.add(a.questionId)
+    if (isSameLocalDay(a.submittedAt, todayKey)) doneToday.add(a.questionId)
+  })
+
+  // questionId → 知识点：选择题查 questions 表；词题不在表内，按 ID 约定派生（loader.vocabKpFromQuestionId）
+  const kpByQuestionId = new Map<string, string[]>()
+  for (const q of await db.questions.toArray()) kpByQuestionId.set(q.id, q.knowledgePointIds)
+
+  const wrongByKp = new Map<string, string[]>()
+  for (const qid of wrongQuestionIds) {
+    let kps = kpByQuestionId.get(qid)
+    if (kps === undefined) {
+      const vocabKp = vocabKpFromQuestionId(qid)
+      kps = vocabKp !== undefined ? [vocabKp] : []
+    }
+    for (const kp of kps) {
+      if (!dueKps.has(kp)) continue
+      const list = wrongByKp.get(kp)
+      if (list) list.push(qid)
+      else wrongByKp.set(kp, [qid])
+    }
+  }
+
+  // dueRows 按 nextReviewAt 索引序（更逾期在前）传入，轮转顺序随之确定
+  return pickReviewQuestions({ now, masteryRows: dueRows, wrongQuestionIdsByKp: wrongByKp, alreadyDoneToday: doneToday })
 }
 
 /** 前缀匹配专项 unit（如 'g7a-present' 命中 'g7a-present-l1'…）；调用方应传完整 special id，词汇单元（v1-u*）不写入 questions 表、不适用本查询 */

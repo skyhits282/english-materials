@@ -41,6 +41,13 @@ export function vocabQuestionId(book: string, unitId: string, no: number): strin
   return `${book}-vocab-${unitShortName(unitId)}-${String(no).padStart(4, '0')}`
 }
 
+/** 词题 questionId（`<book>-vocab-<短单元名>-<4 位词序号>`）→ 知识点 ID（`vocab.<book>.<短单元名>`）。
+ *  词题不在 questions 表中，DB 层反查曾答错题时按此约定派生知识点（与 vocabQuestionId 共用同一 ID 拼法）；非词题 ID 返回 undefined。 */
+export function vocabKpFromQuestionId(questionId: string): string | undefined {
+  const m = /^([a-z0-9]+)-vocab-([a-z0-9]+)-\d+$/.exec(questionId)
+  return m ? `vocab.${m[1]}.${m[2]}` : undefined
+}
+
 /** contentVersion 统一用书级版本；词 ID 的可追溯性已体现在 Question.id 中 */
 function toVocabQuestion(book: VocabBook, unitId: string, w: VocabWord): Question {
   const accepted = [w.word, ...(w.variant ? [w.variant] : [])]

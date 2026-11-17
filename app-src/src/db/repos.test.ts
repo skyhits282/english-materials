@@ -14,8 +14,9 @@ import {
   putContentMeta,
   getContentMeta,
   applyMasteryUpdate,
+  getReviewSet,
 } from './repos'
-import type { Attempt, Question, Settings } from '../types'
+import type { Attempt, Mastery, Question, Settings } from '../types'
 
 const q = (id: string, unit: string): Question => ({
   id,
@@ -181,5 +182,73 @@ describe('applyMasteryUpdate（mastery 提交挂钩）', () => {
     expect(await db.mastery.count()).toBe(2)
     expect((await db.mastery.get('grammar.present.basic'))?.stage).toBe('weak')
     expect((await db.mastery.get('grammar.present.usage'))?.stage).toBe('weak')
+  })
+})
+
+describe('getReviewSet（复测选题 repo 封装）', () => {
+  /** 本地固定时刻，保证本地日断言与运行时区无关 */
+  const at = (y: number, m: number, d: number, h = 10): Date => new Date(y, m - 1, d, h)
+  const NOW = at(2026, 11, 17)
+
+  const masteryRow = (kp: string, nextReviewAt?: string): Mastery => ({
+    knowledgePointId: kp,
+    stage: nextReviewAt ? 'weak' : 'new',
+    intervalDays: nextReviewAt ? 1 : 0,
+    metrics: { testedCount: 1, firstTryCorrect: 0, delayedReviewCorrect: 0 },
+    ...(nextReviewAt ? { nextReviewAt } : {}),
+  })
+
+  const sub = (id: string, questionId: string, isCorrect: boolean, when: Date, phase: 'first' | 'retry' = 'first'): Attempt => ({
+    id,
+    questionId,
+    answer: 'x',
+    isCorrect,
+    phase,
+    submittedAt: when.toISOString(),
+  })
+
+  it('到期知识点 × 曾答错题：选择题查 questions 表、词题按 ID 原样保留，轮转均衡输出', async () => {
+    await upsertQuestions([{ ...q('g7a-present-l1-0001', 'g7a-present-l1'), knowledgePointIds: ['grammar.present'] }])
+    // 词题知识点逾期更早（索引序在前），轮转第 1 轮先取词题
+    await db.mastery.bulkPut([masteryRow('grammar.present', new Date(2026, 10, 17).toISOString()), masteryRow('vocab.g7a.u1', new Date(2026, 10, 16).toISOString())])
+    await db.attempts.bulkAdd([
+      sub('a1', 'g7a-vocab-u1-0001', false, at(2026, 11, 16)),
+      sub('a2', 'g7a-present-l1-0001', false, at(2026, 11, 16)),
+    ])
+    const r = await getReviewSet(NOW)
+    expect(r.questionIds).toEqual(['g7a-vocab-u1-0001', 'g7a-present-l1-0001'])
+    expect(r.dueKpCount).toBe(2)
+    expect(r.availableCount).toBe(2)
+  })
+
+  it('未到期/未排期与无错题知识点不产出题目；曾答对的历史不算错题', async () => {
+    await upsertQuestions([{ ...q('q1', 'g7a-present-l1'), knowledgePointIds: ['k.due'] }])
+    await db.mastery.bulkPut([
+      masteryRow('k.future', new Date(2026, 10, 18).toISOString()), // 明日才到期
+      masteryRow('k.nosched'), // 未排期
+      masteryRow('k.due', new Date(2026, 10, 17).toISOString()),
+      masteryRow('k.nowrong', new Date(2026, 10, 17).toISOString()), // 到期但历史全对
+    ])
+    await db.attempts.bulkAdd([
+      sub('a1', 'q2', false, at(2026, 11, 16)), // 属于未到期知识点之外的题
+      sub('a2', 'q1', true, at(2026, 11, 16)), // q1 历史只有答对记录
+      sub('a3', 'q3', true, at(2026, 11, 16)),
+    ])
+    const r = await getReviewSet(NOW)
+    expect(r.questionIds).toEqual([])
+    expect(r.dueKpCount).toBe(2) // k.due 与 k.nowrong
+    expect(r.availableCount).toBe(0)
+  })
+
+  it('当日已答（含当日复测答对）的题剔除，避免立即重复', async () => {
+    await upsertQuestions([{ ...q('q1', 'g7a-present-l1'), knowledgePointIds: ['k'] }])
+    await db.mastery.put(masteryRow('k', new Date(2026, 10, 17).toISOString()))
+    await db.attempts.bulkAdd([
+      sub('a1', 'q1', false, at(2026, 11, 16)), // 昨日首测错误 → 曾答错
+      sub('a2', 'q1', true, at(2026, 11, 17), 'retry'), // 今日复测已答
+    ])
+    const r = await getReviewSet(NOW)
+    expect(r.questionIds).toEqual([])
+    expect(r.availableCount).toBe(0)
   })
 })

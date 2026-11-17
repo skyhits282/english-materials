@@ -489,7 +489,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/types.ts`（Settings：aiBaseUrl/aiApiKey/aiModel/aiDailyLimit）、`app-src/src/pages/settings.ts`（AI 配置卡）、`app-src/src/services/backup/index.ts`（v2）
 - Test: `app-src/src/services/backup/index.test.ts`（扩展）
 
-- [ ] **Step 1: Settings 扩展与 AI 配置卡**
+- [x] **Step 1: Settings 扩展与 AI 配置卡**
 
 ```ts
 // types.ts Settings 增加（均可选，未配置=灰态）：
@@ -505,7 +505,7 @@ settings.ts 新增"AI 配置"卡：
 - 「测试连接」按钮：发一条最小 chat 请求（见 Task 10 transport，1 token 上限），成功显示"连通 ✓ 模型 <name>"，失败显示错误类别（401 密钥无效 / 网络失败 / 超时）——本按钮在 Task 10 完成后联调，本任务先渲染 UI 与校验
 - 卡片头部注明"密钥仅存本机浏览器，不会出现在备份文件中"
 
-- [ ] **Step 2: 备份 v2**
+- [x] **Step 2: 备份 v2**
 
 `services/backup/index.ts`：
 - `BACKUP_SCHEMA_VERSION = 2`
@@ -514,7 +514,7 @@ settings.ts 新增"AI 配置"卡：
 - **v1 兼容**：`schemaVersion: 1` 的文件仍可导入（跳过 v2 新表校验，按 v1 规则）；v2 文件缺 v2 表数组按空处理
 - 导入前自动安全备份（技术债 §8.1"默认先备份"）：`importBackup` 执行前若本地有数据（任一表非空），自动触发一次 `exportBackup` 下载（文件名加 `-pre-import` 后缀）；用户取消浏览器下载不阻断导入，仅 console.warn
 
-- [ ] **Step 3: 测试扩展**
+- [x] **Step 3: 测试扩展**
 
 - 导出文件不含 aiApiKey/parentPin（有值时导出后断言字段不存在、counts 一致）
 - v2 round-trip：含 tasks/weeklyReports/aiRequests 数据导出→清库→导入一致
@@ -522,7 +522,7 @@ settings.ts 新增"AI 配置"卡：
 - 畸形 tasks/weeklyReports/aiRequests 行拒绝且不写入
 - 剔除后导出→导入：settings 其他字段（含 aiBaseUrl/aiModel）保留，aiApiKey 为空
 
-- [ ] **Step 4: 全量验证 + Commit**
+- [x] **Step 4: 全量验证 + Commit**
 
 ```bash
 git add -A && git commit -m "feat(app): AI 配置卡；备份升 v2 剔除凭证并兼容 v1，导入前自动安全备份

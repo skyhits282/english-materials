@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, maskApiKey, parseAiConfigForm } from './ai-config'
+import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, AI_DEFAULT_VISION_MODEL, maskApiKey, parseAiConfigForm } from './ai-config'
 
 /** 假 Key（红线：任何真实密钥不得出现在代码/测试/提交中） */
 const FAKE_KEY = 'sk-test-fake-key-0000'
@@ -19,6 +19,7 @@ describe('parseAiConfigForm（保存前校验）', () => {
     baseUrl: AI_DEFAULT_BASE_URL,
     apiKey: FAKE_KEY,
     model: AI_DEFAULT_MODEL,
+    visionModel: '',
     dailyLimit: String(AI_DEFAULT_DAILY_LIMIT),
   }
 
@@ -61,5 +62,25 @@ describe('parseAiConfigForm（保存前校验）', () => {
   it('每日上限边界 1 与 500 均通过', () => {
     expect(parseAiConfigForm({ ...raw, dailyLimit: '1' }, undefined).ok).toBe(true)
     expect(parseAiConfigForm({ ...raw, dailyLimit: '500' }, undefined).ok).toBe(true)
+  })
+})
+
+describe('aiVisionModel（手写识别模型，可选）', () => {
+  const base = { baseUrl: 'https://dashscope.example/v1', apiKey: '', model: 'qwen-test', dailyLimit: '50' }
+
+  it('留空 → 不写入 aiVisionModel（用默认 qwen-vl-ocr）', () => {
+    const parsed = parseAiConfigForm({ ...base, visionModel: '' }, undefined)
+    expect(parsed.ok).toBe(true)
+    if (parsed.ok) expect(parsed.value.aiVisionModel).toBeUndefined()
+  })
+
+  it('非空 → 裁剪后保存', () => {
+    const parsed = parseAiConfigForm({ ...base, visionModel: '  qwen-vl-plus  ' }, undefined)
+    expect(parsed.ok).toBe(true)
+    if (parsed.ok) expect(parsed.value.aiVisionModel).toBe('qwen-vl-plus')
+  })
+
+  it('默认视觉模型常量为 qwen-vl-ocr', () => {
+    expect(AI_DEFAULT_VISION_MODEL).toBe('qwen-vl-ocr')
   })
 })

@@ -117,6 +117,9 @@ export interface Settings {
   aiBaseUrl?: string
   aiApiKey?: string
   aiModel?: string
+  /** 手写拍照识别用多模态模型（qwen-vl-ocr 等）：缺省用 AI_DEFAULT_VISION_MODEL。
+   *  非凭证字段，备份导出不剔除（与 aiModel 同待遇）。 */
+  aiVisionModel?: string
   aiDailyLimit?: number
 }
 

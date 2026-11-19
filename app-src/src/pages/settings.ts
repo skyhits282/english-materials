@@ -13,7 +13,7 @@ import {
 import { escapeHtml } from '../ui/escape'
 import { PIN_LENGTH, PIN_PATTERN, isPinProtectedAction, verifyPin, type PinProtectedAction } from '../domain/pin'
 import { EXAM_MAX_ROWS, parseExamRows } from '../domain/exam-scores'
-import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, maskApiKey, parseAiConfigForm } from '../domain/ai-config'
+import { AI_DEFAULT_BASE_URL, AI_DEFAULT_DAILY_LIMIT, AI_DEFAULT_MODEL, AI_DEFAULT_VISION_MODEL, maskApiKey, parseAiConfigForm } from '../domain/ai-config'
 import { testConnection } from '../services/ai/connection'
 import { aiErrorText } from '../services/ai/ui'
 
@@ -334,6 +334,7 @@ function setupAiConfigCard(
     baseUrl: container.querySelector<HTMLInputElement>('#ai-base-url')?.value ?? '',
     apiKey: container.querySelector<HTMLInputElement>('#ai-key')?.value ?? '',
     model: container.querySelector<HTMLInputElement>('#ai-model')?.value ?? '',
+    visionModel: container.querySelector<HTMLInputElement>('#ai-vision-model')?.value ?? '',
     dailyLimit: container.querySelector<HTMLInputElement>('#ai-daily-limit')?.value ?? '',
   })
 
@@ -394,6 +395,8 @@ function setupAiConfigCard(
       if (baseUrl) baseUrl.value = current().aiBaseUrl ?? AI_DEFAULT_BASE_URL
       const model = container.querySelector<HTMLInputElement>('#ai-model')
       if (model) model.value = current().aiModel ?? AI_DEFAULT_MODEL
+      const visionModel = container.querySelector<HTMLInputElement>('#ai-vision-model')
+      if (visionModel) visionModel.value = current().aiVisionModel ?? ''
       const limit = container.querySelector<HTMLInputElement>('#ai-daily-limit')
       if (limit) limit.value = String(current().aiDailyLimit ?? AI_DEFAULT_DAILY_LIMIT)
       renderKeyArea()
@@ -502,6 +505,10 @@ export const renderSettings: PageRenderer = async ({ container }) => {
       <div class="form-row">
         <label for="ai-model">模型名</label>
         <input id="ai-model" type="text" value="${escapeHtml(settings.aiModel ?? AI_DEFAULT_MODEL)}">
+      </div>
+      <div class="form-row">
+        <label for="ai-vision-model">手写识别模型（留空用默认 ${AI_DEFAULT_VISION_MODEL}）</label>
+        <input id="ai-vision-model" type="text" value="${escapeHtml(settings.aiVisionModel ?? '')}" placeholder="${AI_DEFAULT_VISION_MODEL}">
       </div>
       <div class="form-row">
         <label for="ai-daily-limit">每日调用上限（1–500）</label>

@@ -3,15 +3,15 @@ import { navigate } from '../router'
 import type { Question, Settings } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { DEFAULT_SETTINGS, getSettings, questionsByUnitPrefix } from '../db/repos'
-import { saveAttempt, hasPriorAttempt, applyMasteryUpdate, getReviewSet, listAllQuestions, getTask, updateTaskStatus, completeTask } from '../db/repos'
+import { getReviewSet, listAllQuestions } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
-import { PracticeSession, type Submission } from '../domain/session'
-import { localDayKey } from '../domain/metrics'
+import type { Submission } from '../domain/session'
 import { escapeHtml } from '../ui/escape'
 import { getAiUsageToday } from '../services/ai/quota'
 import { runAiTask, type AiRawResult, type ExplainMistakePayload, type ExplainMistakeResult } from '../services/ai/tasks'
 import { aiButtonState, aiErrorText } from '../services/ai/ui'
-import type { TaskRow } from '../db/schema'
+import { buildRecordingSession } from './session-setup'
+import { markTaskCompleted, markTaskStarted } from './task-hooks'
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
@@ -26,35 +26,6 @@ function explainResultHtml(result: ExplainMistakeResult | AiRawResult): string {
     <h4>讲解</h4><p>${escapeHtml(result.explanation)}</p>
     <h4>变式练习</h4><p>${escapeHtml(result.followUpQuestion)}</p>
   </div>`
-}
-
-/** 任务回写辅助：回写失败仅告警，不阻塞练习主链路（沿用 M1 降级哲学） */
-
-/** 任务存在且属于今日（跨日打开的旧链接任务不回写——隔日练习不应改写昨日任务状态） */
-async function todaysTask(taskId: string): Promise<TaskRow | undefined> {
-  const task = await getTask(taskId)
-  return task && task.day === localDayKey() ? task : undefined
-}
-
-async function markTaskStarted(taskId: string): Promise<void> {
-  try {
-    const task = await todaysTask(taskId)
-    // 仅 planned 起转（重复进入已 in_progress 的任务不可再转，状态机无自环转移）
-    if (!task || task.status !== 'planned') return
-    await updateTaskStatus(taskId, 'in_progress')
-  } catch (err) {
-    console.warn('任务置 in_progress 失败：', err)
-  }
-}
-
-async function markTaskCompleted(taskId: string): Promise<void> {
-  try {
-    if (!(await todaysTask(taskId))) return
-    // 状态机转移（planned 两步/in_progress 直转/终态拒绝返回 false）下沉在 completeTask
-    await completeTask(taskId)
-  } catch (err) {
-    console.warn('任务完成回写失败：', err)
-  }
 }
 
 function shuffle<T>(items: T[]): T[] {
@@ -201,28 +172,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       }
     }
 
-    // 提交挂钩：attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；
-    // 挂钩失败仅 console.warn 并回退为单独保存 attempt，不影响判分主链路（沿用 M1 降级哲学）
-    const questionsById = new Map(data.questions.map((item) => [item.id, item] as const))
-    const session = new PracticeSession(data.questions, {
-      hasPriorAttempt: storageOk ? hasPriorAttempt : async () => false,
-      recordAttempt: storageOk
-        ? async (a) => {
-            const question = questionsById.get(a.questionId)
-            if (!question) {
-              console.warn('mastery 挂钩跳过：会话内未找到题目', a.questionId)
-              await saveAttempt(a)
-              return
-            }
-            try {
-              await applyMasteryUpdate(a, question)
-            } catch (err) {
-              console.warn('mastery 更新失败，回退为仅保存 attempt：', err)
-              await saveAttempt(a)
-            }
-          }
-        : async (a) => console.warn('存储不可用，跳过记录：', a.questionId),
-    })
+    const session = buildRecordingSession(data.questions, storageOk)
     const stats = { correct: 0, total: session.total }
 
     const renderQuestion = () => {

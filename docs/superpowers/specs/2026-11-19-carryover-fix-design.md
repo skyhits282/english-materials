@@ -56,13 +56,13 @@
 
 - `domain/plan.ts` 纯函数单测（`pickCarrySource`）：多日窗口取最近有任务日；空窗口返回空；最近日无 deferred 返回空（不看更早）；deferred/skipped 混合只取 deferred；恰好 14 天边界（含/不含）；跨月日期（`YYYY-MM-DD` 字典序直接比较，跨月天然正确）。
 - `db/repos.ts` 集成测试（fake-indexeddb）：周六 deferred + 周日无任务 → 周一生成计划 review 段含周六 deferred 的题；连续多日缺勤 → 取最早可见的最近有任务日；同日二次调用不重复结转；休息日仍不生成新任务。
-- `pages/today.ts` 组件级测试：当日有任务 + `studyDaysPerWeek` 调小 → 显示任务卡不显示休息页；当日无任务 + 非学习日 → 休息页原样。
+- `pages/today.ts` 组件级测试：当日有任务 + `studyDaysPerWeek` 调小 → 显示任务卡不显示休息页；当日无任务 + 非学习日 → 休息页原样。（验收期替代口径：仓库无 DOM 级页面测试惯例，已将休息判定抽为 `shouldShowRest` 纯函数（`domain/plan.ts`）并以 `plan.test.ts` 单测固化上述两场景；浏览器手工验收见验收记录场景 B/C。）
 
 ## 验收记录（2026-11-19）
 
 按 §3 与计划 Task 4 逐项实测（Playwright MCP 文本断言 + Vitest；本会话模型不支持图片模态，全程未用截图；dev 服务器实际 base 为 `/english-materials/app/`，根路径 302 跳转至该地址）：
 
-1. **全量测试**：`npm run test:app` 全绿——23 个测试文件、**375 个用例**（与基线一致，含结转窗口/数据优先相关新增用例）；`npm run test:extract` **9/9**（「已提交产物与提取结果逐字节一致（防漂移）」通过，构建产物链路未被波及）。
+1. **全量测试**：`npm run test:app` 全绿——23 个测试文件、**375 个用例**（基线 361 + 本次新增 14：plan 9 + repos 5）；`npm run test:extract` **9/9**（「已提交产物与提取结果逐字节一致（防漂移）」通过，构建产物链路未被波及）。
 2. **场景 A——缺陷①回溯结转**（真实浏览器）：首次打开 `#/today` 正常渲染「今日学习」（2026 年 11 月 19 日 周四），仅 favicon 404 控制台噪声。原始 IndexedDB 操作删除当日全部任务行，并写入 `task-2026-11-17-unit`（`day=2026-11-17`，`status=deferred`，`questionIds=['carry-demo-1','carry-demo-2']`）；11-18 无任务行。经 `#/settings` → `#/today` 重渲染后：「到期复习」卡存在（3 题 · 10 分钟）；读回 `task-2026-11-19-review` 实测 `questionIds=['carry-demo-1','carry-demo-2','g7a-present-l2-0007']`、`status='planned'`——回溯跳过无任务的 11-18、命中 11-17 并把 deferred 题编入复习段，断言全部通过。随后复位删除 review 行与 planted 行。
 3. **场景 B——缺陷②数据优先**：读回 settings `app` 行并临时置 `studyDaysPerWeek = (getDay()+6)%7 = 3`（周四在周一起始序为休息日；原值字段未显式存在，previous 为 undefined，其余字段与 `updatedAt` 原样保留）。经 `#/settings` → `#/today` 重渲染后：页面仍显示任务卡「单词默写」（Unit 1 · 17 词）、「一般现在时与句子种类」（9 题）、「学习小结」，页头「任务 0/3 已完成」；「今日休息」文本不存在——已生成计划不被休息判定遮蔽，断言通过（当日 review 行已在场景 A 复位删除，故以其余任务卡断言）。
 4. **场景 C——休息页原样**：删除当日全部任务行（special/summary/unit 三条），经 `#/settings` → `#/today` 重渲染后：「今日休息」标题存在（2026 年 11 月 19 日 · 周四，明日继续休息），「自由练习（可选）」卡存在（不计入今日任务与完成进度，含「单词默写」按钮），休息页内容完整。收尾复位 `studyDaysPerWeek = 6` 并确认当日任务行为空（库保持干净）。

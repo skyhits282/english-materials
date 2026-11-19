@@ -83,7 +83,7 @@ const ctx = (over: Partial<PlanContext> = {}): PlanContext => ({
   isStudyDay: true,
   reviewQuestions: [],
   wrongByKp: new Map(),
-  yesterdayUnfinished: [],
+  carrySourceTasks: [],
   specialSets: ['g7a-present', 'g7a-nouns'],
   vocab: [vocabBook('v1-u1', 30)],
   specialQuestions: new Map([
@@ -281,7 +281,7 @@ describe('generatePlan：summary 任务', () => {
   })
 })
 
-describe('generatePlan：昨日结转', () => {
+describe('generatePlan：结转', () => {
   const deferredUnit: TaskRow = {
     id: 'task-2026-11-16-unit',
     day: '2026-11-16',
@@ -302,7 +302,7 @@ describe('generatePlan：昨日结转', () => {
   it('deferred → 映射为今日 review 类任务（questionIds 保留、优先编入复习段）', () => {
     const tasks = generatePlan(ctx({
       reviewQuestions: ['due-1'],
-      yesterdayUnfinished: [deferredUnit, skippedSpecial],
+      carrySourceTasks: [deferredUnit, skippedSpecial],
     }))
     const review = byType(tasks, 'review')
     expect(review?.questionIds).toEqual(['carry-1', 'carry-2', 'due-1'])
@@ -310,12 +310,12 @@ describe('generatePlan：昨日结转', () => {
   })
 
   it('skipped 不结转（其题不进入今日任何任务）', () => {
-    const tasks = generatePlan(ctx({ yesterdayUnfinished: [skippedSpecial, deferredUnit] }))
+    const tasks = generatePlan(ctx({ carrySourceTasks: [skippedSpecial, deferredUnit] }))
     for (const t of tasks) expect(t.questionIds).not.toContain('skip-1')
   })
 
   it('仅有结转、无到期复测 → 仍生成 review 任务承载结转题', () => {
-    const tasks = generatePlan(ctx({ yesterdayUnfinished: [deferredUnit] }))
+    const tasks = generatePlan(ctx({ carrySourceTasks: [deferredUnit] }))
     const review = byType(tasks, 'review')
     expect(review?.questionIds).toEqual(['carry-1', 'carry-2'])
     expect(byType(tasks, 'unit')?.minutesPlanned).toBe(14)

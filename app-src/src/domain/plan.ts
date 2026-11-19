@@ -22,8 +22,8 @@ export interface PlanContext {
   reviewQuestions: string[]
   /** 知识点 → 曾错题（用于专项巩固选薄弱专项） */
   wrongByKp: Map<string, string[]>
-  /** 昨日 deferred/skipped 的任务（deferred 结转、skipped 不结转） */
-  yesterdayUnfinished: TaskRow[]
+  /** 结转来源任务（回溯窗口内最近有任务日的 deferred/skipped；deferred 结转、skipped 不结转） */
+  carrySourceTasks: TaskRow[]
   /** 可用专项集合 id（g7a-present…g7b-tenses，顺序即并列时的优先序） */
   specialSets: string[]
   /** 两册词汇题库：unit 任务经 deriveVocabQuestions 派生词题（纯函数无 IO，由调用方传入） */
@@ -117,9 +117,9 @@ export function generatePlan(ctx: PlanContext): TaskRow[] {
   const alloc = allocateMinutes(ctx.settings.dailyMinutes)
   const used = new Set<string>()
 
-  // 结转：昨日 deferred 的题优先编入复习段（questionIds 保留；skipped 不结转）
+  // 结转：来源 deferred 的题优先编入复习段（questionIds 保留；skipped 不结转）
   const carryIds: string[] = []
-  for (const task of ctx.yesterdayUnfinished) {
+  for (const task of ctx.carrySourceTasks) {
     if (task.status !== 'deferred') continue
     for (const id of task.questionIds) {
       if (used.has(id)) continue

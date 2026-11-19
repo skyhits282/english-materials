@@ -396,6 +396,52 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
       expect(t.questionIds).not.toContain(due.id)
     }
   })
+
+  it('缺陷①：周六 deferred + 周日休息（无任务行）→ 周一计划仍结转（回溯跳过无任务日）', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    // 2026-11-21 周六 deferred；11-22 周日休息无任务行；今日 11-23 周一（学习日）
+    await db.tasks.put({
+      id: 'task-2026-11-21-unit',
+      day: '2026-11-21',
+      type: 'unit',
+      questionIds: ['sat-1', 'sat-2'],
+      status: 'deferred',
+      minutesPlanned: 14,
+    })
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 23))
+    const review = tasks.find((t) => t.type === 'review')
+    expect(review?.questionIds).toEqual(['sat-1', 'sat-2'])
+  })
+
+  it('回溯只取最近有任务日：更近日子全部 skipped → 不再看更早的 deferred', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    // 最近有任务日 11-18（周三，仅 skipped）；更早 11-16 deferred 不看（已消费）
+    await db.tasks.bulkPut([
+      { id: 'task-2026-11-18-special', day: '2026-11-18', type: 'special', questionIds: ['skip-1'], status: 'skipped', minutesPlanned: 7 },
+      { id: 'task-2026-11-16-unit', day: '2026-11-16', type: 'unit', questionIds: ['older-1'], status: 'deferred', minutesPlanned: 14 },
+    ])
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 19))
+    expect(tasks.find((t) => t.type === 'review')).toBeUndefined()
+    for (const t of tasks) expect(t.questionIds).not.toContain('older-1')
+  })
+
+  it('回溯窗口边界：14 天前（含）结转', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    await db.tasks.put({ id: 'task-2026-11-03-unit', day: '2026-11-03', type: 'unit', questionIds: ['in-1'], status: 'deferred', minutesPlanned: 14 })
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 17))
+    expect(tasks.find((t) => t.type === 'review')?.questionIds).toEqual(['in-1'])
+  })
+
+  it('回溯窗口边界：15 天前（不含）放弃', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    await db.tasks.put({ id: 'task-2026-11-02-unit', day: '2026-11-02', type: 'unit', questionIds: ['out-1'], status: 'deferred', minutesPlanned: 14 })
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 17))
+    expect(tasks.find((t) => t.type === 'review')).toBeUndefined()
+  })
 })
 
 describe('updateTaskStatus（任务状态机）', () => {

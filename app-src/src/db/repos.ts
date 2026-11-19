@@ -3,7 +3,7 @@ import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
 import { localDayKey, isSameLocalDay } from '../domain/metrics'
 import { pickReviewQuestions } from '../domain/review-picker'
-import { generatePlan, isStudyDay } from '../domain/plan'
+import { carryWindowStart, generatePlan, isStudyDay, pickCarrySource } from '../domain/plan'
 import { SPECIALS } from '../content/sets'
 import { vocabKpFromQuestionId } from '../content/loader'
 import { uuid } from '../utils/uuid'
@@ -240,20 +240,20 @@ function sortTasksByType(tasks: TaskRow[]): TaskRow[] {
 }
 
 /** 每日计划（规格 §2.1）：当日（本地日 key）无任务才生成，同一天重复打开不重建（按 day 查重）。
- *  review 段取 Task 4 引擎（getReviewSet）产出；昨日 deferred/skipped 任务一并传入，deferred 由
- *  generatePlan 优先编入复习段（skipped 不结转）；now 可注入（测试与跨日边界用）。 */
+ *  review 段取 Task 4 引擎（getReviewSet）产出；结转来源（回溯窗口内最近有任务日的
+ *  deferred）一并传入，deferred 由 generatePlan 优先编入复习段（skipped 不结转）；now 可注入（测试与跨日边界用）。 */
 export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()): Promise<TaskRow[]> {
   const dayKey = localDayKey(now)
   const existing = await db.tasks.where('day').equals(dayKey).toArray()
   if (existing.length > 0) return sortTasksByType(existing)
 
   const settings = await getSettings()
-  // 已知边界：结转只回看恰好"昨天"一日——周六 deferred、周日休息时，周一生成计划查不到该 deferred（丢结转）。
-  // 改进方向为"回溯至最近一个学习日"再查 deferred，暂按 Task 5 计划口径保持现行为。
-  const yesterdayKey = localDayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1))
-  const yesterdayUnfinished = (await db.tasks.where('day').equals(yesterdayKey).toArray()).filter(
-    (t) => t.status === 'deferred' || t.status === 'skipped',
-  )
+  // 结转回溯（规格 §1.2）：14 天窗口内最近一个有任务日的 deferred（更早的已被消费）
+  const windowTasks = await db.tasks
+    .where('day')
+    .between(carryWindowStart(dayKey), dayKey, true, false)
+    .toArray()
+  const carrySourceTasks = pickCarrySource(windowTasks, dayKey)
   const specialSets = SPECIALS.map((s) => s.id)
   const specialQuestions = new Map<string, Question[]>()
   for (const sid of specialSets) specialQuestions.set(sid, await questionsByUnitPrefix(sid))
@@ -264,7 +264,7 @@ export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()
     isStudyDay: isStudyDay(dayKey, settings.studyDaysPerWeek),
     reviewQuestions: (await getReviewSet(now)).questionIds,
     wrongByKp: await buildWrongByKp(),
-    yesterdayUnfinished,
+    carrySourceTasks,
     specialSets,
     vocab: inputs.vocab,
     specialQuestions,

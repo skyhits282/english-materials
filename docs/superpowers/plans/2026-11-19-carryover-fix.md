@@ -32,7 +32,7 @@
 - Modify: `app-src/src/domain/plan.ts`（新增导出，`generatePlan` 不动）
 - Test: `app-src/src/domain/plan.test.ts`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 在 `app-src/src/domain/plan.test.ts` 顶部 import 中加入三个新导出（`generatePlan` 等保持不变）：
 
@@ -103,12 +103,12 @@ describe('pickCarrySource（结转回溯：窗口内最近有任务日的 deferr
 })
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
 Run: `cd app-src && npx vitest run src/domain/plan.test.ts`
 Expected: FAIL——导入报错（`CARRY_LOOKBACK_DAYS` 等不存在于 `./plan` 导出）。
 
-- [ ] **Step 3: 最小实现**
+- [x] **Step 3: 最小实现**
 
 `app-src/src/domain/plan.ts` 顶部 import 区（`import { deriveVocabQuestions } from '../content/loader'` 之后）加：
 
@@ -140,12 +140,12 @@ export function pickCarrySource(priorTasks: TaskRow[], todayKey: string): TaskRo
 }
 ```
 
-- [ ] **Step 4: 运行确认通过**
+- [x] **Step 4: 运行确认通过**
 
 Run: `cd app-src && npx vitest run src/domain/plan.test.ts`
 Expected: PASS（原有用例 + 新增 8 条全绿）。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add app-src/src/domain/plan.ts app-src/src/domain/plan.test.ts
@@ -164,7 +164,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `app-src/src/domain/plan.test.ts`（改名同步 + 结转 describe 更名）
 - Test: `app-src/src/db/repos.test.ts`（`getOrCreatePlan` describe 内追加）
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 在 `app-src/src/db/repos.test.ts` 的 `describe('getOrCreatePlan（每日计划生成 repo 封装）', ...)` 内（`review 段与 Task 4 引擎联动` 用例之后）追加三个用例：
 
@@ -212,12 +212,12 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
   })
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
 Run: `cd app-src && npx vitest run src/db/repos.test.ts`
 Expected: FAIL——`缺陷①` 与 `窗口边界` 两条用例失败（现状只查恰昨日：周一查周日无行 → review undefined；11-02/11-03 都在"昨日=11-16"之外 → 同样 review undefined）。`回溯只取最近有任务日` 可能恰好通过（现状查 11-18 取到 skipped → generatePlan 无结转），属预期。
 
-- [ ] **Step 3: 实现（repos.ts + 两处改名）**
+- [x] **Step 3: 实现（repos.ts + 两处改名）**
 
 `app-src/src/db/repos.ts`：
 
@@ -260,7 +260,7 @@ import { carryWindowStart, generatePlan, isStudyDay, pickCarrySource } from '../
 
 `app-src/src/domain/plan.test.ts`：`ctx` fixture 中 `yesterdayUnfinished: []` → `carrySourceTasks: []`；`describe('generatePlan：昨日结转', ...)` 三处 `yesterdayUnfinished:` 改为 `carrySourceTasks:`（describe 标题改为 `generatePlan：结转`）。
 
-- [ ] **Step 4: 运行确认通过（含全量回归）**
+- [x] **Step 4: 运行确认通过（含全量回归）**
 
 Run: `cd app-src && npx vitest run src/db/repos.test.ts src/domain/plan.test.ts`
 Expected: PASS（含既有「昨日 deferred 结转为今日 review 任务」用例——昨日即最近有任务日，行为不变）。
@@ -268,7 +268,7 @@ Expected: PASS（含既有「昨日 deferred 结转为今日 review 任务」用
 Run: `npm run test:app`
 Expected: PASS 全绿（361 + 新增用例）。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add app-src/src/db/repos.ts app-src/src/domain/plan.ts app-src/src/domain/plan.test.ts app-src/src/db/repos.test.ts
@@ -286,7 +286,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 说明：本页无 DOM 级 vitest 惯例（页面行为按既有口径由 Task 4 浏览器验证覆盖），本任务以全量回归 + 浏览器验收保障。
 
-- [ ] **Step 1: 实现顺序调整**
+- [x] **Step 1: 实现顺序调整**
 
 删除 `today.ts` 中现有休息分支（`// 非学习日（规格 §2.1）：不生成任务，显示"今日休息"与明日预告` 起至其 `return` 结束，原 98-119 行整块），并在 `if (stale) return`（getOrCreatePlan 成功之后那处，原 140 行）之后、`const todayAttempts = ...` 之前插入同块内容，条件改为 `tasks.length === 0 && !isStudyDay(...)`：
 
@@ -320,12 +320,12 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 行为说明（供执行者理解，不写代码）：休息日首次访问现在会先播种再返回 `[]`（原先不播种）；播种失败在休息页静默——`seedError` 面板在后续路径才渲染，此为接受的取舍。
 
-- [ ] **Step 2: 全量回归**
+- [x] **Step 2: 全量回归**
 
 Run: `npm run test:app`
 Expected: PASS 全绿（今日页无单测覆盖，确认无意外破坏）。
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**
 
 ```bash
 git add app-src/src/pages/today.ts

@@ -95,29 +95,6 @@ async function renderPage(container: HTMLElement): Promise<void> {
   const today = localDayKey(now)
   const dateLabel = `${now.getFullYear()} 年 ${now.getMonth() + 1} 月 ${now.getDate()} 日 · ${WEEKDAY_LABELS[now.getDay()]}`
 
-  // 非学习日（规格 §2.1）：不生成任务，显示"今日休息"与明日预告
-  if (!isStudyDay(today, settings.studyDaysPerWeek)) {
-    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-    const tomorrowStudy = isStudyDay(localDayKey(tomorrow), settings.studyDaysPerWeek)
-    const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
-    window.removeEventListener('hashchange', onHashChange)
-    container.innerHTML = `
-      <h1>今日学习</h1>
-      <div class="card">
-        <h3>今日休息</h3>
-        <p>${dateLabel}</p>
-        <p>${tomorrowStudy ? `明日恢复学习，预计 ${settings.dailyMinutes} 分钟。` : '明日继续休息。'}</p>
-      </div>
-      ${todayAttempts.length > 0 ? `<div class="card"><h3>今日已练 ${todayAttempts.length} 题</h3><p>休息日练习不计入任务。</p></div>` : ''}
-      <div class="card">
-        <h3>自由练习（可选）</h3>
-        <p>不计入今日任务与完成进度。</p>
-        <div class="action-row"><button class="btn btn-secondary" id="free-vocab">单词默写</button></div>
-      </div>`
-    container.querySelector('#free-vocab')?.addEventListener('click', () => navigate('exercise', { vocab: settings.currentUnit }))
-    return
-  }
-
   // 播种就绪等待（幂等：seedContent 按版本号跳过，与启动时的后台播种并发重放无害）：
   // 保证计划生成时 questions 表可用，避免首次访问竞态生成缺专项段的残缺计划
   if (bundle && (await isStorageAvailable())) {
@@ -138,6 +115,30 @@ async function renderPage(container: HTMLElement): Promise<void> {
     return
   }
   if (stale) return
+
+  // 非学习日（规格 §2.1 数据优先）：仅当日无任务时显示"今日休息"——中途调小
+  // studyDaysPerWeek 后当日已生成任务照常显示（结转丢题修复缺陷②），不遮蔽不丢失
+  if (tasks.length === 0 && !isStudyDay(today, settings.studyDaysPerWeek)) {
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+    const tomorrowStudy = isStudyDay(localDayKey(tomorrow), settings.studyDaysPerWeek)
+    const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
+    window.removeEventListener('hashchange', onHashChange)
+    container.innerHTML = `
+      <h1>今日学习</h1>
+      <div class="card">
+        <h3>今日休息</h3>
+        <p>${dateLabel}</p>
+        <p>${tomorrowStudy ? `明日恢复学习，预计 ${settings.dailyMinutes} 分钟。` : '明日继续休息。'}</p>
+      </div>
+      ${todayAttempts.length > 0 ? `<div class="card"><h3>今日已练 ${todayAttempts.length} 题</h3><p>休息日练习不计入任务。</p></div>` : ''}
+      <div class="card">
+        <h3>自由练习（可选）</h3>
+        <p>不计入今日任务与完成进度。</p>
+        <div class="action-row"><button class="btn btn-secondary" id="free-vocab">单词默写</button></div>
+      </div>`
+    container.querySelector('#free-vocab')?.addEventListener('click', () => navigate('exercise', { vocab: settings.currentUnit }))
+    return
+  }
 
   const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
   const m = computeCoreMetrics(todayAttempts)

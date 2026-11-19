@@ -31,9 +31,11 @@ describe('alignRecognizedWords（识别词表 → 逐题对齐）', () => {
     ])
   })
 
-  it('越界与重复序号：越界忽略、重复取后（vision 已校验，此处兜底）', () => {
+  it('越界与重复序号：越界忽略、重复取后（vision 已校验，此处兜底；NaN 为纯防御，JSON 不会产生）', () => {
     const aligned = alignRecognizedWords(2, [
       { index: 0, text: 'x' },
+      { index: 1.5, text: 'x' },
+      { index: Number.NaN, text: 'y' },
       { index: 3, text: 'y' },
       { index: 1, text: 'a' },
       { index: 1, text: 'b' },
@@ -41,6 +43,18 @@ describe('alignRecognizedWords（识别词表 → 逐题对齐）', () => {
     expect(aligned).toEqual([
       { index: 1, text: 'b' },
       { index: 2, text: null },
+    ])
+  })
+
+  it('空串/空白串 text 丢弃 → 该题记 null（契约自洽，不依赖 vision 校验）', () => {
+    const aligned = alignRecognizedWords(3, [
+      { index: 2, text: '' },
+      { index: 2, text: '  ' },
+    ])
+    expect(aligned).toEqual([
+      { index: 1, text: null },
+      { index: 2, text: null },
+      { index: 3, text: null },
     ])
   })
 

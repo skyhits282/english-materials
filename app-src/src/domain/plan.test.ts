@@ -397,8 +397,16 @@ describe('pickCarrySource（结转回溯：窗口内最近有任务日的 deferr
     expect(pickCarrySource([taskRow('2026-11-17', 'unit', 'deferred', ['today-1'])], '2026-11-17')).toEqual([])
   })
 
-  it('窗口含恰 14 天前的行、不含 15 天前', () => {
-    const rows = [taskRow('2026-11-02', 'unit', 'deferred', ['out']), taskRow('2026-11-03', 'unit', 'deferred', ['in'])]
-    expect(pickCarrySource(rows, '2026-11-17').map((t) => t.questionIds)).toEqual([['in']])
+  it('窗口含恰 14 天前的行', () => {
+    expect(pickCarrySource([taskRow('2026-11-03', 'unit', 'deferred', ['in'])], '2026-11-17').map((t) => t.questionIds)).toEqual([['in']])
+  })
+
+  it('窗口不含 15 天前的行（放弃）', () => {
+    expect(pickCarrySource([taskRow('2026-11-02', 'unit', 'deferred', ['out'])], '2026-11-17')).toEqual([])
+  })
+
+  it('同日多条 deferred 全部返回（generatePlan 循环消费）', () => {
+    const rows = [taskRow('2026-11-16', 'unit', 'deferred', ['a']), taskRow('2026-11-16', 'special', 'deferred', ['b'])]
+    expect(pickCarrySource(rows, '2026-11-17')).toHaveLength(2)
   })
 })

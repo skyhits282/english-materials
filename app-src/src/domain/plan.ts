@@ -51,7 +51,7 @@ export function carryWindowStart(todayKey: string): string {
 
 /** 结转来源挑选（规格 §1.2）：窗口行里最近一个有任务日的 deferred 任务；
  *  更早的日子不看（其 deferred 已被更近一次计划生成消费），当日行不参与。
- *  纯函数无 IO：调用方负责传入窗口内任务行。 */
+ *  纯函数无 IO：调用方应传入窗口行，函数内部仍防御性过滤窗口外与当日行。 */
 export function pickCarrySource(priorTasks: TaskRow[], todayKey: string): TaskRow[] {
   const start = carryWindowStart(todayKey)
   const before = priorTasks.filter((t) => t.day >= start && t.day < todayKey)

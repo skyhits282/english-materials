@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
+  CARRY_LOOKBACK_DAYS,
+  carryWindowStart,
   generatePlan,
   isStudyDay,
+  pickCarrySource,
   PLAN_RATIO,
   SPECIAL_QUESTION_MAX,
   UNIT_QUESTION_MAX,
@@ -348,5 +351,54 @@ describe('generatePlan：任务行形状', () => {
         seen.add(id)
       }
     }
+  })
+})
+
+/** 任务行 fixture：id/day/type/questionIds/status 一次成型 */
+const taskRow = (day: string, type: TaskRow['type'], status: TaskRow['status'], ids: string[]): TaskRow => ({
+  id: `task-${day}-${type}`,
+  day,
+  type,
+  questionIds: ids,
+  status,
+  minutesPlanned: 10,
+})
+
+describe('carryWindowStart（回溯窗口起点，含当日 14 天前）', () => {
+  it('常量 14 天；起点 = todayKey - 14（跨月正确）', () => {
+    expect(CARRY_LOOKBACK_DAYS).toBe(14)
+    expect(carryWindowStart('2026-11-17')).toBe('2026-11-03')
+    expect(carryWindowStart('2026-03-05')).toBe('2026-02-19') // 2 月 28 天，跨月
+  })
+})
+
+describe('pickCarrySource（结转回溯：窗口内最近有任务日的 deferred）', () => {
+  it('最近有任务日的 deferred 结转（中间隔无任务日也取得到）', () => {
+    const rows = [taskRow('2026-11-14', 'unit', 'deferred', ['a']), taskRow('2026-11-16', 'special', 'deferred', ['b'])]
+    expect(pickCarrySource(rows, '2026-11-17').map((t) => t.questionIds)).toEqual([['b']])
+  })
+
+  it('最近有任务日无 deferred → 不看更早日子（其 deferred 已被更近一次计划生成消费）', () => {
+    const rows = [taskRow('2026-11-14', 'unit', 'deferred', ['a']), taskRow('2026-11-16', 'special', 'skipped', ['b'])]
+    expect(pickCarrySource(rows, '2026-11-17')).toEqual([])
+  })
+
+  it('同日 deferred/skipped 混合只取 deferred', () => {
+    const rows = [taskRow('2026-11-16', 'special', 'skipped', ['s']), taskRow('2026-11-16', 'unit', 'deferred', ['d'])]
+    expect(pickCarrySource(rows, '2026-11-17').map((t) => t.type)).toEqual(['unit'])
+  })
+
+  it('空窗口 / 全部早于窗口起点 → 返回空', () => {
+    expect(pickCarrySource([], '2026-11-17')).toEqual([])
+    expect(pickCarrySource([taskRow('2026-10-01', 'unit', 'deferred', ['a'])], '2026-11-17')).toEqual([])
+  })
+
+  it('当日行不参与结转（day 严格小于 todayKey）', () => {
+    expect(pickCarrySource([taskRow('2026-11-17', 'unit', 'deferred', ['today-1'])], '2026-11-17')).toEqual([])
+  })
+
+  it('窗口含恰 14 天前的行、不含 15 天前', () => {
+    const rows = [taskRow('2026-11-02', 'unit', 'deferred', ['out']), taskRow('2026-11-03', 'unit', 'deferred', ['in'])]
+    expect(pickCarrySource(rows, '2026-11-17').map((t) => t.questionIds)).toEqual([['in']])
   })
 })

@@ -1,6 +1,7 @@
 import type { Question, Settings, VocabBook } from '../types'
 import type { TaskRow, TaskType } from '../db/schema'
 import { deriveVocabQuestions } from '../content/loader'
+import { localDayKey } from './metrics'
 
 /** 每日计划四段时长比例（百分比，规格 §2.2：到期复习 30 / 单元词汇 40 / 专项巩固 20 / 学习小结 10） */
 export const PLAN_RATIO = { review: 30, unit: 40, special: 20, summary: 10 } as const
@@ -37,6 +38,26 @@ export function isStudyDay(day: string, studyDaysPerWeek: number): boolean {
   const weekday = new Date(y!, m! - 1, d!).getDay()
   // 周一映射为 0 … 周日映射为 6，落在前 studyDaysPerWeek 天内即学习日
   return ((weekday + 6) % 7) < studyDaysPerWeek
+}
+
+/** 结转回溯窗口（天）：超出视为放弃，防全历史扫描（规格 §1.2） */
+export const CARRY_LOOKBACK_DAYS = 14
+
+/** 结转回溯窗口起点（含）：今日往前 CARRY_LOOKBACK_DAYS 天的本地日 key */
+export function carryWindowStart(todayKey: string): string {
+  const [y, m, d] = todayKey.split('-').map(Number)
+  return localDayKey(new Date(y!, m! - 1, d! - CARRY_LOOKBACK_DAYS))
+}
+
+/** 结转来源挑选（规格 §1.2）：窗口行里最近一个有任务日的 deferred 任务；
+ *  更早的日子不看（其 deferred 已被更近一次计划生成消费），当日行不参与。
+ *  纯函数无 IO：调用方负责传入窗口内任务行。 */
+export function pickCarrySource(priorTasks: TaskRow[], todayKey: string): TaskRow[] {
+  const start = carryWindowStart(todayKey)
+  const before = priorTasks.filter((t) => t.day >= start && t.day < todayKey)
+  if (before.length === 0) return []
+  const latestDay = before.reduce((max, t) => (t.day > max ? t.day : max), before[0]!.day)
+  return before.filter((t) => t.day === latestDay && t.status === 'deferred')
 }
 
 /** 四段分钟分配：前三段按比例向下取整，尾余全部归 summary（各任务 minutesPlanned 之和恒等于总分钟） */

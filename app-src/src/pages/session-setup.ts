@@ -1,5 +1,5 @@
-/** 组装带记录的 PracticeSession（exercise 键盘流与 vocab-photo 拍照流共用）：
- *  attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；挂钩失败仅告警并回退为
+/** 组装带记录的 PracticeSession（exercise 键盘流使用，后续拍照默写流程 vocab-photo 复用）：
+ *  attempt 追加与 mastery 更新走同一事务（applyMasteryUpdate）；mastery 更新失败仅告警并回退为
  *  单独保存 attempt，不影响判分主链路；存储不可用跳过记录（M1 降级哲学）。 */
 import type { Question } from '../types'
 import { applyMasteryUpdate, hasPriorAttempt, saveAttempt } from '../db/repos'

@@ -1,5 +1,5 @@
-/** 任务回写辅助（exercise 键盘流与 vocab-photo 拍照流共用）：回写失败仅告警，
- *  不阻塞练习主链路（沿用 M1 降级哲学）。独立成模块以避免 exercise ↔ vocab-photo 循环 import。 */
+/** 任务回写辅助（exercise 键盘流使用，后续拍照默写流程 vocab-photo 复用）：回写失败仅告警，
+ *  不阻塞练习主链路（沿用 M1 降级哲学）。独立成模块以避免 exercise 与 vocab-photo 之间形成循环 import。 */
 import { completeTask, getTask, updateTaskStatus } from '../db/repos'
 import { localDayKey } from '../domain/metrics'
 import type { TaskRow } from '../db/schema'

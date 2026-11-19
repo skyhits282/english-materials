@@ -5,7 +5,6 @@ import { DEFAULT_SETTINGS } from '../../db/repos'
 import type { Settings } from '../../types'
 import { AI_DEFAULT_VISION_MODEL } from '../../domain/ai-config'
 import { recognizeHandwrittenWords, AI_VISION_TIMEOUT_MS } from './vision'
-import { AiError } from './transport'
 
 /** 假 Key（红线：任何真实密钥不得出现在代码/测试/提交中） */
 const FAKE_KEY = 'sk-test-fake-key-0000'
@@ -43,11 +42,6 @@ const okContent = (content: string) =>
   })
 
 const ocrContent = (words: unknown) => okContent(JSON.stringify({ words }))
-
-/** 释放若干真实 macrotask 轮次（fake-indexeddb 的 setImmediate 队列走完） */
-const flushTasks = async (rounds = 6): Promise<void> => {
-  for (let i = 0; i < rounds; i++) await new Promise<void>((r) => setImmediate(r))
-}
 
 const lastBody = () =>
   JSON.parse(String(calls.at(-1)?.init.body)) as {
@@ -111,7 +105,11 @@ describe('recognizeHandwrittenWords 成功路径', () => {
 
   it('settings.aiVisionModel 覆盖默认模型', async () => {
     stubFetch(async () => ocrContent([]))
-    await recognizeHandwrittenWords({ imageDataUrl: DATA_URL, expectedCount: 2 }, { settings: settings({ aiVisionModel: 'qwen-vl-plus' }) })
+    const words = await recognizeHandwrittenWords(
+      { imageDataUrl: DATA_URL, expectedCount: 2 },
+      { settings: settings({ aiVisionModel: 'qwen-vl-plus' }) },
+    )
+    expect(words).toEqual([])
     expect(lastBody().model).toBe('qwen-vl-plus')
   })
 })
@@ -153,7 +151,7 @@ describe('recognizeHandwrittenWords 字段校验', () => {
       stubFetch(async () => okContent(content))
       await expect(
         recognizeHandwrittenWords({ imageDataUrl: DATA_URL, expectedCount: 3 }, { settings: settings() }),
-      ).rejects.toBeInstanceOf(AiError)
+      ).rejects.toMatchObject({ kind: 'invalid-response' })
     }
   })
 })

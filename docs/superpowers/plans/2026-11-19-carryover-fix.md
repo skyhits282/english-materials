@@ -343,17 +343,17 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 **红线重申：浏览器验证一律禁用 take_screenshot，只允许 browser_snapshot / browser_find / browser_evaluate 文本断言；同 hash URL 重复导航不会重渲染——切页必须先经 `#/settings` 再回 `#/today`。**
 
-- [ ] **Step 1: 全量测试**
+- [x] **Step 1: 全量测试**
 
 Run: `npm run test:app && npm run test:extract`
 Expected: 全绿；`test:extract` 9/9（防产物漂移用例确认未被波及）。
 
-- [ ] **Step 2: 启动 dev 服务器**
+- [x] **Step 2: 启动 dev 服务器**
 
 Run（后台）: `cd app-src && npx vite --port 5199 --strictPort`
 Expected: 输出 `ready in` / Local: `http://localhost:5199/`。
 
-- [ ] **Step 3: 场景 A——缺陷①回溯结转（真实浏览器）**
+- [x] **Step 3: 场景 A——缺陷①回溯结转（真实浏览器）**
 
 1. `browser_navigate` → `http://localhost:5199/#/today`；`browser_find` 文本「今日学习」确认渲染（首次访问完成播种与当日计划生成）。
 2. `browser_evaluate`：原始 IndexedDB 操作——删除当日全部任务行、写入两天前 deferred 任务行（返回写入结果摘要）：
@@ -384,20 +384,20 @@ async () => {
 5. `browser_evaluate`：读回 `task-<today>-review` 行，断言 `questionIds` 含 `carry-demo-1/carry-demo-2` 且 `status === 'planned'`。
 6. 复位：`browser_evaluate` 删除 `task-<today>-review` 行与 planted deferred 行（恢复干净状态，供场景 B/C）。
 
-- [ ] **Step 4: 场景 B——缺陷②数据优先**
+- [x] **Step 4: 场景 B——缺陷②数据优先**
 
 1. `browser_evaluate`：改写 settings 行——读出 `settings` 存储 key `'app'` 的 value，置 `studyDaysPerWeek = (new Date().getDay() + 6) % 7`（今日按周一起始序恰好成休息日），put 回去；返回改写后的 studyDaysPerWeek。
 2. `browser_navigate` → `#/settings` → `#/today`。
 3. `browser_find` 文本「到期复习」或任务卡任意标题 → **存在**；`browser_find` 文本「今日休息」→ **不存在**（当日已有任务，休息页不遮蔽）。
 
-- [ ] **Step 5: 场景 C——休息页原样（无任务 + 非学习日）**
+- [x] **Step 5: 场景 C——休息页原样（无任务 + 非学习日）**
 
 1. `browser_evaluate`：删除当日全部任务行（同场景 A 的 cursor 删除，仅删）。
 2. `browser_navigate` → `#/settings` → `#/today`。
 3. `browser_find` 文本「今日休息」→ 存在；「自由练习」→ 存在（休息页内容完整）。
 4. 收尾复位：`browser_evaluate` 把 `studyDaysPerWeek` 恢复为 6，并清空当日任务行。
 
-- [ ] **Step 6: 构建验证与产物恢复**
+- [x] **Step 6: 构建验证与产物恢复**
 
 Run: `npm run build:app`
 Expected: 构建成功。
@@ -408,11 +408,11 @@ Expected: 出现 `app/index.html` 修改与 `app/assets/` 下旧 hash 文件删�
 Run: `git checkout -- app/ && git clean -f app/assets`
 Expected: `git status --porcelain app/` 输出为空（按「功能提交不更新 app/ 产物」口径恢复）。
 
-- [ ] **Step 7: 停 dev 服务器**
+- [x] **Step 7: 停 dev 服务器**
 
 停止 Step 2 的后台任务（TaskStop / kill 端口 5199 进程）。
 
-- [ ] **Step 8: 验收记录并提交**
+- [x] **Step 8: 验收记录并提交**
 
 在 `docs/superpowers/specs/2026-11-19-carryover-fix-design.md` 末尾追加「验收记录（2026-11-19）」小节：逐项记录 Step 1 测试计数、场景 A/B/C 浏览器断言结果（含 planted 日期）、构建验证与产物恢复结果。
 

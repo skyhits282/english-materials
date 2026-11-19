@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from '../../db/repos'
 import type { Settings } from '../../types'
 import { runAiTask } from './tasks'
 import { checkQuota, getAiUsageToday } from './quota'
-import { AiError, type ChatMessage } from './transport'
+import { AiError } from './transport'
 
 /** 假 Key（红线：任何真实密钥不得出现在代码/测试/提交中） */
 const FAKE_KEY = 'sk-test-fake-key-0000'
@@ -78,7 +78,8 @@ const flushTasks = async (rounds = 6): Promise<void> => {
 const lastBody = () =>
   JSON.parse(String(calls.at(-1)?.init.body)) as {
     model?: string
-    messages?: ChatMessage[]
+    // 文本任务的消息恒为纯文本内容（多模态数组仅 vision 使用）
+    messages?: Array<{ role: string; content: string }>
     max_tokens?: number
     response_format?: { type: string }
   }

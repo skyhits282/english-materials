@@ -12,10 +12,15 @@ export type AiErrorKind =
   | 'invalid-response'
   | 'http'
 
+/** 多模态消息分段：纯文本或图片（dataURL）；content 为 string 时等价于单个 text part */
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string } }
+
 /** 聊天消息：system 一段 + user 一段（提示词由 tasks 层组装） */
 export interface ChatMessage {
   role: 'system' | 'user'
-  content: string
+  content: string | ContentPart[]
 }
 
 export interface TransportRequest {

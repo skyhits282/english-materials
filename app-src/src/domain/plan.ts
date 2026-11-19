@@ -40,6 +40,12 @@ export function isStudyDay(day: string, studyDaysPerWeek: number): boolean {
   return ((weekday + 6) % 7) < studyDaysPerWeek
 }
 
+/** 数据优先休息判定（规格 §2.1/§3）：仅当日无任务且非学习日才显示休息页——
+ *  中途调小 studyDaysPerWeek 后当日已生成任务照常显示（不遮蔽不丢失，缺陷②） */
+export function shouldShowRest(tasks: { day: string }[], todayKey: string, studyDaysPerWeek: number): boolean {
+  return tasks.length === 0 && !isStudyDay(todayKey, studyDaysPerWeek)
+}
+
 /** 结转回溯窗口（天）：超出视为放弃，防全历史扫描（规格 §1.2） */
 export const CARRY_LOOKBACK_DAYS = 14
 

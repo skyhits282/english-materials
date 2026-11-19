@@ -6,6 +6,7 @@ import {
   isStudyDay,
   pickCarrySource,
   PLAN_RATIO,
+  shouldShowRest,
   SPECIAL_QUESTION_MAX,
   UNIT_QUESTION_MAX,
   type PlanContext,
@@ -16,6 +17,7 @@ import type { TaskRow } from '../db/schema'
 /** 2026-11-16（周一）～2026-11-22（周日）：isStudyDay 断言的取值日 */
 const MONDAY = '2026-11-16'
 const TUESDAY = '2026-11-17'
+const THURSDAY = '2026-11-19'
 const SATURDAY = '2026-11-21'
 const SUNDAY = '2026-11-22'
 
@@ -109,6 +111,31 @@ describe('isStudyDay（周一起始的纯日期数学）', () => {
   })
   it('7 天：每天都是学习日', () => {
     expect(isStudyDay(SUNDAY, 7)).toBe(true)
+  })
+})
+
+describe('shouldShowRest（数据优先休息判定，规格 §2.1/§3）', () => {
+  it('当日有任务 + 非学习日 → false（已生成计划不被休息页遮蔽）', () => {
+    // 周四（周一起始序 3）在 studyDaysPerWeek=3 时为休息日
+    expect(shouldShowRest([{ day: THURSDAY }], THURSDAY, 3)).toBe(false)
+    // 同日已有多条任务同样不遮蔽
+    expect(shouldShowRest([{ day: THURSDAY }, { day: THURSDAY }], THURSDAY, 3)).toBe(false)
+  })
+
+  it('当日无任务 + 非学习日 → true（显示休息页）', () => {
+    expect(shouldShowRest([], THURSDAY, 3)).toBe(true)
+  })
+
+  it('当日无任务 + 学习日 → false（显示今日计划）', () => {
+    expect(shouldShowRest([], THURSDAY, 6)).toBe(false)
+    expect(shouldShowRest([], MONDAY, 6)).toBe(false)
+  })
+
+  it('非学习日判定与 isStudyDay 一致（周四在设置 3 休息、设置 4 学习）', () => {
+    expect(isStudyDay(THURSDAY, 3)).toBe(false)
+    expect(isStudyDay(THURSDAY, 4)).toBe(true)
+    expect(shouldShowRest([], THURSDAY, 3)).toBe(true)
+    expect(shouldShowRest([], THURSDAY, 4)).toBe(false)
   })
 })
 
@@ -408,5 +435,12 @@ describe('pickCarrySource（结转回溯：窗口内最近有任务日的 deferr
   it('同日多条 deferred 全部返回（generatePlan 循环消费）', () => {
     const rows = [taskRow('2026-11-16', 'unit', 'deferred', ['a']), taskRow('2026-11-16', 'special', 'deferred', ['b'])]
     expect(pickCarrySource(rows, '2026-11-17')).toHaveLength(2)
+  })
+
+  it('跨月窗口：最近有任务日（11-01 skipped）无 deferred → 不看窗口内的 10-31 deferred', () => {
+    // today=11-02，窗口起点 10-19：10-31 与 11-01 均在窗口内（含跨月字典序比较），
+    // 最近有任务日为 11-01（skipped）→ 返回空，不回溯到 10-31
+    const rows = [taskRow('2026-10-31', 'unit', 'deferred', ['a']), taskRow('2026-11-01', 'unit', 'skipped', ['b'])]
+    expect(pickCarrySource(rows, '2026-11-02')).toEqual([])
   })
 })

@@ -5,7 +5,7 @@ import { fetchContentBundle, findVocabUnit } from '../content/loader'
 import { seedContent } from '../content/seed'
 import { isStorageAvailable } from '../db/availability'
 import { clearDayTasks, completeTask, getOrCreatePlan, getSettings, isPlanIncomplete, listAttempts } from '../db/repos'
-import { isStudyDay } from '../domain/plan'
+import { isStudyDay, shouldShowRest } from '../domain/plan'
 import { computeCoreMetrics, isSameLocalDay, localDayKey } from '../domain/metrics'
 import { escapeHtml } from '../ui/escape'
 import type { TaskRow } from '../db/schema'
@@ -118,7 +118,7 @@ async function renderPage(container: HTMLElement): Promise<void> {
 
   // 非学习日（规格 §2.1 数据优先）：仅当日无任务时显示"今日休息"——中途调小
   // studyDaysPerWeek 后当日已生成任务照常显示（结转丢题修复缺陷②），不遮蔽不丢失
-  if (tasks.length === 0 && !isStudyDay(today, settings.studyDaysPerWeek)) {
+  if (shouldShowRest(tasks, today, settings.studyDaysPerWeek)) {
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
     const tomorrowStudy = isStudyDay(localDayKey(tomorrow), settings.studyDaysPerWeek)
     const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))

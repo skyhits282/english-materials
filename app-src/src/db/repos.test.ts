@@ -412,6 +412,9 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 23))
     const review = tasks.find((t) => t.type === 'review')
     expect(review?.questionIds).toEqual(['sat-1', 'sat-2'])
+    // 不变量（规格 §1.3）：deferred 为终态，结转不回改旧行（防重复结转）
+    expect((await db.tasks.get('task-2026-11-21-unit'))?.status).toBe('deferred')
+    expect((await db.tasks.get('task-2026-11-23-review'))?.questionIds).toEqual(['sat-1', 'sat-2'])
   })
 
   it('回溯只取最近有任务日：更近日子全部 skipped → 不再看更早的 deferred', async () => {
@@ -430,7 +433,14 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
   it('回溯窗口边界：14 天前（含）结转', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()
-    await db.tasks.put({ id: 'task-2026-11-03-unit', day: '2026-11-03', type: 'unit', questionIds: ['in-1'], status: 'deferred', minutesPlanned: 14 })
+    await db.tasks.put({
+      id: 'task-2026-11-03-unit',
+      day: '2026-11-03',
+      type: 'unit',
+      questionIds: ['in-1'],
+      status: 'deferred',
+      minutesPlanned: 14,
+    })
     const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 17))
     expect(tasks.find((t) => t.type === 'review')?.questionIds).toEqual(['in-1'])
   })
@@ -438,7 +448,14 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
   it('回溯窗口边界：15 天前（不含）放弃', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()
-    await db.tasks.put({ id: 'task-2026-11-02-unit', day: '2026-11-02', type: 'unit', questionIds: ['out-1'], status: 'deferred', minutesPlanned: 14 })
+    await db.tasks.put({
+      id: 'task-2026-11-02-unit',
+      day: '2026-11-02',
+      type: 'unit',
+      questionIds: ['out-1'],
+      status: 'deferred',
+      minutesPlanned: 14,
+    })
     const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 17))
     expect(tasks.find((t) => t.type === 'review')).toBeUndefined()
   })

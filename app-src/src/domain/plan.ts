@@ -22,7 +22,7 @@ export interface PlanContext {
   reviewQuestions: string[]
   /** 知识点 → 曾错题（用于专项巩固选薄弱专项） */
   wrongByKp: Map<string, string[]>
-  /** 结转来源任务（回溯窗口内最近有任务日的 deferred/skipped；deferred 结转、skipped 不结转） */
+  /** 结转来源任务（生产链路经 pickCarrySource 只传入最近有任务日的 deferred；generatePlan 亦防御性忽略非 deferred） */
   carrySourceTasks: TaskRow[]
   /** 可用专项集合 id（g7a-present…g7b-tenses，顺序即并列时的优先序） */
   specialSets: string[]

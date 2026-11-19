@@ -11,6 +11,7 @@ import { runAiTask, type AiRawResult, type ExplainMistakePayload, type ExplainMi
 import { aiButtonState, aiErrorText } from '../services/ai/ui'
 import { buildRecordingSession } from './session-setup'
 import { markTaskCompleted, markTaskStarted } from './task-hooks'
+import { runVocabPhotoFlow } from './vocab-photo'
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
@@ -80,7 +81,7 @@ async function loadReviewQuestions(): Promise<{ title: string; questions: Questi
 
 async function loadQuestions(
   params: URLSearchParams,
-): Promise<{ title: string; questions: Question[]; emptyMessage?: string }> {
+): Promise<{ title: string; questions: Question[]; emptyMessage?: string; isVocab?: boolean }> {
   if (params.get('set') === 'review') {
     return loadReviewQuestions()
   }
@@ -88,7 +89,12 @@ async function loadQuestions(
   if (vocabUnit) {
     const bundle = await fetchContentBundle()
     const unit = findVocabUnit(bundle.vocab, vocabUnit)
-    return { title: `单词默写 · ${unit?.label ?? vocabUnit}`, questions: shuffle(deriveVocabQuestions(bundle.vocab, vocabUnit)) }
+    // 固定顺序：卷面序号 = 纸面序号 = 识别对齐序号；键盘模式在选择后 shuffle
+    return {
+      title: `单词默写 · ${unit?.label ?? vocabUnit}`,
+      questions: deriveVocabQuestions(bundle.vocab, vocabUnit),
+      isVocab: true,
+    }
   }
   // set=<专项 id>（今日页任务卡入口）与 special=<专项 id>（既有入口）共用同一加载路径
   const special = params.get('set') || params.get('special')
@@ -114,7 +120,7 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
     const onHashChange = () => { stale = true }
     window.addEventListener('hashchange', onHashChange, { once: true })
     container.innerHTML = '<h1>学习练习</h1><p class="muted">加载中…</p>'
-    let data: { title: string; questions: Question[]; emptyMessage?: string }
+    let data: { title: string; questions: Question[]; emptyMessage?: string; isVocab?: boolean }
     let storageOk = false
     try {
       storageOk = await isStorageAvailable()
@@ -134,11 +140,6 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       return
     }
 
-    // 任务驱动练习：题目加载成功（非空）即视为"进入练习"，把任务置 in_progress；
-    // 加载失败或空态（无题可练）时不转移，任务保持 planned
-    if (taskId) await markTaskStarted(taskId)
-    if (stale) return
-
     // AI 按钮状态底座：配置快照 + 今日用量。读取失败按"未配置"降级（按钮灰态），不阻塞练习主链路
     let settings: Settings = DEFAULT_SETTINGS
     let aiUsage = 0
@@ -148,6 +149,44 @@ export const renderExercise: PageRenderer = ({ container, params }) => {
       console.warn('AI 配置/用量读取失败，AI 按钮按未配置处理：', err)
     }
     if (stale) return
+
+    /** 模式选择卡（仅词汇默写）：键盘（现有流程）vs 手写拍照（需 AI，三级灰态同口径） */
+    const chooseVocabMode = (): Promise<'keyboard' | 'photo'> =>
+      new Promise((resolve) => {
+        const state = aiButtonState(settings, aiUsage)
+        container.innerHTML = `
+          <h1>${escapeHtml(data.title)}</h1>
+          <div class="card">
+            <h3>单词默写 · 共 ${data.questions.length} 词</h3>
+            <p class="muted">选择作答方式。</p>
+            <div class="action-row">
+              <button class="btn" id="mode-keyboard">键盘默写</button>
+              <button class="btn btn-secondary" id="mode-photo"${state.disabled ? ' disabled' : ''} title="${escapeHtml(state.title)}">手写拍照（AI 识别）</button>
+            </div>
+          </div>`
+        // 离开页面未选择：resolve 一个占位值，后续 stale 判定直接返回（避免悬挂 Promise）
+        window.addEventListener('hashchange', () => resolve('keyboard'), { once: true })
+        container.querySelector('#mode-keyboard')?.addEventListener('click', () => resolve('keyboard'))
+        container.querySelector('#mode-photo')?.addEventListener('click', () => resolve('photo'))
+      })
+
+    // 单词默写：先选作答方式（键盘 = 现有流程；手写拍照 = vocab-photo 三屏流）
+    if (data.isVocab) {
+      const mode = await chooseVocabMode()
+      if (stale) return
+      // 选定模式即视为"进入练习"：任务置 in_progress（拍照流由 vocab-photo 在完成节点回写 completed）
+      if (taskId) await markTaskStarted(taskId)
+      if (stale) return
+      if (mode === 'photo') {
+        runVocabPhotoFlow({ container, title: data.title, questions: data.questions, settings, storageOk, taskId })
+        return
+      }
+      data.questions = shuffle(data.questions)
+    } else if (taskId) {
+      // 非词汇路径：题目加载成功即置 in_progress（原语义不变；加载失败或空态不转移，保持 planned）
+      await markTaskStarted(taskId)
+      if (stale) return
+    }
     // 会话内 AI 请求统一取消源：hashchange 离开页面时中止在途请求（中止在途请求省服务端计费；UI 已随页面卸载）
     const aiAbort = new AbortController()
     window.addEventListener('hashchange', () => aiAbort.abort(), { once: true })

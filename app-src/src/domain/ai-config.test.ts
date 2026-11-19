@@ -68,10 +68,15 @@ describe('parseAiConfigForm（保存前校验）', () => {
 describe('aiVisionModel（手写识别模型，可选）', () => {
   const base = { baseUrl: 'https://dashscope.example/v1', apiKey: '', model: 'qwen-test', dailyLimit: '50' }
 
-  it('留空 → 不写入 aiVisionModel（用默认 qwen-vl-ocr）', () => {
+  it('留空 → 显式 undefined（保存合并时可覆盖旧值，回到默认模型）', () => {
     const parsed = parseAiConfigForm({ ...base, visionModel: '' }, undefined)
     expect(parsed.ok).toBe(true)
-    if (parsed.ok) expect(parsed.value.aiVisionModel).toBeUndefined()
+    if (parsed.ok) {
+      expect(parsed.value).toHaveProperty('aiVisionModel', undefined)
+      // 合并语义验证：旧值被显式 undefined 覆盖
+      const merged = { aiVisionModel: 'qwen-vl-plus', ...parsed.value }
+      expect(merged.aiVisionModel).toBeUndefined()
+    }
   })
 
   it('非空 → 裁剪后保存', () => {

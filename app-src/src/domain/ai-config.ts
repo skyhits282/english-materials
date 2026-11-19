@@ -18,7 +18,7 @@ export function maskApiKey(key: string): string {
   return key.length > 4 ? `sk-****${key.slice(-4)}` : 'sk-****'
 }
 
-/** AI 配置表单原始值：四个字段均为未清洗的字符串（密钥输入未渲染/未更换时为空串） */
+/** AI 配置表单原始值：五个字段均为未清洗的字符串（visionModel 留空表示用默认） */
 export interface RawAiConfigForm {
   baseUrl: string
   apiKey: string
@@ -67,7 +67,7 @@ export function parseAiConfigForm(raw: RawAiConfigForm, existingKey: string | un
       aiBaseUrl: baseUrl,
       ...(apiKey !== '' || existingKey !== undefined ? { aiApiKey: apiKey === '' ? existingKey : apiKey } : {}),
       aiModel: model,
-      ...(visionModel !== '' ? { aiVisionModel: visionModel } : {}),
+      aiVisionModel: visionModel === '' ? undefined : visionModel,
       aiDailyLimit: dailyLimit,
     },
   }

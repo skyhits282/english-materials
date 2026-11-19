@@ -260,7 +260,7 @@ function setupExamScoresCard(deps: CardDeps): { refresh: () => void } {
   return { refresh: renderRows }
 }
 
-/** AI 配置卡（规格 §7.1）：四字段 + 密钥掩码管理。已存密钥只回显掩码（sk-****+后4位），
+/** AI 配置卡（规格 §7.1）：五字段 + 密钥掩码管理。已存密钥只回显掩码（sk-****+后4位），
  *  「更换」切换为密码输入、「清除」移除密钥，任何路径不回填明文。
  *  保存前经纯函数 parseAiConfigForm 校验（URL 须 https、每日上限 1–500 整数）；
  *  「测试连接」经 testConnection 发最小探活请求（含未保存的表单值），不落 aiRequests 不计配额。

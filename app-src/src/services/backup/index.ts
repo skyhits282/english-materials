@@ -177,7 +177,7 @@ function validateSettingsRow(row: unknown, line: number): void {
   }
   if (!isPlainObject(row.value)) throw new BackupError(`备份 settings 表第 ${line} 行 value 不是对象`)
   const value = row.value
-  const stringFields = ['currentUnit', 'studentLabel', 'aiBaseUrl', 'aiApiKey', 'aiModel'] as const
+  const stringFields = ['currentUnit', 'studentLabel', 'aiBaseUrl', 'aiApiKey', 'aiModel', 'aiVisionModel'] as const
   for (const f of stringFields) {
     if (value[f] !== undefined && typeof value[f] !== 'string') {
       throw new BackupError(`备份 settings 表第 ${line} 行 value.${f} 不是字符串`)

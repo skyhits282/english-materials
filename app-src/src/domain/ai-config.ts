@@ -23,7 +23,7 @@ export interface RawAiConfigForm {
   baseUrl: string
   apiKey: string
   model: string
-  /** 手写识别模型：留空 = 用默认（不写入 settings） */
+  /** 手写识别模型：留空 = 显式置 undefined（保存合并时覆盖旧值，回到默认） */
   visionModel: string
   dailyLimit: string
 }
@@ -67,6 +67,8 @@ export function parseAiConfigForm(raw: RawAiConfigForm, existingKey: string | un
       aiBaseUrl: baseUrl,
       ...(apiKey !== '' || existingKey !== undefined ? { aiApiKey: apiKey === '' ? existingKey : apiKey } : {}),
       aiModel: model,
+      // 刻意不用 aiApiKey 的条件展开：留空须输出显式 undefined，
+      // 才能在页面 { ...current(), ...parsed.value } 合并中覆盖旧值（清空回到默认）
       aiVisionModel: visionModel === '' ? undefined : visionModel,
       aiDailyLimit: dailyLimit,
     },

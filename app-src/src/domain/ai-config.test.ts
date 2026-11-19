@@ -79,6 +79,12 @@ describe('aiVisionModel（手写识别模型，可选）', () => {
     }
   })
 
+  it('仅空白串 → trim 后为空 → undefined', () => {
+    const parsed = parseAiConfigForm({ ...base, visionModel: '   ' }, undefined)
+    expect(parsed.ok).toBe(true)
+    if (parsed.ok) expect(parsed.value.aiVisionModel).toBeUndefined()
+  })
+
   it('非空 → 裁剪后保存', () => {
     const parsed = parseAiConfigForm({ ...base, visionModel: '  qwen-vl-plus  ' }, undefined)
     expect(parsed.ok).toBe(true)

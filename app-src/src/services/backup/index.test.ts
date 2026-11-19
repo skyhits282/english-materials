@@ -661,6 +661,11 @@ describe('settings 行校验扩展（防恶意备份注入）', () => {
     const file = settingsFile({ ...DEFAULT_SETTINGS, aiBaseUrl: 42 })
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
   })
+  it('aiVisionModel 非字符串拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, aiVisionModel: 123 })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/aiVisionModel/)
+  })
   it('aiDailyLimit 非数字拒绝', () => {
     const file = settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: '50' })
     expect(() => parseAndValidateBackup(file)).toThrow(BackupError)

@@ -30,7 +30,7 @@
 - Modify: `app-src/src/domain/ai-config.test.ts`（新用例 + 现有夹具补字段）
 - Modify: `app-src/src/pages/settings.ts`（AI 配置卡表单）
 
-- [ ] **Step 1: 写失败测试（现有夹具补 `visionModel` 字段 + 新用例）**
+- [x] **Step 1: 写失败测试（现有夹具补 `visionModel` 字段 + 新用例）**
 
 在 `app-src/src/domain/ai-config.test.ts` 中，所有传给 `parseAiConfigForm` 的原始表单对象字面量统一补上 `visionModel: ''`（TS 会先报错——`RawAiConfigForm` 还没有该字段，这正是失败信号）。然后追加：
 
@@ -58,12 +58,12 @@ describe('aiVisionModel（手写识别模型，可选）', () => {
 
 测试文件顶部 import 补充 `AI_DEFAULT_VISION_MODEL`。
 
-- [ ] **Step 2: 跑测试确认失败**
+- [x] **Step 2: 跑测试确认失败**
 
 Run: `npm --prefix app-src run test -- src/domain/ai-config.test.ts`
 Expected: FAIL（`visionModel` 不在 `RawAiConfigForm` 类型上 / `AI_DEFAULT_VISION_MODEL` 未导出）
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 `app-src/src/types.ts` Settings 接口，在 `aiModel?: string` 之后加：
 
@@ -144,13 +144,13 @@ export interface AiConfigValue {
       if (visionModel) visionModel.value = current().aiVisionModel ?? ''
 ```
 
-- [ ] **Step 4: 跑测试确认通过 + 全量回归**
+- [x] **Step 4: 跑测试确认通过 + 全量回归**
 
 Run: `npm --prefix app-src run test -- src/domain/ai-config.test.ts` → PASS
 Run: `npm run test:app` → 全绿（settings.ts 改动由 tsc 覆盖）
 Run: `npm --prefix app-src run build` → tsc 无错
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app-src/src/types.ts app-src/src/domain/ai-config.ts app-src/src/domain/ai-config.test.ts app-src/src/pages/settings.ts
@@ -169,7 +169,7 @@ tasks.ts 私有的 `isGarbledText` / `tryParseJson` / `truncate` 三个纯函数
 - Create: `app-src/src/services/ai/parse.ts`
 - Modify: `app-src/src/services/ai/tasks.ts`
 
-- [ ] **Step 1: 创建 `parse.ts`（函数体从 tasks.ts 原样搬移，连同各自注释）**
+- [x] **Step 1: 创建 `parse.ts`（函数体从 tasks.ts 原样搬移，连同各自注释）**
 
 ```ts
 /** AI 响应宽松解析与文本工具（tasks.ts / vision.ts 共用）：纯函数，无 IO。 */
@@ -214,7 +214,7 @@ export function truncate(text: string, maxChars: number): string {
 }
 ```
 
-- [ ] **Step 2: tasks.ts 删除这三个函数定义，顶部加 import**
+- [x] **Step 2: tasks.ts 删除这三个函数定义，顶部加 import**
 
 ```ts
 import { isGarbledText, tryParseJson, truncate } from './parse'
@@ -225,12 +225,12 @@ import { isGarbledText, tryParseJson, truncate } from './parse'
 Run: `grep -rn "isGarbledText\|tryParseJson\|truncate" app-src/src --include='*.ts' | grep -v "tasks.ts\|parse.ts"`
 Expected: 无输出（仅 tasks.ts 内部使用）
 
-- [ ] **Step 3: 全量测试确认零行为漂移**
+- [x] **Step 3: 全量测试确认零行为漂移**
 
 Run: `npm run test:app` → 全绿
 Run: `npm --prefix app-src run build` → tsc 无错
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add app-src/src/services/ai/parse.ts app-src/src/services/ai/tasks.ts
@@ -248,7 +248,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Create: `app-src/src/services/ai/vision.ts`
 - Create: `app-src/src/services/ai/vision.test.ts`
 
-- [ ] **Step 1: 写失败测试 `vision.test.ts`**
+- [x] **Step 1: 写失败测试 `vision.test.ts`**
 
 ```ts
 import 'fake-indexeddb/auto'
@@ -474,12 +474,12 @@ describe('recognizeHandwrittenWords 超时与取消', () => {
 })
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
+- [x] **Step 2: 跑测试确认失败**
 
 Run: `npm --prefix app-src run test -- src/services/ai/vision.test.ts`
 Expected: FAIL（`./vision` 模块不存在）
 
-- [ ] **Step 3: 实现 transport 类型放宽 + vision.ts**
+- [x] **Step 3: 实现 transport 类型放宽 + vision.ts**
 
 `app-src/src/services/ai/transport.ts`：`ChatMessage` 定义改为（`ChatMessage` 接口上方加 ContentPart）：
 
@@ -625,13 +625,13 @@ async function recordQuietly(status: string, startedAt: number): Promise<void> {
 
 （「index 越界丢弃…」用例的期望 `[{ index: 1, text: 'apple2' }]`：index 2 两个候选 text 均空被丢弃、index 3 的 text 非字符串被丢弃、index 1 重复取后者。）
 
-- [ ] **Step 4: 跑测试确认通过 + 全量回归**
+- [x] **Step 4: 跑测试确认通过 + 全量回归**
 
 Run: `npm --prefix app-src run test -- src/services/ai/vision.test.ts` → PASS
 Run: `npm run test:app` → 全绿
 Run: `npm --prefix app-src run build` → tsc 无错
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app-src/src/services/ai/transport.ts app-src/src/services/ai/vision.ts app-src/src/services/ai/vision.test.ts
@@ -648,7 +648,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Create: `app-src/src/utils/image.ts`
 - Create: `app-src/src/utils/image.test.ts`
 
-- [ ] **Step 1: 写失败测试 `image.test.ts`**
+- [x] **Step 1: 写失败测试 `image.test.ts`**
 
 ```ts
 import { describe, expect, it } from 'vitest'
@@ -682,12 +682,12 @@ describe('dataUrlByteSize（体积近似）', () => {
 })
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
+- [x] **Step 2: 跑测试确认失败**
 
 Run: `npm --prefix app-src run test -- src/utils/image.test.ts`
 Expected: FAIL（模块不存在）
 
-- [ ] **Step 3: 实现 `image.ts`**
+- [x] **Step 3: 实现 `image.ts`**
 
 ```ts
 /** 手写照片客户端预处理（2026-11-19 规格 §2.3）：canvas 压缩（长边上限、JPEG）→ dataURL。
@@ -754,12 +754,12 @@ function loadImage(dataUrl: string): Promise<HTMLImageElement> {
 }
 ```
 
-- [ ] **Step 4: 跑测试确认通过**
+- [x] **Step 4: 跑测试确认通过**
 
 Run: `npm --prefix app-src run test -- src/utils/image.test.ts` → PASS
 Run: `npm --prefix app-src run build` → tsc 无错（canvas 路径仅类型检查）
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app-src/src/utils/image.ts app-src/src/utils/image.test.ts
@@ -776,7 +776,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Create: `app-src/src/domain/dictation-align.ts`
 - Create: `app-src/src/domain/dictation-align.test.ts`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 ```ts
 import { describe, expect, it } from 'vitest'
@@ -831,12 +831,12 @@ describe('alignRecognizedWords（识别词表 → 逐题对齐）', () => {
 })
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
+- [x] **Step 2: 跑测试确认失败**
 
 Run: `npm --prefix app-src run test -- src/domain/dictation-align.test.ts`
 Expected: FAIL（模块不存在）
 
-- [ ] **Step 3: 实现**
+- [x] **Step 3: 实现**
 
 ```ts
 /** 识别词表 → 逐题对齐（2026-11-19 规格 §1.3，纯函数）：
@@ -858,11 +858,11 @@ export function alignRecognizedWords(expectedCount: number, words: { index: numb
 }
 ```
 
-- [ ] **Step 4: 跑测试确认通过**
+- [x] **Step 4: 跑测试确认通过**
 
 Run: `npm --prefix app-src run test -- src/domain/dictation-align.test.ts` → PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app-src/src/domain/dictation-align.ts app-src/src/domain/dictation-align.test.ts
@@ -882,7 +882,7 @@ exercise.ts 内联的 PracticeSession 装配（mastery 挂钩 + 降级链）与�
 - Create: `app-src/src/pages/task-hooks.ts`
 - Modify: `app-src/src/pages/exercise.ts`
 
-- [ ] **Step 1: 创建 `session-setup.ts`（代码从 exercise.ts 206-225 行区域原样搬移）**
+- [x] **Step 1: 创建 `session-setup.ts`（代码从 exercise.ts 206-225 行区域原样搬移）**
 
 ```ts
 /** 组装带记录的 PracticeSession（exercise 键盘流与 vocab-photo 拍照流共用）：
@@ -916,7 +916,7 @@ export function buildRecordingSession(questions: Question[], storageOk: boolean)
 }
 ```
 
-- [ ] **Step 2: 创建 `task-hooks.ts`（todaysTask / markTaskStarted / markTaskCompleted 从 exercise.ts 原样搬移）**
+- [x] **Step 2: 创建 `task-hooks.ts`（todaysTask / markTaskStarted / markTaskCompleted 从 exercise.ts 原样搬移）**
 
 ```ts
 /** 任务回写辅助（exercise 键盘流与 vocab-photo 拍照流共用）：回写失败仅告警，
@@ -953,7 +953,7 @@ export async function markTaskCompleted(taskId: string): Promise<void> {
 }
 ```
 
-- [ ] **Step 3: exercise.ts 改用共用模块**
+- [x] **Step 3: exercise.ts 改用共用模块**
 
 1. 顶部 import 调整：
    - 新增 `import { buildRecordingSession } from './session-setup'` 与 `import { markTaskCompleted, markTaskStarted } from './task-hooks'`；
@@ -968,12 +968,12 @@ export async function markTaskCompleted(taskId: string): Promise<void> {
 
 删除因此不再使用的 `questionsById` 局部变量。
 
-- [ ] **Step 4: 全量测试 + 类型检查确认零行为漂移**
+- [x] **Step 4: 全量测试 + 类型检查确认零行为漂移**
 
 Run: `npm run test:app` → 全绿
 Run: `npm --prefix app-src run build` → tsc 无错（若有未使用 import 报错，按 tsc 提示清理）
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app-src/src/pages/session-setup.ts app-src/src/pages/task-hooks.ts app-src/src/pages/exercise.ts
@@ -990,7 +990,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Create: `app-src/src/pages/vocab-photo.ts`
 - Modify: `app-src/src/styles.css`（若需 `.dictation-sheet` 列表样式；现有样式够用则不改）
 
-- [ ] **Step 1: 实现 `vocab-photo.ts` 全文**
+- [x] **Step 1: 实现 `vocab-photo.ts` 全文**
 
 页面模块无 jsdom 测试（与现有 pages 一致），正确性由 tsc + 浏览器终验（Task 9）覆盖；核心对齐/判分逻辑已在 Task 3/5 的纯函数层测过。`runVocabPhotoFlow` 在本任务尚无调用方（Task 8 接线），导出符号不触发 tsc 未使用告警。
 
@@ -1196,12 +1196,12 @@ export function runVocabPhotoFlow(opts: VocabPhotoFlowOptions): void {
 }
 ```
 
-- [ ] **Step 2: 类型检查**
+- [x] **Step 2: 类型检查**
 
 Run: `npm --prefix app-src run build` → tsc 无错
 （`runVocabPhotoFlow` 是导出符号，无调用方不触发告警；`markTaskCompleted` 来自 Task 6 的 task-hooks.ts）
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app-src/src/pages/vocab-photo.ts
@@ -1217,7 +1217,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 **Files:**
 - Modify: `app-src/src/pages/exercise.ts`
 
-- [ ] **Step 1: loadQuestions 的 vocab 路径改为固定顺序 + 标记 isVocab**
+- [x] **Step 1: loadQuestions 的 vocab 路径改为固定顺序 + 标记 isVocab**
 
 `loadQuestions` 返回类型与 vocab 分支改为（不 shuffle——键盘模式在选择后再 shuffle）；**同时** start() 内 `let data: { title: string; questions: Question[]; emptyMessage?: string }` 局部声明补上 `isVocab?: boolean`，否则后续 `data.isVocab` 访问过不了 tsc：
 
@@ -1241,7 +1241,7 @@ async function loadQuestions(
   }
 ```
 
-- [ ] **Step 2: start() 插入模式选择卡**
+- [x] **Step 2: start() 插入模式选择卡**
 
 现有 start() 中 `if (taskId) await markTaskStarted(taskId)` 之前有 settings/aiUsage 读取段。把顺序调整为「settings/aiUsage 先读 → vocab 模式选择 → markTaskStarted → 后续」，即：
 
@@ -1305,14 +1305,14 @@ import { runVocabPhotoFlow } from './vocab-photo'
 
 注意：`container` 类型为 `HTMLElement`（PageRenderer 参数），与 `runVocabPhotoFlow` 的 `container: HTMLElement` 匹配。
 
-- [ ] **Step 3: 全量回归**
+- [x] **Step 3: 全量回归**
 
 Run: `npm run test:app` → 全绿
 Run: `npm --prefix app-src run build` → tsc 无错、构建成功
 
 （规格 §4.1 中「exercise.ts 模式选择：轻量纯逻辑断言」——模式选择卡的全部逻辑是内联 DOM 渲染与事件绑定，无可抽的纯函数；按规格「不强行引入 jsdom」原则，本任务不新增 DOM 单测，覆盖走 Task 9 浏览器终验。）
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add app-src/src/pages/exercise.ts
@@ -1329,14 +1329,14 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Modify: `docs/superpowers/specs/2026-11-19-vocab-photo-dictation-design.md`（追加验收记录）
 - Modify: `docs/superpowers/plans/2026-11-16-m0-m1-local-core.md`（M2 待办汇总登记，如有 Minor）
 
-- [ ] **Step 1: 汇总回归**
+- [x] **Step 1: 汇总回归**
 
 Run: `npm run test:app` → 全绿（记录用例总数）
 Run: `npm --prefix app-src run build` → tsc 无错；产物仅在 `app/`，且重复构建零漂移（对比两次构建产物 hash 一致）
 Run: `npm run test:extract` → 6/6（防漂移守卫）
 Run: `npx html-validate index.html typing/ 2>/dev/null || npm run htmlvalidate` → 原站 CI 不受影响（按仓库既有 CI 命令执行）
 
-- [ ] **Step 2: 浏览器终验（⚠️ 本会话模型不支持图片模态，绝对禁止 take_screenshot —— 会话会被 400 错误杀死；一律用文本快照 browser_snapshot / browser_find / browser_evaluate）**
+- [x] **Step 2: 浏览器终验（⚠️ 本会话模型不支持图片模态，绝对禁止 take_screenshot —— 会话会被 400 错误杀死；一律用文本快照 browser_snapshot / browser_find / browser_evaluate）**
 
 用 Playwright MCP 对 `vite preview`（或 `npm run dev:app`）逐项验证，全部用文本断言：
 
@@ -1349,7 +1349,7 @@ Run: `npx html-validate index.html typing/ 2>/dev/null || npm run htmlvalidate` 
 7. 中途离开（hashchange）→ 在途识别中止（mock fetch 永不返回，断言离开后无残留渲染）。
 8. 任务驱动入口（今日页词汇任务卡）→ 选模式后任务 in_progress，完成后 completed（tasks 表查询验证）。
 
-- [ ] **Step 3: 更新文档并提交**
+- [x] **Step 3: 更新文档并提交**
 
 1. 在 `docs/superpowers/specs/2026-11-19-vocab-photo-dictation-design.md` 末尾追加「## 验收记录（2026-11-…）」，按规格 §5 四条逐项登记实测结果（含测试用例总数、构建零漂移、浏览器终验各步、隐私红线复检：grep 确认无真实 Key、aiRequests 无图片内容字段）。
 2. 若评审/终验发现 Minor（非阻塞），登记到 `docs/superpowers/plans/2026-11-16-m0-m1-local-core.md` 的「M2 待办汇总」。

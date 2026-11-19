@@ -146,3 +146,18 @@ FileReader → `Image` → canvas 压缩到长边 ≤1280px、JPEG 质量 0.85 �
 2. 浏览器终验：`#/exercise?vocab=u1` → 手写拍照 → 整页照片 → 识别 → 直接判分 → 结果屏逐行对错与汇总正确；缺失序号记未作答；attempts/任务回写与键盘模式口径一致。
 3. AI 关闭/未配 Key/额度满时手写拍照入口置灰并显示原因；识别失败可重拍且不写任何记录。
 4. 照片不落任何存储（IndexedDB/aiRequests/备份），代码与测试中无任何真实 Key（红线复检）。
+
+## 验收记录（2026-11-19）
+
+按 §5 四条逐项实测（Playwright MCP 文本断言 + Vitest；本会话模型不支持图片模态，全程未用截图）：
+
+1. **测试与构建**：`npm run test:app` 全绿——23 个测试文件、**361 个用例**（含新增 vision 15 / image 9 / dictation-align 6 / ai-config 新 3，及既有全量）；`npm --prefix app-src run build` tsc 无错，产物仅 `app/`；两次构建产物 sha256 一致（零漂移）；`npm run test:extract` 7/7（计划写 6/6 为当时快照，现为 7）；`html-validate index.html typing/` 退出码 0。
+2. **浏览器终验**（dev 服务器，全程 browser_snapshot/browser_find/browser_evaluate 文本断言）：
+   - `#/exercise?vocab=v1-u1` 出现模式选择卡（「键盘默写」「手写拍照（AI 识别）」）；键盘路径进入原逐题流程（第 1/9 题、题干「铃（声）；钟（声）（n.）」、提交按钮齐全）；拍照路径卷面屏 9 词带序号清单 + 拍照上传入口。
+   - mock fetch 注入 2400×1800 canvas 测试图走完整链路：压缩产出 `data:image/jpeg` 1280×960（约 14KB）；请求体默认模型 `qwen-vl-ocr`、max_tokens 1024、user 消息为 [image_url, text] 混排；结果屏逐行 ✓/✗、缺失序号显示「未作答」、汇总「共 9 词，写对 1 词（11%）」；attempts 新增 9 行（phase=first，与键盘流同口径）。
+   - 任务驱动入口（今日页「单词默写」任务卡）：选定拍照模式后任务 in_progress，判分完成后 completed（tasks 表实测）。
+   - 中途离开：识别中屏 hashchange 离开后 AbortSignal.aborted=true、无残留渲染、回今日页。
+3. **灰态与错误**：未配 Key（aiEnabled=true）→ 手写按钮 disabled，title「未配置 AI（设置页）」；AI 关闭（默认 aiEnabled=false）→ disabled，title「已在设置页关闭 AI」。识别失败可重拍路径由 vision.test.ts 单测覆盖（invalid-response 不写记录外仅记 aiRequests 状态行）。
+4. **隐私红线复检**：浏览器实测 aiRequests 行仅含 id/type/status/latencyMs/createdAt 五字段，不含图片 dataURL、识别文本与 Key；全仓 grep 无 `sk-` 形态真实密钥（测试一律 `sk-test-fake-key-0000`）；db/ 与 backup/ 层无 imageDataUrl 引用（照片仅进识别请求体）。
+
+**实现偏差备忘**（非产品缺陷，仅记录）：计划 Task 8 要求 `chooseVocabMode` 定义在 `renderQuestion` 之前（调用点之后），const 箭头函数会触发 TDZ `ReferenceError`；实现时将其定义移到调用点之前（settings 块之后），语义不变。浏览器终验未发现需登记 M2 的 Minor。

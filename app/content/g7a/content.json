@@ -1,6 +1,6 @@
 {
   "contentId": "g7a",
-  "version": "2026-11-17.2",
+  "version": "2026-11-19.1",
   "questionCount": 384,
   "vocabWordCount": 470,
   "books": [
@@ -20,12 +20,12 @@
   "files": [
     {
       "name": "questions.json",
-      "sha256": "e1d613e7017fbc64728b7837f4c5281d52b5ca5a88b533e6f219a5433a3c6d08",
+      "sha256": "87381678cbcfe80c428628a581753a895de5f6c686067e1cd8e7bc79285223b3",
       "count": 384
     },
     {
       "name": "vocab.json",
-      "sha256": "96d9fe74e1774573f457f42239978a9f5288335a2b424c9f21320a77595a5ada",
+      "sha256": "9b47fea65bca5972b2c20a00157b1535f1b0fb95a73f62ee400384c975d9e920",
       "count": 18
     }
   ]

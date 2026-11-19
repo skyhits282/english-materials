@@ -1,7 +1,7 @@
 [
   {
     "book": "g7a",
-    "contentVersion": "2026-11-17.2",
+    "contentVersion": "2026-11-19.1",
     "units": [
       {
         "id": "v1-u1",
@@ -1733,7 +1733,7 @@
   },
   {
     "book": "g7b",
-    "contentVersion": "2026-11-17.2",
+    "contentVersion": "2026-11-19.1",
     "units": [
       {
         "id": "v2-u1",

@@ -11,7 +11,7 @@ import { pathToFileURL } from 'node:url'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const OUT_DIR = path.join(ROOT, 'app-src/public/content/g7a')
-export const CONTENT_VERSION = '2026-11-17.2'
+export const CONTENT_VERSION = '2026-11-19.1'
 
 /** 目录映射：book → 专项目录与词汇数据文件（词汇 unit id 前缀沿用源数据的 v1- 与 v2-） */
 const BOOKS = [
@@ -49,6 +49,31 @@ const LEVEL_SLUGS = {
   'g7b-nouns': ['countability', 'plural-rules', 'plural-sound', 'plural-irregular', 'dual-purpose', 'mixed'],
   'g7b-pronouns-modals': ['possessive-form', 'possessive-contrast', 'can-could', 'may', 'must-have-to', 'mixed'],
   'g7b-tenses': ['progressive-form', 'ing-change', 'progressive-use', 'past-form', 'past-negation', 'mixed'],
+}
+
+/** 确定性伪随机（mulberry32）：种子来自题目 ID 的 sha256，保证提取幂等 */
+function mulberry32(seed) {
+  let a = seed >>> 0
+  return () => {
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+/** 选项顺序洗牌：源题库把正确选项固定排在首位（88% answer=0，学生易学会"选 A"）。
+ *  以题目 ID 为种子做确定性 Fisher-Yates 并同步映射 correctOptionIndex；
+ *  语义不变（正确选项文本与选项集合不变），输出稳定（幂等），题库增改自动生效。 */
+export function shuffleOptions(questionId, options, answer) {
+  const seed = parseInt(createHash('sha256').update(questionId).digest('hex').slice(0, 8), 16)
+  const rand = mulberry32(seed)
+  const order = options.map((_, i) => i)
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
+  return { options: order.map((i) => options[i]), answer: order.indexOf(answer) }
 }
 
 /** "P1-1"（字母+级别-序号）→ g7a-present-l1-0001；级别取自原始 ID 内的数字 */
@@ -95,6 +120,7 @@ function toQuestion(bk, sp, raw, priorKp, ownKp) {
   }
   const slug = LEVEL_SLUGS[sp.id][level - 1]
   if (!slug) throw new Error(`${sp.id} 缺少级别 ${level} 的知识点映射`)
+  const shuffled = shuffleOptions(toQuestionId(sp.id, raw.id), raw.options, raw.answer)
   return {
     id: toQuestionId(sp.id, raw.id),
     contentVersion: CONTENT_VERSION,
@@ -105,8 +131,8 @@ function toQuestion(bk, sp, raw, priorKp, ownKp) {
     knowledgePointIds: [disambiguateKp(`${sp.kpPrefix}.${slug}`, bk.book, priorKp, ownKp)],
     type: 'single_choice',
     stem: raw.stem,
-    options: raw.options,
-    answerSpec: { correctOptionIndex: raw.answer },
+    options: shuffled.options,
+    answerSpec: { correctOptionIndex: shuffled.answer },
     explanation: raw.explain,
     difficulty: level,
     estimatedSeconds: 45,

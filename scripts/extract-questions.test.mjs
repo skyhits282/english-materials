@@ -111,6 +111,48 @@ test('content.json 元数据与题数一致（含分册统计）', () => {
   }
 })
 
+/** 源 data.js 原始题目（对照洗牌语义用）：与 extract-questions.mjs 的 BOOKS 专项一致 */
+const RAW_SPECIALS = [
+  { dir: 'g7a-present', key: 'G7A_PRESENT', id: 'g7a-present' },
+  { dir: 'g7a-nouns', key: 'G7A_NOUNS', id: 'g7a-nouns' },
+  { dir: 'g7a-numbers', key: 'G7A_NUMBERS', id: 'g7a-numbers' },
+  { dir: 'g7a-articles', key: 'G7A_ARTICLES', id: 'g7a-articles' },
+  { dir: 'g7b-adjadv', key: 'G7B_ADJADV', id: 'g7b-adjadv' },
+  { dir: 'g7b-nouns', key: 'G7B_NOUNS', id: 'g7b-nouns' },
+  { dir: 'g7b-pronouns-modals', key: 'G7B_PRONOUNS', id: 'g7b-pronouns-modals' },
+  { dir: 'g7b-tenses', key: 'G7B_TENSES', id: 'g7b-tenses' },
+]
+
+function loadRawQuestions() {
+  const raws = []
+  for (const sp of RAW_SPECIALS) {
+    const src = fs.readFileSync(path.resolve(import.meta.dirname, '..', sp.dir, 'data.js'), 'utf8')
+    const sandbox = {}
+    new Function('window', src)(sandbox)
+    for (const raw of sandbox[sp.key].questions) raws.push({ special: sp.id, raw })
+  }
+  return raws
+}
+
+test('选项洗牌语义保持：选项集合不变，正确选项文本不变', () => {
+  const { questions } = extractAll()
+  const byId = new Map(questions.map((q) => [q.id, q]))
+  for (const { special, raw } of loadRawQuestions()) {
+    const q = byId.get(toQuestionId(special, raw.id))
+    assert.ok(q, `缺少题目 ${raw.id}`)
+    assert.deepEqual([...q.options].sort(), [...raw.options].sort())
+    assert.equal(q.options[q.answerSpec.correctOptionIndex], raw.options[raw.answer])
+  }
+})
+
+test('选项洗牌分布：正确答案不再扎堆 A（每个索引都出现且单索引 < 40%）', () => {
+  const { questions } = extractAll()
+  const dist = [0, 0, 0, 0]
+  for (const q of questions) dist[q.answerSpec.correctOptionIndex] += 1
+  assert.ok(dist.every((n) => n > 20), `正确选项分布过偏：${dist.join('/')}`)
+  assert.ok(Math.max(...dist) < 154, `单索引占比超过 40%：${dist.join('/')}`)
+})
+
 test('已提交产物与提取结果逐字节一致（防漂移）', () => {
   const { questionsJson, vocabJson, content } = extractAll()
   const outDir = path.resolve(import.meta.dirname, '../app-src/public/content/g7a')

@@ -459,6 +459,24 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 17))
     expect(tasks.find((t) => t.type === 'review')).toBeUndefined()
   })
+
+  it('缺陷②不变量：休息日当日已有任务行 → 原样返回不重建（今日页数据优先的 repo 侧保证）', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    // 2026-11-22 周日（每周 6 天 → 休息日），当日已有一行任务（模拟中途调小 studyDaysPerWeek 前生成的计划）
+    await db.tasks.put({
+      id: 'task-2026-11-22-unit',
+      day: '2026-11-22',
+      type: 'unit',
+      questionIds: ['u-1'],
+      status: 'in_progress',
+      minutesPlanned: 14,
+    })
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, REST_DAY)
+    expect(tasks.map((t) => t.id)).toEqual(['task-2026-11-22-unit'])
+    expect(tasks[0]?.status).toBe('in_progress')
+    expect(await db.tasks.count()).toBe(1)
+  })
 })
 
 describe('updateTaskStatus（任务状态机）', () => {

@@ -246,7 +246,10 @@ async function renderPage(container: HTMLElement): Promise<void> {
   }
   container.querySelector('#seed-retry')?.addEventListener('click', (e) => {
     const btn = e.currentTarget
-    if (btn instanceof HTMLButtonElement) void retrySeed(btn, { container, today, rebuild: planIncomplete })
+    // 休息日只重拉/重播种，不删当日任务：休息日 getOrCreatePlan 返回 [] 不重建，
+    // 误删已有任务行会造成净丢失（今日页数据优先的窄路径）
+    const rebuild = planIncomplete && isStudyDay(today, settings.studyDaysPerWeek)
+    if (btn instanceof HTMLButtonElement) void retrySeed(btn, { container, today, rebuild })
   })
   window.removeEventListener('hashchange', onHashChange)
 }

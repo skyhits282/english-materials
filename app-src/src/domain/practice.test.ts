@@ -40,6 +40,7 @@ describe('pickSpecialPractice（规格 §0：纯随机抽 24）', () => {
     expect(picked).toHaveLength(SPECIAL_PRACTICE_MAX)
     const ids = new Set(input.map((x) => x.id))
     for (const x of picked) expect(ids.has(x.id)).toBe(true)
+    expect(new Set(picked.map((x) => x.id)).size).toBe(SPECIAL_PRACTICE_MAX)
   })
   it('输入不足 24（5 题）时全部返回', () => {
     const input = Array.from({ length: 5 }, (_, i) => q(i))

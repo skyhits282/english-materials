@@ -4,6 +4,7 @@ import type { Question, Settings } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
 import { DEFAULT_SETTINGS, getReviewSet, getSettings, listAllQuestions, questionsByUnitPrefix } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
+import { pickSpecialPractice, shuffle } from '../domain/practice'
 import type { Submission } from '../domain/session'
 import { escapeHtml } from '../ui/escape'
 import { getAiUsageToday } from '../services/ai/quota'
@@ -26,15 +27,6 @@ function explainResultHtml(result: ExplainMistakeResult | AiRawResult): string {
     <h4>讲解</h4><p>${escapeHtml(result.explanation)}</p>
     <h4>变式练习</h4><p>${escapeHtml(result.followUpQuestion)}</p>
   </div>`
-}
-
-function shuffle<T>(items: T[]): T[] {
-  const arr = [...items]
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[arr[i], arr[j]] = [arr[j]!, arr[i]!]
-  }
-  return arr
 }
 
 /** 复测模式（#/exercise?set=review）：getReviewSet 产出到期题 ID，这里解析为 Question 对象。
@@ -96,17 +88,18 @@ async function loadQuestions(
       isVocab: true,
     }
   }
-  // set=<专项 id>（今日页任务卡入口）与 special=<专项 id>（既有入口）共用同一加载路径
+  // set=<专项 id>（今日页任务卡入口）与 special=<专项 id>（既有入口）共用同一加载路径；
+  // 限量随机抽题（规格 §0）：一次 24 题而非全量 48，标题带实际题数（与「到期复习 · N 题」口径一致）
   const special = params.get('set') || params.get('special')
   if (special) {
     const storageOk = await isStorageAvailable()
     if (storageOk) {
-      const questions = await questionsByUnitPrefix(special)
-      return { title: '专项练习', questions: shuffle(questions) }
+      const questions = pickSpecialPractice(await questionsByUnitPrefix(special))
+      return { title: `专项练习 · ${questions.length} 题`, questions }
     }
     const bundle = await fetchContentBundle()
-    const questions = bundle.questions.filter((q) => q.unit.startsWith(special))
-    return { title: '专项练习', questions: shuffle(questions) }
+    const questions = pickSpecialPractice(bundle.questions.filter((q) => q.unit.startsWith(special)))
+    return { title: `专项练习 · ${questions.length} 题`, questions }
   }
   return { title: '练习', questions: [] }
 }

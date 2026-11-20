@@ -27,7 +27,7 @@
 - Create: `app-src/src/domain/practice.ts`
 - Test: `app-src/src/domain/practice.test.ts`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 创建 `app-src/src/domain/practice.test.ts`：
 
@@ -95,12 +95,12 @@ describe('pickSpecialPractice（规格 §0：纯随机抽 24）', () => {
 })
 ```
 
-- [ ] **Step 2: 运行确认失败**
+- [x] **Step 2: 运行确认失败**
 
 Run: `cd app-src && npx vitest run src/domain/practice.test.ts`
 Expected: FAIL（`Failed to resolve import './practice'`，模块不存在）
 
-- [ ] **Step 3: 写最小实现**
+- [x] **Step 3: 写最小实现**
 
 创建 `app-src/src/domain/practice.ts`：
 
@@ -127,17 +127,17 @@ export function pickSpecialPractice(questions: readonly Question[]): Question[] 
 }
 ```
 
-- [ ] **Step 4: 运行确认通过**
+- [x] **Step 4: 运行确认通过**
 
 Run: `cd app-src && npx vitest run src/domain/practice.test.ts`
 Expected: PASS（6 用例全绿）
 
-- [ ] **Step 5: 全量回归**
+- [x] **Step 5: 全量回归**
 
 Run: `cd /data/svn/learn/english-materials && npm run test:app`
 Expected: 23 文件 / **386** 用例全绿（380 基线 + 6 新增）
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add app-src/src/domain/practice.ts app-src/src/domain/practice.test.ts
@@ -153,7 +153,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 **Files:**
 - Modify: `app-src/src/pages/exercise.ts:31-38`（删除本地 shuffle）、`:99-110`（special 分支两条路径）、import 区
 
-- [ ] **Step 1: 改 import 并删除本地 shuffle**
+- [x] **Step 1: 改 import 并删除本地 shuffle**
 
 在 `pages/exercise.ts` import 区（现有 `import type { Submission } from '../domain/session'` 附近）新增：
 
@@ -176,7 +176,7 @@ function shuffle<T>(items: T[]): T[] {
 
 词汇键盘模式的 `shuffle(data.questions)`（约 184 行）改为导入复用，行为不变。
 
-- [ ] **Step 2: 改 special 分支（两条路径统一限量 + 标题带题数）**
+- [x] **Step 2: 改 special 分支（两条路径统一限量 + 标题带题数）**
 
 将 `loadQuestions` 内 special 分支（约 99-110 行）：
 
@@ -213,12 +213,12 @@ function shuffle<T>(items: T[]): T[] {
   }
 ```
 
-- [ ] **Step 3: 类型检查与全量回归**
+- [x] **Step 3: 类型检查与全量回归**
 
 Run: `cd app-src && npx tsc --noEmit && npx vitest run`
 Expected: tsc exit 0；23 文件 / 386 用例全绿（exercise 页无 DOM 级测试为仓库惯例，接线由 Task 3 浏览器验收兜底）
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add app-src/src/pages/exercise.ts
@@ -234,12 +234,12 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 **Files:**
 - Modify: `docs/superpowers/specs/2026-11-20-special-practice-cap-design.md`（验收记录小节）
 
-- [ ] **Step 1: 启动 dev 服务器**
+- [x] **Step 1: 启动 dev 服务器**
 
 Run: `cd /data/svn/learn/english-materials/app-src && npx vite --port 5199 --strictPort`（后台）
 注意：实际 base 为 `/english-materials/app/`（根路径 302 跳转），浏览器地址统一用 `http://localhost:5199/english-materials/app/#/...`
 
-- [ ] **Step 2: 自由入口限量断言**
+- [x] **Step 2: 自由入口限量断言**
 
 浏览器导航 `http://localhost:5199/english-materials/app/#/exercise?special=g7a-present`，文本断言（禁止截图，只用 browser_snapshot / browser_find / browser_evaluate）：
 - 页面标题含 `专项练习 · 24 题`
@@ -247,11 +247,11 @@ Run: `cd /data/svn/learn/english-materials/app-src && npx vite --port 5199 --str
 - 再次进入（先经 `#/today` 再回该 URL，同 hash 导航不重渲染）标题仍为 24 题且首题题干与上次**可能**不同——用 browser_evaluate 读首题 `h3` 文本，连进 3 次至少一次不同（随机性生效，同首题 3 连概率 1/24²≈0.17%，若恰同视为通过并重试一轮）
 - 换一个专项（如 `special=g7b-tenses`）同样 24 题
 
-- [ ] **Step 3: 任务卡入口断言（今日页真实链路）**
+- [x] **Step 3: 任务卡入口断言（今日页真实链路）**
 
 导航 `#/today`，如当日计划含「专项巩固」任务卡，点击进入：标题含 `专项练习 · 24 题`、进度 `第 1 / 24 题`（`set=` 与 `special=` 共用路径，此处验证带 `task=` 的完整链路不回归）；如当日无专项任务卡（休息日/计划无专项段），如实记录并以 Step 2 的共用路径断言为准。
 
-- [ ] **Step 4: 全量回归 + 构建验证 + 产物恢复**
+- [x] **Step 4: 全量回归 + 构建验证 + 产物恢复**
 
 Run: `cd /data/svn/learn/english-materials && npm run test:app && npm run test:extract && npm run build:app`
 Expected: 386 用例全绿；extract 9/9；构建成功。随后**必须**恢复产物（功能提交不更新 `app/`）：
@@ -260,11 +260,11 @@ git checkout -- app/ && git clean -f app/assets
 git status --porcelain   # 应为空
 ```
 
-- [ ] **Step 5: 停 dev 服务器并填写验收记录**
+- [x] **Step 5: 停 dev 服务器并填写验收记录**
 
 停掉 5199 端口进程。在规格 `docs/superpowers/specs/2026-11-20-special-practice-cap-design.md` 末尾「验收记录（2026-11-20）」小节如实填写：测试计数（386 全绿 / extract 9/9）、浏览器各断言结果（含随机性观察与偏差备忘）、构建与产物恢复情况、`git status --porcelain app/` 为空。
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add docs/superpowers/specs/2026-11-20-special-practice-cap-design.md

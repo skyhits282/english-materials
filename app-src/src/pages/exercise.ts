@@ -95,11 +95,14 @@ async function loadQuestions(
     const storageOk = await isStorageAvailable()
     if (storageOk) {
       const questions = pickSpecialPractice(await questionsByUnitPrefix(special))
-      return { title: `专项练习 · ${questions.length} 题`, questions }
+      // 无题时不带题数，避免与下方「该内容暂无题目。」空态重复突兀
+      const title = questions.length > 0 ? `专项练习 · ${questions.length} 题` : '专项练习'
+      return { title, questions }
     }
     const bundle = await fetchContentBundle()
     const questions = pickSpecialPractice(bundle.questions.filter((q) => q.unit.startsWith(special)))
-    return { title: `专项练习 · ${questions.length} 题`, questions }
+    const title = questions.length > 0 ? `专项练习 · ${questions.length} 题` : '专项练习'
+    return { title, questions }
   }
   return { title: '练习', questions: [] }
 }

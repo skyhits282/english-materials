@@ -34,6 +34,9 @@ describe('shuffle（Fisher-Yates，拷贝洗牌）', () => {
 })
 
 describe('pickSpecialPractice（规格 §0：纯随机抽 24）', () => {
+  it('上限常量锚定为 24（规格唯一数字契约，防自引用断言）', () => {
+    expect(SPECIAL_PRACTICE_MAX).toBe(24)
+  })
   it('48 题抽恰 24 题，且结果为输入子集', () => {
     const input = Array.from({ length: 48 }, (_, i) => q(i))
     const picked = pickSpecialPractice(input)

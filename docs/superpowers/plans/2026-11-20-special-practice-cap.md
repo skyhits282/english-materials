@@ -135,7 +135,7 @@ Expected: PASS（6 用例全绿）
 - [x] **Step 5: 全量回归**
 
 Run: `cd /data/svn/learn/english-materials && npm run test:app`
-Expected: 23 文件 / **386** 用例全绿（380 基线 + 6 新增）
+Expected: 24 文件 / **386** 用例全绿（380 基线 + 6 新增）
 
 - [x] **Step 6: 提交**
 
@@ -216,7 +216,7 @@ function shuffle<T>(items: T[]): T[] {
 - [x] **Step 3: 类型检查与全量回归**
 
 Run: `cd app-src && npx tsc --noEmit && npx vitest run`
-Expected: tsc exit 0；23 文件 / 386 用例全绿（exercise 页无 DOM 级测试为仓库惯例，接线由 Task 3 浏览器验收兜底）
+Expected: tsc exit 0；24 文件 / 386 用例全绿（exercise 页无 DOM 级测试为仓库惯例，接线由 Task 3 浏览器验收兜底）
 
 - [x] **Step 4: 提交**
 
@@ -244,7 +244,7 @@ Run: `cd /data/svn/learn/english-materials/app-src && npx vite --port 5199 --str
 浏览器导航 `http://localhost:5199/english-materials/app/#/exercise?special=g7a-present`，文本断言（禁止截图，只用 browser_snapshot / browser_find / browser_evaluate）：
 - 页面标题含 `专项练习 · 24 题`
 - 进度行含 `第 1 / 24 题`
-- 再次进入（先经 `#/today` 再回该 URL，同 hash 导航不重渲染）标题仍为 24 题且首题题干与上次**可能**不同——用 browser_evaluate 读首题 `h3` 文本，连进 3 次至少一次不同（随机性生效，同首题 3 连概率 1/24²≈0.17%，若恰同视为通过并重试一轮）
+- 再次进入（先经 `#/today` 再回该 URL，同 hash 导航不重渲染）标题仍为 24 题且首题题干与上次**可能**不同——用 browser_evaluate 读首题 `h3` 文本，连进 3 次至少一次不同（随机性生效，同首题 3 连概率 (1/48)²≈0.04%，若恰同视为通过并重试一轮）
 - 换一个专项（如 `special=g7b-tenses`）同样 24 题
 
 - [x] **Step 3: 任务卡入口断言（今日页真实链路）**

@@ -2,6 +2,7 @@ import type { PageRenderer } from '../router'
 import { navigate, parseHash } from '../router'
 import { SPECIALS } from '../content/sets'
 import { fetchContentBundle, findVocabUnit } from '../content/loader'
+import { hasUnlockedSpecialQuestions } from '../content/special-units'
 import { seedContent } from '../content/seed'
 import { isStorageAvailable } from '../db/availability'
 import { clearDayTasks, completeTask, getOrCreatePlan, getSettings, isPlanIncomplete, listAttempts } from '../db/repos'
@@ -147,8 +148,10 @@ async function renderPage(container: HTMLElement): Promise<void> {
 
   // 播种失败/计划残缺判定（M1 技术债清偿，两者都给重试入口）：
   //  - seedError：bundle fetch 失败或 seedContent 抛错——计划可能仍完整（此前已生成），但题目停留旧版本；
-  //  - isPlanIncomplete：当日计划缺专项段（questions 表无题可选时 generatePlan 不会产出 special 任务）
-  const planIncomplete = isPlanIncomplete(tasks)
+  //  - isPlanIncomplete：当日计划缺专项段（questions 表无题可选时 generatePlan 不会产出 special 任务）；
+  //    进度 0 解锁（当前学习单元无已解锁专项题）时专项任务合法缺席，不算残缺（specialExpected=false）
+  const specialExpected = bundle === undefined || hasUnlockedSpecialQuestions(bundle.questions, settings.currentUnit)
+  const planIncomplete = isPlanIncomplete(tasks, specialExpected)
   const seedFailed = seedError !== undefined
 
   interface TaskCard {
@@ -230,7 +233,12 @@ async function renderPage(container: HTMLElement): Promise<void> {
       ${seedError ? `<p>${escapeHtml(String(seedError))}</p>` : ''}
       <div class="action-row"><button class="btn" id="seed-retry">重试</button></div>
     </div>` : ''}
-    ${cardHtml}`
+    ${cardHtml}
+    ${
+      !specialExpected && !tasks.some((t) => t.type === 'special')
+        ? '<p class="muted">当前学习单元尚未解锁专项练习，可在家长设置中调高「当前学习单元」。</p>'
+        : ''
+    }`
 
   for (const btn of container.querySelectorAll<HTMLButtonElement>('button[data-card]')) {
     btn.addEventListener('click', () => {

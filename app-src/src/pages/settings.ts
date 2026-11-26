@@ -459,8 +459,9 @@ export const renderSettings: PageRenderer = async ({ container }) => {
         </select>
       </div>
       <div class="form-row">
-        <label for="set-unit">单词默写当前单元</label>
+        <label for="set-unit">当前学习单元</label>
         <select id="set-unit"></select>
+        <p class="muted">同时决定单词默写范围与专项练习、每日计划的出题范围（按教材单元逐步解锁语法专项）；学到七下后自动解锁七上全部专项。</p>
       </div>
       <div class="form-row">
         <label for="set-minutes">每日学习时长（分钟，20–45）</label>

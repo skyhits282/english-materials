@@ -2,6 +2,7 @@ import type { PageRenderer } from '../router'
 import { navigate } from '../router'
 import type { Question, Settings } from '../types'
 import { fetchContentBundle, deriveVocabQuestions, findVocabUnit } from '../content/loader'
+import { filterByUnlockedLevels } from '../content/special-units'
 import { DEFAULT_SETTINGS, getReviewSet, getSettings, listAllQuestions, questionsByUnitPrefix } from '../db/repos'
 import { isStorageAvailable } from '../db/availability'
 import { pickSpecialPractice, shuffle } from '../domain/practice'
@@ -15,6 +16,10 @@ import { markTaskCompleted, markTaskStarted } from './task-hooks'
 import { runVocabPhotoFlow } from './vocab-photo'
 
 const LETTERS = ['A', 'B', 'C', 'D']
+
+/** 专项出题范围为空（当前学习单元尚未解锁该专项任何级别）时的引导空态文案 */
+const UNLOCKED_EMPTY_MESSAGE =
+  '当前学习单元尚未解锁该专项的题目。可在家长设置中调高「当前学习单元」后重试。'
 
 /** AI 讲解结果渲染（模块级纯渲染函数）：三段"提示/讲解/变式练习"；{raw} 降级时整段纯文本展示。
  *  AI 返回内容一律 escapeHtml（红线：不信任外部模型输出）。 */
@@ -89,20 +94,40 @@ async function loadQuestions(
     }
   }
   // set=<专项 id>（今日页任务卡入口）与 special=<专项 id>（既有入口）共用同一加载路径；
-  // 限量随机抽题（规格 §0）：一次 24 题而非全量 48，标题带实际题数（与「到期复习 · N 题」口径一致）
+  // 限量随机抽题（规格 §0）：一次 24 题而非全量 48，标题带实际题数（与「到期复习 · N 题」口径一致）。
+  // 出题范围按学习进度过滤（当前学习单元，与每日计划 specialQuestions 同一口径）；
+  // 设置读取失败（存储不可用）时不过滤（fail-open，与 currentUnit 解析失败的兜底同口径，不阻塞练习主链路）
   const special = params.get('set') || params.get('special')
   if (special) {
+    let currentUnit: string | undefined
+    try {
+      currentUnit = (await getSettings()).currentUnit
+    } catch (err) {
+      console.warn('设置读取失败，专项出题范围不过滤：', err)
+    }
+    const filterPool = (pool: Question[]): Question[] =>
+      currentUnit === undefined ? pool : filterByUnlockedLevels(pool, currentUnit)
     const storageOk = await isStorageAvailable()
     if (storageOk) {
-      const questions = pickSpecialPractice(await questionsByUnitPrefix(special))
-      // 无题时不带题数，避免与下方「该内容暂无题目。」空态重复突兀
-      const title = questions.length > 0 ? `专项练习 · ${questions.length} 题` : '专项练习'
-      return { title, questions }
+      const pool = await questionsByUnitPrefix(special)
+      const questions = pickSpecialPractice(filterPool(pool))
+      // 区分两种空态：过滤前池空（题库缺失/专项 id 不存在）走默认文案；池非空但进度 0 解锁走引导文案
+      if (questions.length === 0) {
+        return pool.length === 0
+          ? { title: '专项练习', questions }
+          : { title: '专项练习', questions, emptyMessage: UNLOCKED_EMPTY_MESSAGE }
+      }
+      return { title: `专项练习 · ${questions.length} 题`, questions }
     }
     const bundle = await fetchContentBundle()
-    const questions = pickSpecialPractice(bundle.questions.filter((q) => q.unit.startsWith(special)))
-    const title = questions.length > 0 ? `专项练习 · ${questions.length} 题` : '专项练习'
-    return { title, questions }
+    const pool = bundle.questions.filter((q) => q.unit.startsWith(special))
+    const questions = pickSpecialPractice(filterPool(pool))
+    if (questions.length === 0) {
+      return pool.length === 0
+        ? { title: '专项练习', questions }
+        : { title: '专项练习', questions, emptyMessage: UNLOCKED_EMPTY_MESSAGE }
+    }
+    return { title: `专项练习 · ${questions.length} 题`, questions }
   }
   return { title: '练习', questions: [] }
 }

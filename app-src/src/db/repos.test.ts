@@ -477,6 +477,37 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     expect(tasks[0]?.status).toBe('in_progress')
     expect(await db.tasks.count()).toBe(1)
   })
+
+  it('专项题按学习进度过滤：currentUnit=v1-u4 时 l6（解锁于 v1-u10）不进入 special 任务', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await upsertQuestions([
+      q('g7a-present-l1-0001', 'g7a-present-l1'),
+      q('g7a-present-l6-0001', 'g7a-present-l6'),
+    ])
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, STUDY_DAY)
+    const special = tasks.find((t) => t.type === 'special')
+    expect(special?.questionIds).toEqual(['g7a-present-l1-0001'])
+  })
+
+  it('进度 0 解锁：专项任务合法缺席，分钟并入 summary（计划仍合法）', async () => {
+    await saveSettings(DEFAULT_SETTINGS) // currentUnit v1-u4（七上）
+    await upsertQuestions([q('g7b-tenses-l1-0001', 'g7b-tenses-l1')]) // 解锁于 v2-u5，全锁
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, STUDY_DAY)
+    expect(tasks.map((t) => t.type)).toEqual(['unit', 'summary'])
+    // special 份额 7 分钟并入 summary（4 + 7）
+    expect(tasks.find((t) => t.type === 'summary')?.minutesPlanned).toBe(11)
+  })
+
+  it('跨册全序：currentUnit=v2-u1 时七上专项可练、七下 v2-u5+ 级别仍锁', async () => {
+    await saveSettings({ ...DEFAULT_SETTINGS, book: 'g7b', currentUnit: 'v2-u1' })
+    await upsertQuestions([
+      q('g7a-present-l6-0001', 'g7a-present-l6'), // 解锁于 v1-u10 ≤ v2-u1（跨册解锁）
+      q('g7b-tenses-l5-0001', 'g7b-tenses-l5'), // 解锁于 v2-u6 > v2-u1（仍锁）
+    ])
+    const tasks = await getOrCreatePlan({ vocab: [vocabBook('v2-u1', 5)] }, STUDY_DAY)
+    const special = tasks.find((t) => t.type === 'special')
+    expect(special?.questionIds).toEqual(['g7a-present-l6-0001'])
+  })
 })
 
 describe('updateTaskStatus（任务状态机）', () => {
@@ -569,6 +600,11 @@ describe('isPlanIncomplete（播种重试是否重建当日计划的判定）', 
     expect(isPlanIncomplete([task('unit'), task('summary')])).toBe(true)
     expect(isPlanIncomplete([])).toBe(false)
     expect(isPlanIncomplete([task('review'), task('unit'), task('special'), task('summary')])).toBe(false)
+  })
+
+  it('specialExpected=false：进度 0 解锁导致专项任务合法缺席不算残缺', () => {
+    expect(isPlanIncomplete([task('unit'), task('summary')], false)).toBe(false)
+    expect(isPlanIncomplete([task('unit'), task('summary')], true)).toBe(true) // 默认参数 = 原行为
   })
 
   it('回归：bundle 瞬时失败但计划完整——重试判定不清任务，已完成状态保留', async () => {

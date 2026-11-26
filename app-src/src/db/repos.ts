@@ -6,6 +6,7 @@ import { pickReviewQuestions } from '../domain/review-picker'
 import { carryWindowStart, generatePlan, isStudyDay, pickCarrySource } from '../domain/plan'
 import { SPECIALS } from '../content/sets'
 import { vocabKpFromQuestionId } from '../content/loader'
+import { filterByUnlockedLevels } from '../content/special-units'
 import { uuid } from '../utils/uuid'
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -255,8 +256,11 @@ export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()
     .toArray()
   const carrySourceTasks = pickCarrySource(windowTasks, dayKey)
   const specialSets = SPECIALS.map((s) => s.id)
+  // 按学习进度过滤（currentUnit）：专项任务只从已解锁级别选（与练习页 pickSpecialPractice 同一口径）
   const specialQuestions = new Map<string, Question[]>()
-  for (const sid of specialSets) specialQuestions.set(sid, await questionsByUnitPrefix(sid))
+  for (const sid of specialSets) {
+    specialQuestions.set(sid, filterByUnlockedLevels(await questionsByUnitPrefix(sid), settings.currentUnit))
+  }
 
   const plan = generatePlan({
     day: dayKey,
@@ -312,9 +316,10 @@ export async function completeTask(id: string): Promise<boolean> {
 
 /** 播种重试是否需要清除当日任务重建：仅当计划本身残缺（学习日生成的计划缺专项段——
  *  questions 表无题可选时 generatePlan 不会产出 special 任务）。瞬时 bundle 失败但计划完整时
- *  返回 false：重试只重拉 bundle 与播种，不得重置已完成任务状态。 */
-export function isPlanIncomplete(tasks: TaskRow[]): boolean {
-  return tasks.length > 0 && !tasks.some((t) => t.type === 'special')
+ *  返回 false：重试只重拉 bundle 与播种，不得重置已完成任务状态。
+ *  specialExpected=false（当前学习单元进度下无已解锁专项题）时专项任务合法缺席，不算残缺。 */
+export function isPlanIncomplete(tasks: TaskRow[], specialExpected = true): boolean {
+  return tasks.length > 0 && specialExpected && !tasks.some((t) => t.type === 'special')
 }
 
 /** 更新任务状态：非法转移（含终态再转移）抛错且不落库 */

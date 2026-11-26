@@ -286,10 +286,10 @@ const vocabBook = (unitId: string, wordCount: number): VocabBook => ({
 })
 
 describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
-  /** 本地固定时刻：2026-11-17 周二（学习日）、2026-11-22 周日（休息日） */
+  /** 本地固定时刻：2026-11-17 周二（学习日）、2026-11-20 周五（默认学习日集合下唯一休息日） */
   const at = (y: number, m: number, d: number, h = 10): Date => new Date(y, m - 1, d, h)
   const STUDY_DAY = at(2026, 11, 17)
-  const REST_DAY = at(2026, 11, 22)
+  const REST_DAY = at(2026, 11, 20)
 
   /** 专项题入库（g7a-present，12 题 × 45s） */
   const seedSpecialQuestions = async (): Promise<void> => {
@@ -355,6 +355,13 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     expect(await db.tasks.count()).toBe(0)
   })
 
+  it('默认学习日集合回归锚点：周日（2026-11-22）是学习日、周五（REST_DAY）休息', async () => {
+    await saveSettings(DEFAULT_SETTINGS)
+    await seedSpecialQuestions()
+    const sundayTasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, at(2026, 11, 22))
+    expect(sundayTasks.length).toBeGreaterThan(0)
+  })
+
   it('昨日 deferred 结转为今日 review 任务；skipped 不结转', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()
@@ -397,10 +404,10 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
     }
   })
 
-  it('缺陷①：周六 deferred + 周日休息（无任务行）→ 周一计划仍结转（回溯跳过无任务日）', async () => {
+  it('缺陷①：周六 deferred + 其后无任务日 → 周一计划仍结转（回溯跳过无任务日）', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()
-    // 2026-11-21 周六 deferred；11-22 周日休息无任务行；今日 11-23 周一（学习日）
+    // 2026-11-21 周六 deferred；11-22 周日（默认学习日集合下为学习日，但当日未访问无任务行）；今日 11-23 周一（学习日）
     await db.tasks.put({
       id: 'task-2026-11-21-unit',
       day: '2026-11-21',
@@ -463,17 +470,17 @@ describe('getOrCreatePlan（每日计划生成 repo 封装）', () => {
   it('缺陷②不变量：休息日当日已有任务行 → 原样返回不重建（今日页数据优先的 repo 侧保证）', async () => {
     await saveSettings(DEFAULT_SETTINGS)
     await seedSpecialQuestions()
-    // 2026-11-22 周日（每周 6 天 → 休息日），当日已有一行任务（模拟中途调小 studyDaysPerWeek 前生成的计划）
+    // 2026-11-20 周五（默认学习日集合下唯一休息日），当日已有一行任务（模拟中途减少学习日前生成的计划）
     await db.tasks.put({
-      id: 'task-2026-11-22-unit',
-      day: '2026-11-22',
+      id: 'task-2026-11-20-unit',
+      day: '2026-11-20',
       type: 'unit',
       questionIds: ['u-1'],
       status: 'in_progress',
       minutesPlanned: 14,
     })
     const tasks = await getOrCreatePlan({ vocab: [vocabBook('v1-u4', 5)] }, REST_DAY)
-    expect(tasks.map((t) => t.id)).toEqual(['task-2026-11-22-unit'])
+    expect(tasks.map((t) => t.id)).toEqual(['task-2026-11-20-unit'])
     expect(tasks[0]?.status).toBe('in_progress')
     expect(await db.tasks.count()).toBe(1)
   })

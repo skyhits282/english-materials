@@ -468,8 +468,18 @@ export const renderSettings: PageRenderer = async ({ container }) => {
         <input id="set-minutes" type="number" min="20" max="45" step="5" value="${escapeHtml(String(settings.dailyMinutes))}">
       </div>
       <div class="form-row">
-        <label for="set-days">每周学习天数（1–7）</label>
-        <input id="set-days" type="number" min="1" max="7" value="${escapeHtml(String(settings.studyDaysPerWeek))}">
+        <label>每周学习日</label>
+        <div class="weekday-row" id="set-days">
+          ${['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            .map(
+              (label, i) =>
+                `<label class="check-row"><input type="checkbox" data-day="${i}"${
+                  settings.studyDays.includes(i) ? ' checked' : ''
+                }> ${label}</label>`,
+            )
+            .join('')}
+        </div>
+        <p class="muted">默认周一至周四与周六、周日学习（仅周五休息）；至少勾选一天。</p>
       </div>
       <div class="form-row">
         <label for="set-ai">AI 讲解（联网调用外部 AI 服务；关闭后练习/报告页 AI 按钮置灰）</label>
@@ -553,8 +563,9 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     fillUnitOptions(settings.book, settings.currentUnit)
     const minutes = container.querySelector<HTMLInputElement>('#set-minutes')
     if (minutes) minutes.value = String(settings.dailyMinutes)
-    const days = container.querySelector<HTMLInputElement>('#set-days')
-    if (days) days.value = String(settings.studyDaysPerWeek)
+    for (const cb of container.querySelectorAll<HTMLInputElement>('#set-days input[data-day]')) {
+      cb.checked = settings.studyDays.includes(Number(cb.dataset.day))
+    }
     const ai = container.querySelector<HTMLInputElement>('#set-ai')
     if (ai) ai.checked = settings.aiEnabled
   }
@@ -567,12 +578,20 @@ export const renderSettings: PageRenderer = async ({ container }) => {
     if (!currentUnit.startsWith(book === 'g7b' ? 'v2-' : 'v1-')) {
       currentUnit = vocabUnitsForBook(bundle?.vocab ?? [], book)[0]?.id ?? currentUnit
     }
+    const studyDays = [...container.querySelectorAll<HTMLInputElement>('#set-days input[data-day]')]
+      .filter((cb) => cb.checked)
+      .map((cb) => Number(cb.dataset.day))
+    if (studyDays.length === 0) {
+      if (stale) return
+      message.textContent = '请至少勾选一个学习日。'
+      return
+    }
     const next: Settings = {
       ...settings,
       book,
       currentUnit,
       dailyMinutes: clamp(Number(container.querySelector<HTMLInputElement>('#set-minutes')?.value), 20, 45),
-      studyDaysPerWeek: clamp(Number(container.querySelector<HTMLInputElement>('#set-days')?.value), 1, 7),
+      studyDays,
       aiEnabled: container.querySelector<HTMLInputElement>('#set-ai')?.checked ?? false,
     }
     if (await persist(next)) {

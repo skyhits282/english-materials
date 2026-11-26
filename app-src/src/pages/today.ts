@@ -117,11 +117,11 @@ async function renderPage(container: HTMLElement): Promise<void> {
   }
   if (stale) return
 
-  // 非学习日（规格 §2.1 数据优先）：仅当日无任务时显示"今日休息"——中途调小
-  // studyDaysPerWeek 后当日已生成任务照常显示（结转丢题修复缺陷②），不遮蔽不丢失
-  if (shouldShowRest(tasks, today, settings.studyDaysPerWeek)) {
+  // 非学习日（规格 §2.1 数据优先）：仅当日无任务时显示"今日休息"——中途减少
+  // 学习日后当日已生成任务照常显示（结转丢题修复缺陷②），不遮蔽不丢失
+  if (shouldShowRest(tasks, today, settings.studyDays)) {
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-    const tomorrowStudy = isStudyDay(localDayKey(tomorrow), settings.studyDaysPerWeek)
+    const tomorrowStudy = isStudyDay(localDayKey(tomorrow), settings.studyDays)
     const todayAttempts = attempts.filter((a) => isSameLocalDay(a.submittedAt, today))
     window.removeEventListener('hashchange', onHashChange)
     container.innerHTML = `
@@ -256,7 +256,7 @@ async function renderPage(container: HTMLElement): Promise<void> {
     const btn = e.currentTarget
     // 休息日只重拉/重播种，不删当日任务：休息日 getOrCreatePlan 返回 [] 不重建，
     // 误删已有任务行会造成净丢失（今日页数据优先的窄路径）
-    const rebuild = planIncomplete && isStudyDay(today, settings.studyDaysPerWeek)
+    const rebuild = planIncomplete && isStudyDay(today, settings.studyDays)
     if (btn instanceof HTMLButtonElement) void retrySeed(btn, { container, today, rebuild })
   })
   window.removeEventListener('hashchange', onHashChange)

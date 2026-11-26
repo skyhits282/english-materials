@@ -679,6 +679,75 @@ describe('settings 行校验扩展（防恶意备份注入）', () => {
     expect(parseAndValidateBackup(settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: 1 })).counts.settings).toBe(1)
     expect(parseAndValidateBackup(settingsFile({ ...DEFAULT_SETTINGS, aiDailyLimit: 500 })).counts.settings).toBe(1)
   })
+  it('studyDays 非数组拒绝', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, studyDays: 'x' })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/studyDays/)
+  })
+  it.each([7, -1, 1.5, '2'])('studyDays 元素越界/非整数拒绝（%s）', (day) => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, studyDays: [0, day] })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/studyDays/)
+  })
+  it('studyDays 空数组拒绝（每周须至少一个学习日）', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, studyDays: [] })
+    expect(() => parseAndValidateBackup(file)).toThrow(BackupError)
+    expect(() => parseAndValidateBackup(file)).toThrow(/studyDays/)
+  })
+  it('studyDays 合法（非连续组合）通过', () => {
+    const file = settingsFile({ ...DEFAULT_SETTINGS, studyDays: [0, 1, 2, 3, 5, 6] })
+    expect(parseAndValidateBackup(file).counts.settings).toBe(1)
+  })
+})
+
+describe('settings 旧字段迁移（studyDaysPerWeek → studyDays，导入时映射）', () => {
+  /** 旧版备份的 settings 行：value 只有 studyDaysPerWeek（周一起始连续 N 天），无 studyDays */
+  const legacyFile = (studyDaysPerWeek: number) =>
+    JSON.stringify({
+      schemaVersion: 2,
+      app: 'english-coach',
+      exportedAt: '2026-11-17T00:00:00.000Z',
+      counts: { settings: 1, contentMeta: 0, questions: 0, attempts: 0, mastery: 0, weeklyReports: 0, tasks: 0, aiRequests: 0 },
+      data: {
+        settings: [
+          {
+            key: 'app',
+            value: { ...DEFAULT_SETTINGS, studyDays: undefined, studyDaysPerWeek },
+            updatedAt: 'x',
+          },
+        ],
+        contentMeta: [],
+        questions: [],
+        attempts: [],
+        mastery: [],
+        weeklyReports: [],
+        tasks: [],
+        aiRequests: [],
+      },
+    })
+
+  it('覆盖导入：旧字段映射为周一起始的连续星期数组，旧字段移除', async () => {
+    const parsed = parseAndValidateBackup(legacyFile(3))
+    await importBackup(parsed, 'overwrite', { preImportDownload: () => {} })
+    const row = await db.settings.get('app')
+    expect(row?.value.studyDays).toEqual([0, 1, 2])
+    expect((row?.value as unknown as Record<string, unknown>).studyDaysPerWeek).toBeUndefined()
+  })
+
+  it('合并导入：同样迁移（settings 键不存在时写入）', async () => {
+    const parsed = parseAndValidateBackup(legacyFile(5))
+    await importBackup(parsed, 'merge', { preImportDownload: () => {} })
+    const row = await db.settings.get('app')
+    expect(row?.value.studyDays).toEqual([0, 1, 2, 3, 4])
+  })
+
+  it('旧字段越界（0/8/1.5）不映射：丢弃旧字段，读取时走默认学习日', async () => {
+    const parsed = parseAndValidateBackup(legacyFile(8))
+    await importBackup(parsed, 'overwrite', { preImportDownload: () => {} })
+    const row = await db.settings.get('app')
+    expect((row?.value as unknown as Record<string, unknown>).studyDays).toBeUndefined()
+    expect((row?.value as unknown as Record<string, unknown>).studyDaysPerWeek).toBeUndefined()
+  })
 })
 
 describe('行校验健壮性（M1 遗留）', () => {

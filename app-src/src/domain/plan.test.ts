@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CARRY_LOOKBACK_DAYS,
   carryWindowStart,
+  DEFAULT_STUDY_DAYS,
   generatePlan,
   isStudyDay,
   pickCarrySource,
@@ -18,6 +19,7 @@ import type { TaskRow } from '../db/schema'
 const MONDAY = '2026-11-16'
 const TUESDAY = '2026-11-17'
 const THURSDAY = '2026-11-19'
+const FRIDAY = '2026-11-20'
 const SATURDAY = '2026-11-21'
 const SUNDAY = '2026-11-22'
 
@@ -26,7 +28,7 @@ const settings = (over: Partial<Settings> = {}): Settings => ({
   book: 'g7a',
   currentUnit: 'v1-u1',
   dailyMinutes: 35,
-  studyDaysPerWeek: 6,
+  studyDays: [0, 1, 2, 3, 5, 6],
   aiEnabled: false,
   studentLabel: '学生1',
   ...over,
@@ -97,45 +99,58 @@ const ctx = (over: Partial<PlanContext> = {}): PlanContext => ({
 
 const byType = (tasks: TaskRow[], type: string): TaskRow | undefined => tasks.find((t) => t.type === type)
 
-describe('isStudyDay（周一起始的纯日期数学）', () => {
-  it('默认 6 天：周一…周六学习', () => {
-    expect(isStudyDay(MONDAY, 6)).toBe(true)
-    expect(isStudyDay(SATURDAY, 6)).toBe(true)
+describe('isStudyDay（星期序号数组判定，周一=0…周日=6）', () => {
+  it('默认集（周一至周四 + 周六周日）：周一到周四学习', () => {
+    expect(isStudyDay(MONDAY, DEFAULT_STUDY_DAYS)).toBe(true)
+    expect(isStudyDay(TUESDAY, DEFAULT_STUDY_DAYS)).toBe(true)
+    expect(isStudyDay(THURSDAY, DEFAULT_STUDY_DAYS)).toBe(true)
   })
-  it('默认 6 天：周日休息', () => {
-    expect(isStudyDay(SUNDAY, 6)).toBe(false)
+  it('默认集：仅周五休息', () => {
+    expect(isStudyDay(FRIDAY, DEFAULT_STUDY_DAYS)).toBe(false)
   })
-  it('5 天：周一…周五学习、周六休息', () => {
-    expect(isStudyDay('2026-11-20', 5)).toBe(true) // 周五
-    expect(isStudyDay(SATURDAY, 5)).toBe(false)
+  it('默认集：周六周日学习', () => {
+    expect(isStudyDay(SATURDAY, DEFAULT_STUDY_DAYS)).toBe(true)
+    expect(isStudyDay(SUNDAY, DEFAULT_STUDY_DAYS)).toBe(true)
   })
-  it('7 天：每天都是学习日', () => {
-    expect(isStudyDay(SUNDAY, 7)).toBe(true)
+  it('非连续自定义：仅周三周日学习（周一/周二/周四休息）', () => {
+    expect(isStudyDay('2026-11-18', [2, 6])).toBe(true) // 周三
+    expect(isStudyDay(SUNDAY, [2, 6])).toBe(true)
+    expect(isStudyDay(MONDAY, [2, 6])).toBe(false)
+    expect(isStudyDay(THURSDAY, [2, 6])).toBe(false)
+  })
+  it('周一到周五学习、周六周日休息', () => {
+    expect(isStudyDay(FRIDAY, [0, 1, 2, 3, 4])).toBe(true)
+    expect(isStudyDay(SATURDAY, [0, 1, 2, 3, 4])).toBe(false)
+    expect(isStudyDay(SUNDAY, [0, 1, 2, 3, 4])).toBe(false)
+  })
+  it('每天都是学习日', () => {
+    expect(isStudyDay(SUNDAY, [0, 1, 2, 3, 4, 5, 6])).toBe(true)
+    expect(isStudyDay(FRIDAY, [0, 1, 2, 3, 4, 5, 6])).toBe(true)
   })
 })
 
 describe('shouldShowRest（数据优先休息判定，规格 §2.1/§3）', () => {
   it('当日有任务 + 非学习日 → false（已生成计划不被休息页遮蔽）', () => {
-    // 周四（周一起始序 3）在 studyDaysPerWeek=3 时为休息日
-    expect(shouldShowRest([{ day: THURSDAY }], THURSDAY, 3)).toBe(false)
+    // 周四在 [0,1,2]（周一到周三）设置下为休息日
+    expect(shouldShowRest([{ day: THURSDAY }], THURSDAY, [0, 1, 2])).toBe(false)
     // 同日已有多条任务同样不遮蔽
-    expect(shouldShowRest([{ day: THURSDAY }, { day: THURSDAY }], THURSDAY, 3)).toBe(false)
+    expect(shouldShowRest([{ day: THURSDAY }, { day: THURSDAY }], THURSDAY, [0, 1, 2])).toBe(false)
   })
 
   it('当日无任务 + 非学习日 → true（显示休息页）', () => {
-    expect(shouldShowRest([], THURSDAY, 3)).toBe(true)
+    expect(shouldShowRest([], THURSDAY, [0, 1, 2])).toBe(true)
   })
 
   it('当日无任务 + 学习日 → false（显示今日计划）', () => {
-    expect(shouldShowRest([], THURSDAY, 6)).toBe(false)
-    expect(shouldShowRest([], MONDAY, 6)).toBe(false)
+    expect(shouldShowRest([], THURSDAY, [0, 1, 2, 3])).toBe(false)
+    expect(shouldShowRest([], MONDAY, DEFAULT_STUDY_DAYS)).toBe(false)
   })
 
-  it('非学习日判定与 isStudyDay 一致（周四在设置 3 休息、设置 4 学习）', () => {
-    expect(isStudyDay(THURSDAY, 3)).toBe(false)
-    expect(isStudyDay(THURSDAY, 4)).toBe(true)
-    expect(shouldShowRest([], THURSDAY, 3)).toBe(true)
-    expect(shouldShowRest([], THURSDAY, 4)).toBe(false)
+  it('非学习日判定与 isStudyDay 一致（周四在周一到周三休息、周一到周四学习）', () => {
+    expect(isStudyDay(THURSDAY, [0, 1, 2])).toBe(false)
+    expect(isStudyDay(THURSDAY, [0, 1, 2, 3])).toBe(true)
+    expect(shouldShowRest([], THURSDAY, [0, 1, 2])).toBe(true)
+    expect(shouldShowRest([], THURSDAY, [0, 1, 2, 3])).toBe(false)
   })
 })
 

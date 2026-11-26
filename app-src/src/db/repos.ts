@@ -3,7 +3,7 @@ import type { Attempt, Mastery, Question, Settings, VocabBook } from '../types'
 import { nextMasteryState, type ReviewEvent } from '../domain/review'
 import { localDayKey, isSameLocalDay } from '../domain/metrics'
 import { pickReviewQuestions } from '../domain/review-picker'
-import { carryWindowStart, generatePlan, isStudyDay, pickCarrySource } from '../domain/plan'
+import { carryWindowStart, DEFAULT_STUDY_DAYS, generatePlan, isStudyDay, pickCarrySource } from '../domain/plan'
 import { SPECIALS } from '../content/sets'
 import { vocabKpFromQuestionId } from '../content/loader'
 import { filterByUnlockedLevels } from '../content/special-units'
@@ -14,7 +14,7 @@ export const DEFAULT_SETTINGS: Settings = {
   book: 'g7a',
   currentUnit: 'v1-u4',
   dailyMinutes: 35,
-  studyDaysPerWeek: 6,
+  studyDays: [...DEFAULT_STUDY_DAYS],
   aiEnabled: false,
   studentLabel: '学生1',
 }
@@ -265,7 +265,7 @@ export async function getOrCreatePlan(inputs: PlanInputs, now: Date = new Date()
   const plan = generatePlan({
     day: dayKey,
     settings,
-    isStudyDay: isStudyDay(dayKey, settings.studyDaysPerWeek),
+    isStudyDay: isStudyDay(dayKey, settings.studyDays),
     reviewQuestions: (await getReviewSet(now)).questionIds,
     wrongByKp: await buildWrongByKp(),
     carrySourceTasks,

@@ -103,7 +103,9 @@ export interface Settings {
   /** 词汇默写当前单元，取 vocab unit id（如 v1-u4 / v2-u3） */
   currentUnit: string
   dailyMinutes: number
-  studyDaysPerWeek: number
+  /** 每周学习日（周一=0 … 周日=6 的星期序号数组，支持非连续组合）；
+   *  默认周一至周四 + 周六周日（仅周五休息）。旧字段 studyDaysPerWeek 已废弃，仅备份导入时映射 */
+  studyDays: number[]
   aiEnabled: boolean
   studentLabel: string
   /** 家长保护 PIN：4 位数字，明文存储（仅防误操作，不参与任何加密）；undefined=未设置。

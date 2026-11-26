@@ -189,6 +189,17 @@ function validateSettingsRow(row: unknown, line: number): void {
       throw new BackupError(`备份 settings 表第 ${line} 行 value.${f} 不是数字`)
     }
   }
+  // studyDays（周一=0…周日=6 星期序号数组，与设置页表单校验对称）：数组、非空、元素须为 0–6 整数
+  if (value.studyDays !== undefined) {
+    const days = value.studyDays
+    if (
+      !Array.isArray(days) ||
+      days.length === 0 ||
+      !days.every((d) => typeof d === 'number' && Number.isInteger(d) && d >= 0 && d <= 6)
+    ) {
+      throw new BackupError(`备份 settings 表第 ${line} 行 value.studyDays 须为非空的 0–6 整数数组（周一=0…周日=6）`)
+    }
+  }
   // aiDailyLimit 语义范围（与设置页表单校验对称：1–500 整数）
   const limit = value.aiDailyLimit
   if (limit !== undefined && (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 500)) {
@@ -344,6 +355,8 @@ export async function importBackup(
   await autoBackupBeforeImport(options.preImportDownload)
   const tasks = file.data.tasks ?? []
   const aiRequests = file.data.aiRequests ?? []
+  // 旧字段迁移在两分支共用入口做一次（overwrite 清库重写与 merge 跳过已有键都吃到同一份迁移结果）
+  const settingsRows = migrateSettingsRows(file.data.settings)
   if (mode === 'overwrite') {
     return db.transaction(
       'rw',
@@ -359,7 +372,7 @@ export async function importBackup(
           db.weeklyReports.clear(),
           db.aiRequests.clear(),
         ])
-        await db.settings.bulkAdd(file.data.settings)
+        await db.settings.bulkAdd(settingsRows)
         await db.contentMeta.bulkAdd(file.data.contentMeta)
         await db.questions.bulkAdd(file.data.questions)
         await db.tasks.bulkAdd(tasks)
@@ -381,8 +394,8 @@ export async function importBackup(
       await db.tasks.bulkPut(tasks)
       await db.mastery.bulkPut(file.data.mastery)
       await db.weeklyReports.bulkPut(file.data.weeklyReports)
-      const existingKeys = await db.settings.bulkGet(file.data.settings.map((r) => r.key))
-      const newSettings = file.data.settings.filter((_, i) => existingKeys[i] === undefined)
+      const existingKeys = await db.settings.bulkGet(settingsRows.map((r) => r.key))
+      const newSettings = settingsRows.filter((_, i) => existingKeys[i] === undefined)
       if (newSettings.length > 0) await db.settings.bulkAdd(newSettings)
       const existingAttempts = await db.attempts.bulkGet(file.data.attempts.map((a) => a.id))
       const missing = file.data.attempts.filter((_, i) => existingAttempts[i] === undefined)
@@ -393,6 +406,34 @@ export async function importBackup(
       return { attemptsAdded: missing.length, attemptsSkipped: file.data.attempts.length - missing.length }
     },
   )
+}
+
+/** settings 旧字段迁移（studyDaysPerWeek → studyDays）：旧字段是"周一起始连续 N 天"模型（1–7），
+ *  新字段是星期序号数组。value 有旧字段且无新字段时映射 [0..N-1]（保持旧备份语义不漂移），并移除旧字段；
+ *  旧字段越界/非整数（损坏数据）不映射也不保留（读取时 getSettings 合并默认学习日）。
+ *  拷贝改写，不改入参数组与行对象。 */
+function migrateSettingsRows(rows: SettingsRow[]): SettingsRow[] {
+  return rows.map((row) => {
+    const value = row.value as unknown as Record<string, unknown>
+    const legacy = value.studyDaysPerWeek
+    if (
+      value.studyDays === undefined &&
+      typeof legacy === 'number' &&
+      Number.isInteger(legacy) &&
+      legacy >= 1 &&
+      legacy <= 7
+    ) {
+      const next: Record<string, unknown> = { ...value, studyDays: Array.from({ length: legacy }, (_, i) => i) }
+      delete next.studyDaysPerWeek
+      return { ...row, value: next as unknown as SettingsRow['value'] }
+    }
+    if (value.studyDays === undefined && legacy !== undefined) {
+      const next: Record<string, unknown> = { ...value }
+      delete next.studyDaysPerWeek
+      return { ...row, value: next as unknown as SettingsRow['value'] }
+    }
+    return row
+  })
 }
 
 /** 导入前自动安全备份（技术债 §8.1"默认先备份"）：本地任一表有数据即先导出一份下载

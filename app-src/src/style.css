@@ -91,6 +91,9 @@ h2 { font-size: 1.2rem; }
   min-height: 48px; font-size: 1rem; cursor: pointer;
 }
 .check-row input { width: 22px; height: 22px; margin: 0; }
+/* 设置页每周学习日：7 个星期勾选排一行，窄屏自动换行 */
+.weekday-row { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.weekday-row .check-row { min-height: 44px; }
 
 /* 试卷成绩录入行（Task 8）：题型 + 得分/满分 三列，窄屏不换行 */
 .exam-row { display: grid; grid-template-columns: 1fr 88px 88px; gap: 8px; margin: 8px 0; }

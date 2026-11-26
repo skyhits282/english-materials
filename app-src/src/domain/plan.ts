@@ -14,9 +14,9 @@ export const SPECIAL_QUESTION_MAX = 10
 export interface PlanContext {
   /** 本地日 key（YYYY-MM-DD） */
   day: string
-  /** dailyMinutes、studyDaysPerWeek、book、currentUnit */
+  /** dailyMinutes、studyDays、book、currentUnit */
   settings: Settings
-  /** 由调用方按 studyDaysPerWeek 约定判定（isStudyDay(day, studyDaysPerWeek)） */
+  /** 由调用方按 studyDays 约定判定（isStudyDay(day, settings.studyDays)） */
   isStudyDay: boolean
   /** 今日到期复测题（Task 4 引擎产出） */
   reviewQuestions: string[]
@@ -32,18 +32,21 @@ export interface PlanContext {
   specialQuestions: Map<string, Question[]>
 }
 
-/** 学习日判定：以周一起始的 studyDaysPerWeek 天为学习日（默认 6 → 周一…周六学习、周日休息），纯日期数学 */
-export function isStudyDay(day: string, studyDaysPerWeek: number): boolean {
+/** 默认每周学习日（周一=0 … 周日=6 的星期序号）：周一至周四 + 周六周日（仅周五休息），DEFAULT_SETTINGS 引用 */
+export const DEFAULT_STUDY_DAYS: readonly number[] = [0, 1, 2, 3, 5, 6]
+
+/** 学习日判定：星期序号数组（周一=0 … 周日=6，非连续组合合法），纯日期数学 */
+export function isStudyDay(day: string, studyDays: readonly number[]): boolean {
   const [y, m, d] = day.split('-').map(Number)
   const weekday = new Date(y!, m! - 1, d!).getDay()
-  // 周一映射为 0 … 周日映射为 6，落在前 studyDaysPerWeek 天内即学习日
-  return ((weekday + 6) % 7) < studyDaysPerWeek
+  // 周一映射为 0 … 周日映射为 6，命中集合即学习日
+  return studyDays.includes((weekday + 6) % 7)
 }
 
 /** 数据优先休息判定（规格 §2.1/§3）：仅当日无任务且非学习日才显示休息页——
- *  中途调小 studyDaysPerWeek 后当日已生成任务照常显示（不遮蔽不丢失，缺陷②） */
-export function shouldShowRest(tasks: { day: string }[], todayKey: string, studyDaysPerWeek: number): boolean {
-  return tasks.length === 0 && !isStudyDay(todayKey, studyDaysPerWeek)
+ *  中途减少学习日后当日已生成任务照常显示（不遮蔽不丢失，缺陷②） */
+export function shouldShowRest(tasks: { day: string }[], todayKey: string, studyDays: readonly number[]): boolean {
+  return tasks.length === 0 && !isStudyDay(todayKey, studyDays)
 }
 
 /** 结转回溯窗口（天）：超出视为放弃，防全历史扫描（规格 §1.2） */
